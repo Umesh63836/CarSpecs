@@ -1,4 +1,4 @@
-name: Build and Push API
+name: Build and Deploy API
 
 on:
   push:
@@ -12,18 +12,22 @@ permissions:
 env:
   REGISTRY: carspecsregistry.azurecr.io
   IMAGE_NAME: carspec-api
+  RESOURCE_GROUP: carspec-rg
+  CONTAINER_APP: carspec-api
+  CONTAINER_ENVIRONMENT: carspec-env
+  IDENTITY_NAME: carspec-api-identity
 
 jobs:
-  build-and-push:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
 
-      # 1. Get source code
+      # CI
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Login to Azure using OIDC
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -31,19 +35,78 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # 3. Login to Azure Container Registry
       - name: Login to ACR
         run: |
           az acr login --name carspecsregistry
 
-      # 4. Build Docker image
       - name: Build API Docker image
         run: |
           docker build \
             -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} \
             ./CarSpecAPI
 
-      # 5. Push image to ACR
       - name: Push API image
         run: |
           docker push $REGISTRY/$IMAGE_NAME:${{ github.sha }}
+
+      # CD
+
+      - name: Get managed identity ID
+        id: identity
+        run: |
+          IDENTITY_ID=$(az identity show \
+            --name $IDENTITY_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --query id \
+            --output tsv)
+
+          echo "identity_id=$IDENTITY_ID" >> $GITHUB_OUTPUT
+
+      - name: Get managed identity principal ID
+        id: principal
+        run: |
+          PRINCIPAL_ID=$(az identity show \
+            --name $IDENTITY_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --query principalId \
+            --output tsv)
+
+          echo "principal_id=$PRINCIPAL_ID" >> $GITHUB_OUTPUT
+
+      - name: Check if Container App exists
+        id: check-app
+        run: |
+          if az containerapp show \
+            --name $CONTAINER_APP \
+            --resource-group $RESOURCE_GROUP \
+            > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      # First deployment
+
+      - name: Create Container App
+        if: steps.check-app.outputs.exists == 'false'
+        run: |
+          az containerapp create \
+            --name $CONTAINER_APP \
+            --resource-group $RESOURCE_GROUP \
+            --environment $CONTAINER_ENVIRONMENT \
+            --image $REGISTRY/$IMAGE_NAME:${{ github.sha }} \
+            --target-port 8080 \
+            --ingress external \
+            --user-assigned ${{ steps.identity.outputs.identity_id }} \
+            --registry-server $REGISTRY \
+            --registry-identity ${{ steps.identity.outputs.identity_id }}
+
+      # Subsequent deployments
+
+      - name: Update Container App
+        if: steps.check-app.outputs.exists == 'true'
+        run: |
+          az containerapp update \
+            --name $CONTAINER_APP \
+            --resource-group $RESOURCE_GROUP \
+            --image $REGISTRY/$IMAGE_NAME:${{ github.sha }}
