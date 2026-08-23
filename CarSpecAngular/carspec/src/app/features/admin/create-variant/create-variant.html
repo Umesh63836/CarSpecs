@@ -1,0 +1,535 @@
+<!-- Success Alert -->
+@if (showSuccessAlert) {
+
+  <div class="mx-6 mt-5 rounded-xl border border-green-200 bg-green-50 p-4 sm:mx-8">
+
+    <div class="flex items-start">
+
+      <!-- Success Icon -->
+      <div class="flex-shrink-0">
+
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+
+          <svg
+            class="h-5 w-5 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+
+        </div>
+
+      </div>
+
+      <!-- Message -->
+      <div class="ml-3 flex-1">
+
+        <h3 class="text-sm font-semibold text-green-800">
+          Variant created successfully
+        </h3>
+
+        <p class="mt-1 text-sm text-green-700">
+          The new variant has been added successfully.
+        </p>
+
+        <!-- Actions -->
+        <div class="mt-3 flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            (click)="dismissSuccess()"
+            class="rounded-lg border border-green-300 bg-white px-3 py-1.5 text-sm font-medium text-green-700 transition hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          >
+            Dismiss
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+@if (showErrorAlert) {
+
+  <div class="mx-6 mt-5 rounded-xl border border-red-200 bg-red-50 p-4 sm:mx-8">
+
+    <div class="flex items-start">
+
+      <!-- Error Icon -->
+      <div class="flex-shrink-0">
+
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+
+          <svg
+            class="h-5 w-5 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+
+        </div>
+
+      </div>
+
+      <!-- Message -->
+      <div class="ml-3 flex-1">
+
+        <h3 class="text-sm font-semibold text-red-800">
+          Failed to create variant
+        </h3>
+
+        <p class="mt-1 text-sm text-red-700">
+          {{errorMessage}}
+        </p>
+
+        <!-- Actions -->
+        <div class="mt-3 flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            (click)="dismissError()"
+            class="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+          >
+            Dismiss
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+@if (showModal) {
+    <!-- Modal Backdrop -->
+<div
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6 backdrop-blur-sm"
+>
+
+  <!-- Modal -->
+  <div
+    class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+  >
+
+    <!-- Header -->
+    <div
+      class="sticky top-0 z-10 border-b border-gray-200 bg-white px-6 py-5 sm:px-8"
+    >
+
+      <div class="flex items-start justify-between">
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">
+            Create New Variant
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Add a new variant to the selected car model.
+          </p>
+        </div>
+
+        <!-- Close button -->
+        <button
+          type="button" (click)="closeModal()"
+          class="ml-4 rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          aria-label="Close"
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- Form -->
+    <form
+      [formGroup]="variantForm"
+      (ngSubmit)="createVariant()"
+      class="px-6 py-6 sm:px-8"
+    >
+
+      <!-- Variant Name -->
+      <div class="mb-5">
+
+        <label
+          for="variantName"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Variant Name
+          <span class="text-red-500">*</span>
+        </label>
+
+        <input
+          id="variantName"
+          type="text"
+          formControlName="variantName"
+          placeholder="e.g. SX 1.5 Petrol"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+        @if (
+          variantForm.controls.variantName.touched &&
+          variantForm.controls.variantName.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Variant name is required.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Brand -->
+      <div class="mb-5">
+
+        <label
+          for="brandId"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Brand
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="brandId"
+          formControlName="brandId"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+          <option [ngValue]="null">
+            Select Brand
+          </option>
+
+          @for (brand of brands(); track brand.brandId) {
+            <option [ngValue]="brand.brandId">
+              {{ brand.brandName }}
+            </option>
+          }
+
+        </select>
+
+        @if (
+          variantForm.controls.brandId.touched &&
+          variantForm.controls.brandId.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Please select a brand.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Model -->
+      <div class="mb-5">
+
+        <label
+          for="modelId"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Model
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="modelId"
+          formControlName="modelId"
+          [disabled]="!variantForm.controls.brandId.value"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        >
+
+          <option [ngValue]="null">
+            {{ variantForm.controls.brandId.value ? 'Select Model' : 'Select Brand First' }}
+          </option>
+
+          @for (model of models(); track model.modelId) {
+            <option [ngValue]="model.modelId">
+              {{ model.modelName }}
+            </option>
+          }
+
+        </select>
+
+        @if (
+          variantForm.controls.modelId.touched &&
+          variantForm.controls.modelId.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Please select a model.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Engine -->
+      <div class="mb-5">
+
+        <label
+          for="engineId"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Engine
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="engineId"
+          formControlName="engineId"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+          <option [ngValue]="null">
+            Select Engine
+          </option>
+
+          @for (engine of engines(); track engine.engineId) {
+            <option [ngValue]="engine.engineId">
+              {{ engine.engineName }}
+            </option>
+          }
+
+        </select>
+
+        @if (
+          variantForm.controls.engineId.touched &&
+          variantForm.controls.engineId.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Please select an engine.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Transmission -->
+      <div class="mb-5">
+
+        <label
+          for="transmissionId"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Transmission
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="transmissionId"
+          formControlName="transmissionId"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+          <option [ngValue]="null">
+            Select Transmission
+          </option>
+
+          @for (
+            transmission of transmissions();
+            track transmission.transmissionId
+          ) {
+            <option [ngValue]="transmission.transmissionId">
+              {{ transmission.transmissionType }}
+              @if (transmission.numberOfGears) {
+                - {{ transmission.numberOfGears }} Speed
+              }
+            </option>
+          }
+
+        </select>
+
+        @if (
+          variantForm.controls.transmissionId.touched &&
+          variantForm.controls.transmissionId.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Please select a transmission.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Drivetrain -->
+      <div class="mb-5">
+
+        <label
+          for="drivetrainId"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Drivetrain
+          <span class="text-red-500">*</span>
+        </label>
+
+        <select
+          id="drivetrainId"
+          formControlName="drivetrainId"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+          <option [ngValue]="null">
+            Select Drivetrain
+          </option>
+
+          @for (
+            drivetrain of drivetrains();
+            track drivetrain.drivetrainId
+          ) {
+            <option [ngValue]="drivetrain.drivetrainId">
+              {{ drivetrain.drivetrainType }}
+            </option>
+          }
+
+        </select>
+
+        @if (
+          variantForm.controls.drivetrainId.touched &&
+          variantForm.controls.drivetrainId.invalid
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Please select a drivetrain.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Price -->
+      <div class="mb-5">
+
+        <label
+          for="exShowroomPrice"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Ex-showroom Price
+          <span class="text-red-500">*</span>
+        </label>
+
+        <div class="relative">
+
+          <span
+            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-sm text-gray-500"
+          >
+            ₹
+          </span>
+
+          <input
+            id="exShowroomPrice"
+            type="number"
+            formControlName="exShowroomPrice"
+            min="0"
+            placeholder="e.g. 1250000"
+            class="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-8 pr-3 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+        </div>
+
+        @if (
+          variantForm.controls.exShowroomPrice.touched &&
+          variantForm.controls.exShowroomPrice.hasError('required')
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Ex-showroom price is required.
+          </p>
+        }
+
+        @if (
+          variantForm.controls.exShowroomPrice.hasError('min')
+        ) {
+          <p class="mt-1.5 text-sm text-red-600">
+            Price cannot be negative.
+          </p>
+        }
+
+      </div>
+
+
+      <!-- Image URL -->
+      <div class="mb-6">
+
+        <label
+          for="variantImageUrl"
+          class="mb-2 block text-sm font-medium text-gray-700"
+        >
+          Variant Image URL
+        </label>
+
+        <input
+          id="variantImageUrl"
+          type="text"
+          formControlName="variantImageUrl"
+          placeholder="/images/variants/creta-sx.png"
+          class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        >
+
+        <p class="mt-1.5 text-xs text-gray-500">
+          Example: /images/variants/creta-sx.png
+        </p>
+
+      </div>
+
+
+      <!-- Buttons -->
+      <div
+        class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5"
+      >
+
+        <button
+  type="button"
+  (click)="closeModal()"
+  class="ml-4 rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+  aria-label="Close"
+>
+  Cancel
+</button>
+
+        <button
+          type="submit"
+          [disabled]="variantForm.invalid"
+          class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Create Variant
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+}

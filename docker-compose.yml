@@ -1,0 +1,31 @@
+services:
+
+  api:
+    build:
+      context: ./CarSpecAPI
+      dockerfile: Dockerfile
+    container_name: carspec-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DefaultConnection: ""
+    ports:
+      - "8080:8080"
+    networks:
+      - carspec-network
+
+  frontend:
+    build:
+      context: ./CarSpecAngular/carspec
+      dockerfile: Dockerfile
+    container_name: carspec-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - carspec-network
+
+networks:
+  carspec-network:
+    external: true

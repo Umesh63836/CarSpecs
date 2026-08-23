@@ -1,0 +1,172 @@
+@if (showModal) {
+
+  <div
+    class="fixed inset-0 z-[9999] flex items-center justify-center
+           bg-black/40 px-4 py-6 backdrop-blur-sm"
+  >
+
+    <div
+      class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl"
+    >
+
+      <!-- Header -->
+      <div
+        class="flex items-start justify-between border-b
+               border-gray-200 px-6 py-5"
+      >
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">
+            Admin Login
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Sign in to manage CarSpecs
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="rounded-lg p-2 text-gray-400
+                 hover:bg-gray-100 hover:text-gray-600"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- Error -->
+      @if (loginError()) {
+
+        <div
+          class="mx-6 mt-5 rounded-xl border border-red-200
+                 bg-red-50 p-4"
+        >
+
+          <p class="text-sm font-medium text-red-800">
+            Login failed
+          </p>
+
+          <p class="mt-1 text-sm text-red-700">
+            {{ loginError() }}
+          </p>
+
+        </div>
+
+      }
+
+
+      <!-- Form -->
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="login()"
+        class="px-6 py-6"
+      >
+
+        <!-- Username -->
+        <div class="mb-5">
+
+          <label
+            for="username"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Username
+          </label>
+
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            autocomplete="username"
+            class="block w-full rounded-lg border border-gray-300
+                   bg-white px-3 py-2.5 text-sm text-gray-900
+                   outline-none transition
+                   focus:border-blue-500
+                   focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          @if (
+            loginForm.controls.username.touched &&
+            loginForm.controls.username.invalid
+          ) {
+            <p class="mt-1.5 text-sm text-red-600">
+              Username is required.
+            </p>
+          }
+
+        </div>
+
+
+        <!-- Password -->
+        <div class="mb-6">
+
+          <label
+            for="password"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            autocomplete="current-password"
+            class="block w-full rounded-lg border border-gray-300
+                   bg-white px-3 py-2.5 text-sm text-gray-900
+                   outline-none transition
+                   focus:border-blue-500
+                   focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          @if (
+            loginForm.controls.password.touched &&
+            loginForm.controls.password.invalid
+          ) {
+            <p class="mt-1.5 text-sm text-red-600">
+              Password is required.
+            </p>
+          }
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div
+          class="flex justify-end gap-3 border-t
+                 border-gray-200 pt-5"
+        >
+
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="rounded-lg border border-gray-300
+                   bg-white px-4 py-2.5 text-sm font-medium
+                   text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="loginForm.invalid"
+            class="rounded-lg bg-blue-600 px-5 py-2.5
+                   text-sm font-medium text-white
+                   hover:bg-blue-700
+                   disabled:cursor-not-allowed
+                   disabled:opacity-50"
+          >
+            Login
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+}

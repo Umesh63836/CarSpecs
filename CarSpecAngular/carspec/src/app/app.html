@@ -1,0 +1,71 @@
+<!-- ========== HEADER ========== -->
+<app-navbar></app-navbar>
+
+@if (loadingService.isLoading()) {
+  <app-loading></app-loading>
+}
+
+
+<router-outlet></router-outlet>
+
+@if (errorService.error(); as error) {
+
+  <div
+    class="fixed top-5 right-5 z-[10000]
+           w-[360px]
+           rounded-xl
+           border border-red-200
+           bg-white
+           p-4
+           shadow-2xl
+           animate-[slideIn_0.3s_ease-out]"
+  >
+
+    <div class="flex items-start gap-3">
+
+      <!-- Error Icon -->
+      <div
+        class="flex h-10 w-10 shrink-0
+               items-center justify-center
+               rounded-full
+               bg-red-100
+               text-red-600"
+      >
+        ⚠
+      </div>
+
+      <!-- Error Content -->
+      <div class="flex-1">
+
+        <h3 class="text-sm font-semibold text-gray-900">
+          Request Failed
+        </h3>
+
+        <p class="mt-1 text-sm text-gray-600">
+          {{ error.message }}
+        </p>
+
+      </div>
+
+      <!-- Close -->
+      <button
+        type="button"
+        (click)="errorService.clear()"
+        class="text-gray-400 hover:text-gray-700"
+      >
+        ✕
+      </button>
+
+    </div>
+
+  </div>
+
+}
+
+<!-- ========== FOOTER ========== -->
+
+<app-footer></app-footer>
+
+<!-- ========== END FOOTER ========== -->
+
+

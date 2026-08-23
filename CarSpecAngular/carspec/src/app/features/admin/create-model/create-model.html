@@ -1,0 +1,338 @@
+@if (showSuccessAlert) {
+
+  <div class="mx-6 mt-5 rounded-xl border border-green-200 bg-green-50 p-4 sm:mx-8">
+
+    <div class="flex items-start">
+
+      <!-- Success Icon -->
+      <div class="flex-shrink-0">
+
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+
+          <svg
+            class="h-5 w-5 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+
+        </div>
+
+      </div>
+
+
+      <!-- Message -->
+      <div class="ml-3 flex-1">
+
+        <h3 class="text-sm font-semibold text-green-800">
+          Brand created successfully
+        </h3>
+
+        <p class="mt-1 text-sm text-green-700">
+          The new car brand has been added successfully.
+        </p>
+
+
+        <!-- Actions -->
+        <div class="mt-3 flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            (click)="viewAllBrands()"
+            class="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+          >
+            View All Brands
+          </button>
+
+          <button
+            type="button"
+            (click)="dismissSuccess()"
+            class="rounded-lg border border-green-300 bg-white px-3 py-1.5 text-sm font-medium text-green-700 transition hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          >
+            Dismiss
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+@if (showModal) {
+
+  <div
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6 backdrop-blur-sm"
+  >
+
+    <div
+      class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+    >
+
+      <!-- Header -->
+
+      <div
+        class="sticky top-0 z-10 flex items-start justify-between border-b border-gray-200 bg-white px-6 py-5"
+      >
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">
+            Create New Brand
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Add a new car manufacturer.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- Your existing form -->
+       <form
+        [formGroup]="modelForm"
+        (ngSubmit)="createModel()"
+        class="px-6 py-6 sm:px-8"
+      >
+
+        <!-- Brand -->
+        <div class="mb-5">
+
+          <label
+            for="brandId"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Brand
+            <span class="text-red-500">*</span>
+          </label>
+
+          <select
+            id="brandId"
+            formControlName="brandId"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+            <option [ngValue]="null">
+              Select Brand
+            </option>
+
+            @for (brand of brands(); track brand.brandId) {
+
+              <option [ngValue]="brand.brandId">
+                {{ brand.brandName }}
+              </option>
+
+            }
+
+          </select>
+
+          @if (
+            modelForm.controls.brandId.touched &&
+            modelForm.controls.brandId.hasError('required')
+          ) {
+
+            <p class="mt-1.5 text-sm text-red-600">
+              Please select a brand.
+            </p>
+
+          }
+
+        </div>
+
+
+        <!-- Model Name -->
+        <div class="mb-5">
+
+          <label
+            for="modelName"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Model Name
+            <span class="text-red-500">*</span>
+          </label>
+
+          <input
+            id="modelName"
+            type="text"
+            formControlName="modelName"
+            placeholder="e.g. Creta"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          @if (
+            modelForm.controls.modelName.touched &&
+            modelForm.controls.modelName.hasError('required')
+          ) {
+
+            <p class="mt-1.5 text-sm text-red-600">
+              Model name is required.
+            </p>
+
+          }
+
+        </div>
+
+
+        <!-- Launch Year -->
+        <div class="mb-5">
+
+          <label
+            for="launchYear"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Launch Year
+            <span class="text-red-500">*</span>
+          </label>
+
+          <input
+            id="launchYear"
+            type="number"
+            formControlName="launchYear"
+            min="1900"
+            placeholder="e.g. 2017"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          @if (
+            modelForm.controls.launchYear.touched &&
+            modelForm.controls.launchYear.hasError('required')
+          ) {
+
+            <p class="mt-1.5 text-sm text-red-600">
+              Launch year is required.
+            </p>
+
+          }
+
+          @if (
+            modelForm.controls.launchYear.hasError('min')
+          ) {
+
+            <p class="mt-1.5 text-sm text-red-600">
+              Launch year must be 1900 or later.
+            </p>
+
+          }
+
+        </div>
+
+
+        <!-- Discontinued Year -->
+        <div class="mb-5">
+
+          <label
+            for="discontinuedYear"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Discontinued Year
+          </label>
+
+          <input
+            id="discontinuedYear"
+            type="number"
+            formControlName="discontinuedYear"
+            placeholder="Leave empty if currently available"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          <p class="mt-1.5 text-xs text-gray-500">
+            Leave this field empty if the model is still available.
+          </p>
+
+        </div>
+
+
+        <!-- Image URL -->
+        <div class="mb-5">
+
+          <label
+            for="modelImageUrl"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Model Image URL
+          </label>
+
+          <input
+            id="modelImageUrl"
+            type="text"
+            formControlName="modelImageUrl"
+            placeholder="/images/models/creta.png"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          <p class="mt-1.5 text-xs text-gray-500">
+            Example: /images/models/creta.png
+          </p>
+
+        </div>
+
+
+        <!-- Active Status -->
+        <div class="mb-6">
+
+          <label
+            class="inline-flex cursor-pointer items-center"
+          >
+
+            <input
+              type="checkbox"
+              formControlName="isActive"
+              class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+            >
+
+            <span class="ml-2 text-sm font-medium text-gray-700">
+              Model is active
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <!-- Buttons -->
+        <div
+          class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5"
+        >
+
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="modelForm.invalid"
+            class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Create Model
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+}

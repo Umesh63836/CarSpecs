@@ -1,0 +1,267 @@
+<!-- Success Alert -->
+@if (showSuccessAlert) {
+
+  <div class="mx-6 mt-5 rounded-xl border border-green-200 bg-green-50 p-4 sm:mx-8">
+
+    <div class="flex items-start">
+
+      <!-- Success Icon -->
+      <div class="flex-shrink-0">
+
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+
+          <svg
+            class="h-5 w-5 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+
+        </div>
+
+      </div>
+
+
+      <!-- Message -->
+      <div class="ml-3 flex-1">
+
+        <h3 class="text-sm font-semibold text-green-800">
+          Brand created successfully
+        </h3>
+
+        <p class="mt-1 text-sm text-green-700">
+          The new car brand has been added successfully.
+        </p>
+
+
+        <!-- Actions -->
+        <div class="mt-3 flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            (click)="viewAllBrands()"
+            class="rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+          >
+            View All Brands
+          </button>
+
+          <button
+            type="button"
+            (click)="dismissSuccess()"
+            class="rounded-lg border border-green-300 bg-white px-3 py-1.5 text-sm font-medium text-green-700 transition hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          >
+            Dismiss
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+@if (showErrorAlert) {
+
+  <div class="mx-6 mt-5 rounded-xl border border-red-200 bg-red-50 p-4 sm:mx-8">
+
+    <div class="flex items-start">
+
+      <!-- Error Icon -->
+      <div class="flex-shrink-0">
+
+        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+
+          <svg
+            class="h-5 w-5 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+
+        </div>
+
+      </div>
+
+
+      <!-- Message -->
+      <div class="ml-3 flex-1">
+
+        <h3 class="text-sm font-semibold text-red-800">
+          Failed to create brand
+        </h3>
+
+        <p class="mt-1 text-sm text-red-700">
+          {{errorMessage}}
+        </p>
+
+
+        <!-- Actions -->
+        <div class="mt-3 flex flex-wrap gap-2">
+
+          <button
+            type="button"
+            (click)="dismissError()"
+            class="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+          >
+            Dismiss
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+
+@if (showModal) {
+
+  <div
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6 backdrop-blur-sm"
+  >
+
+    <div
+      class="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl"
+    >
+
+      <!-- Header -->
+
+      <div
+        class="sticky top-0 z-10 flex items-start justify-between border-b border-gray-200 bg-white px-6 py-5"
+      >
+
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">
+            Create New Brand
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Add a new car manufacturer.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+        >
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- Your existing form -->
+      <!-- Form -->
+      <form
+        [formGroup]="brandForm"
+        (ngSubmit)="createBrand()"
+        class="px-6 py-6 sm:px-8"
+      >
+
+        <!-- Brand Name -->
+        <div class="mb-5">
+
+          <label
+            for="brandName"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Brand Name
+            <span class="text-red-500">*</span>
+          </label>
+
+          <input
+            id="brandName"
+            type="text"
+            formControlName="brandName"
+            placeholder="e.g. Hyundai"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          @if (
+            brandForm.controls.brandName.touched &&
+            brandForm.controls.brandName.invalid
+          ) {
+            <p class="mt-1.5 text-sm text-red-600">
+              Brand name is required.
+            </p>
+          }
+
+        </div>
+
+
+        <!-- Logo URL -->
+        <div class="mb-6">
+
+          <label
+            for="logoUrl"
+            class="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Logo URL
+          </label>
+
+          <input
+            id="logoUrl"
+            type="text"
+            formControlName="logoUrl"
+            placeholder="/images/brands/hyundai.png"
+            class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          >
+
+          <p class="mt-1.5 text-xs text-gray-500">
+            Enter the path or URL of the brand logo.
+          </p>
+
+        </div>
+
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
+
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="brandForm.invalid"
+            class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Create Brand
+          </button>
+
+        </div>
+
+      </form>
+
+        <!-- fields -->
+
+    </div>
+
+  </div>
+
+}

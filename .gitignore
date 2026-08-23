@@ -1,0 +1,29 @@
+# Visual Studio
+.vs/
+**/.vs/
+
+# Build output
+**/bin/
+**/obj/
+
+# User-specific Visual Studio files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET
+appsettings.Development.json
+
+# Node
+node_modules/
+
+# Angular build output
+dist/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
