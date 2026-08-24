@@ -65,6 +65,15 @@ namespace CarSpecAPI.Controllers
         }
 
         [Authorize]
+        [HttpPost("fueltype")]
+        public async Task<IActionResult> CreateNewFuelType([FromBody] CreateFuelTypeDto dto)
+        {
+            var response = await this.specificationService.CreateFuelTypeAsync(dto);
+
+            return Ok(response);
+        }
+
+        [Authorize]
         [HttpPost("engine")]
         public async Task<IActionResult> CreateNewEngine([FromBody] CreateEngineDto dto)
         {

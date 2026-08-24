@@ -1,6 +1,10 @@
 export interface ISpecs {
-  engineId: number;
+  variantId: number
+  brand: string ;
+  model: string ;
+  variant: string ;
   engine: string ; 
+  exShowroomPrice: number | null;
   noOfCyl: number | null;
   noOfValves: number | null;
   displacement: number | null;

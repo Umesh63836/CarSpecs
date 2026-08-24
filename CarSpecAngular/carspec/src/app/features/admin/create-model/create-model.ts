@@ -18,6 +18,7 @@ export class CreateModel implements OnInit{
   private brandService = inject(Brand);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   showModal : boolean = true;
 
@@ -75,7 +76,7 @@ createModel() {
 
     console.log('Model created:', result);
 
-    this.showSuccessAlert = true;
+    this.alert.emit({ type: 'success', title: 'Model created successfully', message: 'The new car model has been added successfully.' });
     this.showErrorAlert = false;
 
     this.showModal = false;
@@ -91,7 +92,7 @@ createModel() {
     console.error('Failed to create model:', error);
 
     this.showSuccessAlert = false;
-    this.showErrorAlert = true;
+    this.alert.emit({ type: 'error', title: 'Failed to create model', message: this.errorMessage });
 
     this.showModal = false;
 

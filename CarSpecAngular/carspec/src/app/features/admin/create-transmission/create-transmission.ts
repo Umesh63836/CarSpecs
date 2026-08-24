@@ -17,6 +17,7 @@ export class CreateTransmission {
   private router = inject(Router);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   transmissionForm = this.fb.nonNullable.group({
     transmissionName: ['', Validators.required],
@@ -46,7 +47,7 @@ export class CreateTransmission {
 
     this.createService.createTransmission(dto).subscribe({next: response => {
     // Show success alert
-      this.showSuccessAlert = true;
+      this.alert.emit({ type: 'success', title: 'Transmission created successfully', message: 'The new transmission has been added successfully.' });
       this.showModal =false;
 
       // Hide error alert
@@ -57,7 +58,7 @@ export class CreateTransmission {
      this.showSuccessAlert = false;
 
       // Show error alert
-      this.showErrorAlert = true;
+      this.alert.emit({ type: 'error', title: 'Failed to create transmission', message: this.errorMessage });
       this.showModal =false;
 
       // Try to get useful error message from API

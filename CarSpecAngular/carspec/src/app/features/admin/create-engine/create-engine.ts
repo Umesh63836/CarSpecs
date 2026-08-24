@@ -14,6 +14,7 @@ export class CreateEngine implements OnInit{
   private createService = inject(CreateServices);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   showModal = true;
   showSuccessAlert = false;
@@ -129,7 +130,7 @@ export class CreateEngine implements OnInit{
 
           console.log('Engine created:', response);
 
-          this.showSuccessAlert = true;
+          this.alert.emit({ type: 'success', title: 'Engine created successfully', message: 'The new engine has been added successfully.' });
           this.showErrorAlert = false;
           this.showModal = false;
 
@@ -143,7 +144,7 @@ export class CreateEngine implements OnInit{
           console.error('Failed to create engine:', error);
 
           this.showSuccessAlert = false;
-          this.showErrorAlert = true;
+          this.alert.emit({ type: 'error', title: 'Failed to create engine', message: this.errorMessage });
           this.showModal = false;
 
           this.errorMessage =

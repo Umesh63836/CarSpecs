@@ -15,6 +15,7 @@ export class CreateBrand {
   private router = inject(Router);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   brandForm = this.fb.nonNullable.group({
     brandName: ['', Validators.required],
@@ -41,7 +42,7 @@ export class CreateBrand {
 
     this.createService.createBrand(dto).subscribe({next: response => {
     // Show success alert
-      this.showSuccessAlert = true;
+      this.alert.emit({ type: 'success', title: 'Brand created successfully', message: 'The new car brand has been added successfully.' });
       this.showModal =false;
 
       // Hide error alert
@@ -52,7 +53,7 @@ export class CreateBrand {
      this.showSuccessAlert = false;
 
       // Show error alert
-      this.showErrorAlert = true;
+      this.alert.emit({ type: 'error', title: 'Failed to create brand', message: this.errorMessage });
       this.showModal =false;
 
       // Try to get useful error message from API

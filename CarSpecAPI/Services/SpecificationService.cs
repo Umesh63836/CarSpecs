@@ -17,13 +17,16 @@ namespace CarSpecAPI.Services
 
         public async Task<VariantSpecsDto?> GetVariantSpecsAsync(int variantId)
         {
-            var result = await carDbContext.Variants
+            var result = await carDbContext.Variants.Include(m => m.Model).ThenInclude(b => b.Brand)
             .Where(v => v.VariantId == variantId)
             .Select(v => new VariantSpecsDto
             {
-                EngineId = v.Engine.EngineId,
+                VariantId = v.VariantId,
+                Brand = v.Model.Brand.BrandName,
+                Model = v.Model.ModelName,
+                Variant = v.VariantName,
+                ExShowroomPrice = v.ExShowroomPrice,
                 Engine = v.Engine.EngineName,
-
                 NoOfCyl = v.Engine.NumberOfCylinders,
                 NoOfValves = v.Engine.NumberOfValves,
                 Displacement = v.Engine.Displacement,
@@ -89,6 +92,23 @@ namespace CarSpecAPI.Services
                 FuelType = f.FuelType1,
             }).ToListAsync();
             return result;
+        }
+
+        public async Task<SelectFuelTypeDto> CreateFuelTypeAsync(CreateFuelTypeDto dto)
+        {
+            var fuelType = new FuelType
+            {
+                FuelType1 = dto.FuelType
+            };
+
+            await carDbContext.FuelTypes.AddAsync(fuelType);
+            await carDbContext.SaveChangesAsync();
+
+            return new SelectFuelTypeDto
+            {
+                FuelTypeId = fuelType.FuelTypeId,
+                FuelType = fuelType.FuelType1
+            };
         }
 
 

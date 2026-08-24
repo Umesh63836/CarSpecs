@@ -1,1 +1,55 @@
-<p>create-fuel-type works!</p>
+@if (showModal) {
+	<div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4 py-6 backdrop-blur-sm">
+		<div class="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+			<div class="flex items-start justify-between border-b border-gray-200 bg-white px-6 py-5 sm:px-8">
+				<div>
+					<h2 class="text-xl font-semibold text-gray-900">Create New Fuel Type</h2>
+					<p class="mt-1 text-sm text-gray-500">Add a new fuel type for cars.</p>
+				</div>
+				<button
+					type="button"
+					(click)="closeModal()"
+					class="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+					aria-label="Close"
+				>
+					✕
+				</button>
+			</div>
+
+			<form [formGroup]="fuelTypeForm" (ngSubmit)="createFuelType()" class="px-6 py-6 sm:px-8">
+				<div class="mb-6">
+					<label for="fuelType" class="mb-2 block text-sm font-medium text-gray-700">
+						Fuel Type <span class="text-red-500">*</span>
+					</label>
+					<input
+						id="fuelType"
+						type="text"
+						formControlName="fuelType"
+						placeholder="e.g. Petrol"
+						class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+					>
+					@if (fuelTypeForm.controls.fuelType.touched && fuelTypeForm.controls.fuelType.invalid) {
+						<p class="mt-1.5 text-sm text-red-600">Fuel type is required.</p>
+					}
+				</div>
+
+				<div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5">
+					<button
+						type="button"
+						(click)="closeModal()"
+						class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						[disabled]="fuelTypeForm.invalid"
+						class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Create Fuel Type
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}

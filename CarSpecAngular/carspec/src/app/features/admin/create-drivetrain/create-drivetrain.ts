@@ -16,6 +16,7 @@ export class CreateDrivetrain {
   private router = inject(Router);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   drivetrainForm = this.fb.nonNullable.group({
     drivetrainName: ['', Validators.required]
@@ -43,7 +44,7 @@ export class CreateDrivetrain {
 
     this.createService.createDrivetrain(dto).subscribe({next: response => {
     // Show success alert
-      this.showSuccessAlert = true;
+      this.alert.emit({ type: 'success', title: 'Drivetrain created successfully', message: 'The new drivetrain has been added successfully.' });
       this.showModal =false;
 
       // Hide error alert
@@ -54,7 +55,7 @@ export class CreateDrivetrain {
      this.showSuccessAlert = false;
 
       // Show error alert
-      this.showErrorAlert = true;
+      this.alert.emit({ type: 'error', title: 'Failed to create drivetrain', message: this.errorMessage });
       this.showModal =false;
 
       // Try to get useful error message from API

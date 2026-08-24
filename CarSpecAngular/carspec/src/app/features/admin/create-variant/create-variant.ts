@@ -26,6 +26,7 @@ export class CreateVariant implements OnInit {
   private fb = inject(FormBuilder);
 
   @Output() close = new EventEmitter<void>();
+  @Output() alert = new EventEmitter<{ type: 'success' | 'error'; title: string; message: string }>();
 
   showModal : boolean = true;
   showSuccessAlert = false;
@@ -147,7 +148,7 @@ export class CreateVariant implements OnInit {
     this.createService.createVariant(modelId!, dto).subscribe({
       next: (result: VariantDto) => {
         console.log('Variant created:', result);
-        this.showSuccessAlert = true;
+        this.alert.emit({ type: 'success', title: 'Variant created successfully', message: 'The new variant has been added successfully.' });
         this.showErrorAlert = false;
         this.showModal = false;
         this.variantForm.reset();
@@ -155,7 +156,7 @@ export class CreateVariant implements OnInit {
       error: (error) => {
         console.error('Failed to create variant:', error);
         this.showSuccessAlert = false;
-        this.showErrorAlert = true;
+        this.alert.emit({ type: 'error', title: 'Failed to create variant', message: this.errorMessage });
         this.showModal = false;
         this.errorMessage =
           error?.error?.message ||

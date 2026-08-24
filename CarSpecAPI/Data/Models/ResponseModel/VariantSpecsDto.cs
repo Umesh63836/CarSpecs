@@ -2,9 +2,17 @@
 {
     public class VariantSpecsDto
     {
-        public int EngineId { get; set; }
+        public int VariantId { get; set; }
+
+        public string Brand { get; set; } = string.Empty;
+
+        public string Model { get; set; } = string.Empty;
+
+        public string Variant { get; set; } = string.Empty;
 
         public string Engine { get; set; } = string.Empty;
+
+        public decimal? ExShowroomPrice { get; set; }
 
         public byte? NoOfCyl { get; set; }
 
@@ -18,7 +26,7 @@
 
         public bool isTurbocharged { get; set; } = false;
 
-        public string EmmissionStandard { get; set; } = string.Empty;
+        public string? EmmissionStandard { get; set; } = string.Empty;
 
         public string TransmissionType { get; set; } = string.Empty;
 
@@ -28,7 +36,7 @@
 
         public string Drivetrain { get; set;} = string.Empty;
 
-        public string VarientImageURL { get; set; } = string.Empty;
+        public string? VarientImageURL { get; set; } = string.Empty;
 
     }
 }

@@ -5,6 +5,7 @@ namespace CarSpecAPI.Services
 {
     public interface ISpecificationService
     {
+        Task<SelectFuelTypeDto> CreateFuelTypeAsync(CreateFuelTypeDto dto);
         Task<DrivetrainDto> CreateDrivetrainAsync(CreateDrivetrainDto dto);
         Task<EngineDto?> CreateEngineAsync(CreateEngineDto dto);
         Task<TransmissionDto> CreateTransmissionAsync(CreateTransmissionDto dto);

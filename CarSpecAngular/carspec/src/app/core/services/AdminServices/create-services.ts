@@ -39,6 +39,10 @@ export class CreateServices {
     return this.http.post<DrivetrainDto>(this.apiUrl + '/Specifications/drivetrain',dto);
     }
 
+    createFuelType(dto: { fuelType: string }): Observable<SelectFueltypeDto> {
+    return this.http.post<SelectFueltypeDto>(this.apiUrl + '/Specifications/fueltype', dto);
+    }
+
     createVariant(modelId: number,dto: CreateVariantDto): Observable<VariantDto> {
     return this.http.post<VariantDto>(this.apiUrl + '/Variants/' + modelId + '/variants', dto);
     }
