@@ -1,3 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+html {
+  font-size: 14.5px;
+}
+
+body {
+  line-height: 1.4;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 0.90rem;
+}

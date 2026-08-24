@@ -13,6 +13,7 @@
 *.sln.docstates
 
 # ASP.NET
+appsettings.json
 appsettings.Development.json
 
 # Node
@@ -24,6 +25,7 @@ dist/
 # Environment files
 .env
 .env.*
+environment.ts
 
 # Logs
 *.log
