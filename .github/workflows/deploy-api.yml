@@ -11,9 +11,11 @@ permissions:
 
 env:
   REGISTRY: carspecsregistry.azurecr.io
-  IMAGE_NAME: carspec-api
+  API_IMAGE: carspec-api
+  FRONTEND_IMAGE: carspec-frontend
   RESOURCE_GROUP: carspec-rg
-  CONTAINER_APP: carspec-api
+  API_API_CONTAINER_APP: carspec-api
+  FRONTEND_API_CONTAINER_APP: carspec-frontend
   CONTAINER_ENVIRONMENT: carspec-env
   IDENTITY_NAME: carspec-api-identity
 
@@ -42,13 +44,23 @@ jobs:
       - name: Build API Docker image
         run: |
           docker build \
-            -t $REGISTRY/$IMAGE_NAME:${{ github.sha }} \
+            -t $REGISTRY/$API_IMAGE:${{ github.sha }} \
             ./CarSpecAPI
 
       - name: Push API image
         run: |
-          docker push $REGISTRY/$IMAGE_NAME:${{ github.sha }}
+          docker push $REGISTRY/$API_IMAGE:${{ github.sha }}
 
+      - name: Build Angular Docker image
+        run: |
+          docker build \
+            -t $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }} \
+            ./carspec
+              
+      - name: Push Angular image
+        run: |
+          docker push $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }}
+              
       # CD-----------------------------------
 
       - name: Get managed identity ID
@@ -77,7 +89,7 @@ jobs:
         id: check-app
         run: |
           if az containerapp show \
-            --name $CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -91,10 +103,10 @@ jobs:
         if: steps.check-app.outputs.exists == 'false'
         run: |
           az containerapp create \
-            --name $CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             --environment $CONTAINER_ENVIRONMENT \
-            --image $REGISTRY/$IMAGE_NAME:${{ github.sha }} \
+            --image $REGISTRY/$API_IMAGE:${{ github.sha }} \
             --target-port 8080 \
             --ingress external \
             --user-assigned ${{ steps.identity.outputs.identity_id }} \
@@ -107,6 +119,6 @@ jobs:
         if: steps.check-app.outputs.exists == 'true'
         run: |
           az containerapp update \
-            --name $CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
-            --image $REGISTRY/$IMAGE_NAME:${{ github.sha }}
+            --image $REGISTRY/$API_IMAGE:${{ github.sha }}
