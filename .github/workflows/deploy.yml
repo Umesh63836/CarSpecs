@@ -11,12 +11,17 @@ permissions:
 
 env:
   REGISTRY: carspecsregistry.azurecr.io
+
   API_IMAGE: carspec-api
   FRONTEND_IMAGE: carspec-frontend
+
   RESOURCE_GROUP: carspec-rg
-  API_API_CONTAINER_APP: carspec-api
-  FRONTEND_API_CONTAINER_APP: carspec-frontend
+
+  API_CONTAINER_APP: carspec-api
+  FRONTEND_CONTAINER_APP: carspec-frontend
+
   CONTAINER_ENVIRONMENT: carspec-env
+
   IDENTITY_NAME: carspec-api-identity
 
 jobs:
@@ -25,7 +30,7 @@ jobs:
 
     steps:
 
-      # CI--------------------------------
+      # ---------------- CI ----------------
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,6 +46,8 @@ jobs:
         run: |
           az acr login --name carspecsregistry
 
+      # -------- Build & Push API --------
+
       - name: Build API Docker image
         run: |
           docker build \
@@ -51,17 +58,19 @@ jobs:
         run: |
           docker push $REGISTRY/$API_IMAGE:${{ github.sha }}
 
+      # ------ Build & Push Frontend ------
+
       - name: Build Angular Docker image
         run: |
           docker build \
             -t $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }} \
             ./CarSpecAngular/carspec
-              
+
       - name: Push Angular image
         run: |
           docker push $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }}
-              
-      # CD-----------------------------------
+
+      # ---------------- CD ----------------
 
       - name: Get managed identity ID
         id: identity
@@ -74,36 +83,31 @@ jobs:
 
           echo "identity_id=$IDENTITY_ID" >> $GITHUB_OUTPUT
 
-      - name: Get managed identity principal ID
-        id: principal
-        run: |
-          PRINCIPAL_ID=$(az identity show \
-            --name $IDENTITY_NAME \
-            --resource-group $RESOURCE_GROUP \
-            --query principalId \
-            --output tsv)
+      # -------- Check API Container App --------
 
-          echo "principal_id=$PRINCIPAL_ID" >> $GITHUB_OUTPUT
-
-      - name: Check if Container App exists
-        id: check-app
+      - name: Check API Container App
+        id: check-api
         run: |
           if az containerapp show \
-            --name $API_API_CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             > /dev/null 2>&1; then
+
             echo "exists=true" >> $GITHUB_OUTPUT
+
           else
+
             echo "exists=false" >> $GITHUB_OUTPUT
+
           fi
 
-      # First deployment
+      # -------- First API deployment --------
 
-      - name: Create Container App
-        if: steps.check-app.outputs.exists == 'false'
+      - name: Create API Container App
+        if: steps.check-api.outputs.exists == 'false'
         run: |
           az containerapp create \
-            --name $API_API_CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             --environment $CONTAINER_ENVIRONMENT \
             --image $REGISTRY/$API_IMAGE:${{ github.sha }} \
@@ -113,12 +117,21 @@ jobs:
             --registry-server $REGISTRY \
             --registry-identity ${{ steps.identity.outputs.identity_id }}
 
-      # Subsequent deployments
+      # -------- Subsequent API deployments --------
 
-      - name: Update Container App
-        if: steps.check-app.outputs.exists == 'true'
+      - name: Update API Container App
+        if: steps.check-api.outputs.exists == 'true'
         run: |
           az containerapp update \
-            --name $API_API_CONTAINER_APP \
+            --name $API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             --image $REGISTRY/$API_IMAGE:${{ github.sha }}
+
+      # -------- Update Frontend --------
+
+      - name: Update Frontend Container App
+        run: |
+          az containerapp update \
+            --name $FRONTEND_CONTAINER_APP \
+            --resource-group $RESOURCE_GROUP \
+            --image $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }}
