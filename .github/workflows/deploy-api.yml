@@ -55,7 +55,7 @@ jobs:
         run: |
           docker build \
             -t $REGISTRY/$FRONTEND_IMAGE:${{ github.sha }} \
-            ./carspec
+            ./CarSpecAngular/carspec
               
       - name: Push Angular image
         run: |
