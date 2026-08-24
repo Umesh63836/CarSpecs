@@ -77,11 +77,11 @@ export class Navbar implements OnInit{
   const refreshToken = this.authService.getRefreshToken();
 
   if (refreshToken) {
-
     this.authService.logout(refreshToken).subscribe({
       next: () => {
         this.authService.clearTokens();
         this.router.navigate(['/']);
+        this.authService.showSuccess();
       },
       error: () => {
         this.authService.clearTokens();

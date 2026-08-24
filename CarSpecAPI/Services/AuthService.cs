@@ -137,20 +137,22 @@ public class AuthService : IAuthService
 
 
     // LOGOUT
-    public async Task LogoutAsync(string refreshToken)
+    public async Task<Boolean> LogoutAsync(string refreshToken)
     {
         var storedToken = await carsDbContext.RefreshTokens
             .FirstOrDefaultAsync(x =>
                 x.TokenHash == refreshToken);
 
         if (storedToken == null)
-            return;
+            return false;
 
         if (storedToken.RevokedAt == null)
         {
             storedToken.RevokedAt = DateTime.UtcNow;
             await carsDbContext.SaveChangesAsync();
+            return true;
         }
+        return false;
     }
 
 

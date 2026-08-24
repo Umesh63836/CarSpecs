@@ -11,19 +11,28 @@ export class AuthService {
     private apiUrl = environment.apiUrl;
 
     isloggedIn = signal(!!localStorage.getItem('accessToken'));
+    isloggedout = signal(false);
+
+    showSuccess() {
+    this.isloggedout.set(true);
+    // Automatically remove after 5 seconds
+    setTimeout(() => {
+      this.isloggedout.set(false);
+    }, 3000);
+    }
 
     login(loginDto: LoginDto): Observable<LoginResponseDto> {
         return this.http.post<LoginResponseDto>(this.apiUrl + "/Auth/login", loginDto)
     }
 
     refreshToken(refreshToken: string): Observable<LoginResponseDto>  {
-        const param = new HttpParams().set('refreshtoken', refreshToken)
-        return this.http.post<LoginResponseDto>(this.apiUrl + "/Auth/refresh", {param});
+        const params = new HttpParams().set('refreshtoken', refreshToken)
+        return this.http.post<LoginResponseDto>(this.apiUrl + "/Auth/refresh", {params});
     }
   
-    logout(refreshToken: string): Observable<LoginResponseDto>  {
-        const param = new HttpParams().set('refreshToken', refreshToken)
-        return this.http.post<LoginResponseDto>(this.apiUrl + "/Auth/logout", {param});
+    logout(refreshToken: string): Observable<void>  {
+        const params = new HttpParams().set('refreshToken', refreshToken)
+        return this.http.post<void>(this.apiUrl + "/Auth/logout", null , {params} );
     }
 
     getAccessToken() {

@@ -3,6 +3,7 @@ import { Brand } from '../../core/services/brand/brand';
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormsModule } from '@angular/forms';
 import { IBrand } from '../../core/models/interfaces/brand';
+import { AuthService } from '../../core/services/AdminServices/AuthService/authService';
 
 @Component({
   selector: 'app-brands',
@@ -13,6 +14,7 @@ import { IBrand } from '../../core/models/interfaces/brand';
 export class Brands implements OnInit{
   private brandService = inject(Brand)
   private route = inject(ActivatedRoute)
+  authService = inject(AuthService);
 
   brands = signal<IBrand[]>([]);
   

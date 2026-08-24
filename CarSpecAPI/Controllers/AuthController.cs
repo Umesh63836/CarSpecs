@@ -55,9 +55,9 @@ namespace CarSpecAPI.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(string refreshToken)
         {
-            await authService.LogoutAsync(refreshToken);
+            bool status = await authService.LogoutAsync(refreshToken);
 
-            return Ok();
+            return status ? Ok() : Unauthorized();
         }
     }
 }

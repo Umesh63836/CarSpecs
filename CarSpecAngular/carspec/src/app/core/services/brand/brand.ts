@@ -3,6 +3,7 @@ import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IBrand } from '../../models/interfaces/brand';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../AdminServices/AuthService/authService';
 
 @Service()
 export class Brand {
