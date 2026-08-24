@@ -89,7 +89,7 @@ jobs:
         id: check-app
         run: |
           if az containerapp show \
-            --name $API_CONTAINER_APP \
+            --name $API_API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             > /dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -103,7 +103,7 @@ jobs:
         if: steps.check-app.outputs.exists == 'false'
         run: |
           az containerapp create \
-            --name $API_CONTAINER_APP \
+            --name $API_API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             --environment $CONTAINER_ENVIRONMENT \
             --image $REGISTRY/$API_IMAGE:${{ github.sha }} \
@@ -119,6 +119,6 @@ jobs:
         if: steps.check-app.outputs.exists == 'true'
         run: |
           az containerapp update \
-            --name $API_CONTAINER_APP \
+            --name $API_API_CONTAINER_APP \
             --resource-group $RESOURCE_GROUP \
             --image $REGISTRY/$API_IMAGE:${{ github.sha }}
