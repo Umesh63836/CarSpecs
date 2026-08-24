@@ -1,250 +1,1432 @@
-<header class="relative flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full bg-navbar">
-    <nav class="relative max-w-340 w-full mx-auto md:flex md:items-center md:justify-between md:gap-3 py-2 px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center gap-x-1">
-      <a class="flex-none font-semibold text-xl text-foreground focus:outline-hidden focus:opacity-80" href="#" aria-label="Brand"><img
-    src="/images/carSpecsLogo/logo-hd.png"
-    alt="CarSpecs"
-    class="h-10 w-auto object-contain"
-  ></a>
+<header class="relative z-50 w-full bg-navbar">
 
-      <!-- Collapse Button -->
-      <button type="button" class="hs-collapse-toggle md:hidden relative size-9 flex justify-center items-center font-medium text-sm rounded-lg bg-layer border border-layer-line text-layer-foreground hover:bg-layer-hover focus:outline-hidden focus:bg-layer-focus disabled:opacity-50 disabled:pointer-events-none" id="hs-header-base-collapse"  aria-expanded="false" aria-controls="hs-header-base" aria-label="Toggle navigation"  data-hs-collapse="#hs-header-base" >
-        <svg class="hs-collapse-open:hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
-        <svg class="hs-collapse-open:block shrink-0 hidden size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        <span class="sr-only">Toggle navigation</span>
-      </button>
-      <!-- End Collapse Button -->
-    </div>
+  <nav class="relative max-w-340 w-full mx-auto py-2 px-4 sm:px-6 lg:px-8">
 
-    <!-- Collapse -->
-    <div id="hs-header-base"
-     class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow md:block md:overflow-visible">      
-    <div class="overflow-y-auto max-h-[75vh] md:overflow-visible">
-          <div class="py-2 md:py-0  flex flex-col md:flex-row md:items-center gap-0.5 md:gap-1">
-          <div class="grow">
-            <div class="flex flex-col md:flex-row  md:items-center gap-0.5 md:gap-1">
-              <a class="p-2 flex items-center text-sm bg-navbar-nav-active text-navbar-nav-foreground hover:bg-navbar-nav-hover rounded-lg focus:outline-hidden focus:bg-navbar-nav-focus" href="#" aria-current="page">
-                <svg class="shrink-0 size-4 me-3 md:me-2 block md:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                Home
-              </a>
+    <!-- ===================================================== -->
+    <!-- TOP NAVBAR ROW                                        -->
+    <!-- ===================================================== -->
 
-              <!-- Dropdown -->
-              <div class="hs-dropdown [--strategy:static] md:[--strategy:fixed] [--adaptive:none] md:[--adaptive:adaptive] [--is-collapse:true] md:[--is-collapse:false] ">
-                <button id="hs-header-base-dropdown" type="button" class="hs-dropdown-toggle w-full p-2 flex items-center text-sm text-navbar-nav-foreground hover:bg-navbar-nav-hover rounded-lg focus:outline-hidden focus:bg-navbar-nav-focus" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                  <svg class="shrink-0 size-4 me-3 md:me-2 block md:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 2.5-2.5L3 5"/><path d="m3 19 2.5-2.5L3 14"/><path d="M10 6h11"/><path d="M10 12h11"/><path d="M10 18h11"/></svg>
-                  Cars
-                  <svg class="hs-dropdown-open:-rotate-180 md:hs-dropdown-open:rotate-0 duration-300 shrink-0 size-4 ms-auto md:ms-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                </button>
+    <div class="flex items-center justify-between gap-3">
 
-                <div class="hs-dropdown-menu transition-[opacity,margin] duration-[0.1ms] md:duration-150 hs-dropdown-open:opacity-100 opacity-0 relative w-full md:w-52 hidden z-10 top-full ps-7 md:ps-0 md:bg-dropdown md:border md:border-dropdown-line md:rounded-lg md:shadow-md before:absolute before:-top-4 before:inset-s-0 before:w-full before:h-5 md:after:hidden after:absolute after:top-1 after:inset-s-4.5 after:h-[calc(100%-4px)] after:border-s after:border-navbar-nav-list-divider" role="menu" aria-orientation="vertical" aria-labelledby="hs-header-base-dropdown">
-                  <div class="py-1 md:px-1 space-y-0.5">
-                    <a class="p-2 md:px-3 flex items-center text-sm text-dropdown-item-foreground rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus" href="#">
-                      About
-                    </a>
+      <!-- ================= LOGO ================= -->
 
-                    <div class="hs-dropdown [--strategy:static] md:[--strategy:absolute] [--adaptive:none] md:[--trigger:hover] [--is-collapse:true] md:[--is-collapse:false] relative">
-                      <button id="hs-header-base-dropdown-sub" type="button" class="hs-dropdown-toggle w-full flex justify-between items-center text-sm text-dropdown-item-foreground rounded-lg p-2 md:px-3 hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus">
-                        Sub Menu
-                        <svg class="hs-dropdown-open:-rotate-180 md:hs-dropdown-open:-rotate-90 md:-rotate-90 ms-auto shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                      </button>
+      <a
+        class="flex-none font-semibold text-xl text-foreground
+               focus:outline-hidden focus:opacity-80"
+        href="#"
+        aria-label="CarSpecs">
 
-                      <div class="hs-dropdown-menu transition-[opacity,margin] duration-[0.1ms] md:duration-150 hs-dropdown-open:opacity-100 opacity-0 relative md:w-48 hidden z-10 md:mt-2 md:mx-2.5! md:top-0 md:inset-s-full before:-inset-s-3 before:top-0 before:h-full before:w-5 ps-7 md:ps-0 md:bg-dropdown md:border md:border-dropdown-line md:rounded-lg md:shadow-md before:hidden md:before:block before:absolute before:-inset-e-5 before:top-0 before:h-full before:w-5 md:after:hidden after:absolute after:top-1 after:inset-s-4.5 after:h-[calc(100%-4px)] after:border-s after:border-navbar-nav-list-divider" role="menu" aria-orientation="vertical" aria-labelledby="hs-header-base-dropdown-sub">
-                        <div class="p-1 space-y-1">
-                          <a class="p-2 md:px-3 flex items-center text-sm text-dropdown-item-foreground rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus" href="#">
-                            About
-                          </a>
+        <img
+          src="/images/carSpecsLogo/logo-hd.png"
+          alt="CarSpecs"
+          class="h-10 w-auto object-contain"
+        />
 
-                         
-                        </div>
-                      </div>
-                    </div>
-
-                    <a class="p-2 md:px-3 flex items-center text-sm text-dropdown-item-foreground rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus" href="#">
-                      Downloads
-                    </a>
-
-                    <a class="p-2 md:px-3 flex items-center text-sm text-dropdown-item-foreground rounded-lg hover:bg-dropdown-item-hover focus:outline-hidden focus:bg-dropdown-item-focus" href="#">
-                      Team Account
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <!-- End Dropdown -->
-
-              <a class="p-2 flex items-center text-sm text-navbar-nav-foreground hover:bg-navbar-nav-hover rounded-lg focus:outline-hidden focus:bg-navbar-nav-focus" href="#">
-                <svg class="shrink-0 size-4 me-3 md:me-2 block md:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                Account
-              </a>
-
-              
-            </div>
-          </div>
-<div class="relative z-[100] w-full max-w-xl">
-
-  <!-- Search input -->
-  <input
-    type="text"
-    placeholder="Search cars, brands, models..."
-    [(ngModel)]="searchText"
-    (input)="onSearch()"
-    class="w-full rounded-xl border border-gray-300
-           bg-white px-4 py-3 pr-12
-           text-sm text-gray-900
-           outline-none
-           transition
-           focus:border-blue-500
-           focus:ring-2 focus:ring-blue-200"
-  />
-
-  <!-- Search icon -->
-  <button
-    type="button"
-    class="absolute right-3 top-1/2
-           -translate-y-1/2
-           text-gray-500">
-
-    🔍
-
-  </button>
+      </a>
 
 
-  <!-- Search Results -->
-  @if (searchResults().length > 0) {
+      <!-- ===================================================== -->
+      <!-- DESKTOP SEARCH                                         -->
+      <!-- ===================================================== -->
 
-    <div  class="absolute left-0 right-0 top-full z-[999]
-            mt-2 overflow-hidden
-            rounded-xl border border-gray-200
-            bg-white shadow-2xl">
+      <div class="hidden md:block relative z-[100] w-full max-w-xl">
 
-      @for (result of searchResults(); track result.resultType) {
-
-        <div (click)="onSearchResultClick(result)"
-          class="flex cursor-pointer items-center gap-4
-                 border-b border-gray-100
-                 px-4 py-3
+        <input
+          type="text"
+          placeholder="Search cars, brands, models..."
+          [(ngModel)]="searchText"
+          (input)="onSearch()"
+          class="w-full rounded-xl border border-gray-300
+                 bg-white px-4 py-3 pr-12
+                 text-sm text-gray-900
+                 outline-none
                  transition
-                 last:border-b-0
-                 hover:bg-gray-50">
+                 focus:border-blue-500
+                 focus:ring-2 focus:ring-blue-200"
+        />
 
-          <!-- Result information -->
-          <div class="min-w-0 flex-1">
-            @if(result.resultType == "Model"){
-              <p
-              class="truncate text-sm font-semibold
-                     text-gray-900">
+        <button
+          type="button"
+          class="absolute right-3 top-1/2
+                 -translate-y-1/2
+                 text-gray-500
+                 hover:text-gray-800">
 
-              {{ result.brandName }} {{ result.modelName }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
 
-            </p>
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+
+          </svg>
+
+        </button>
+
+
+        <!-- ================= DESKTOP SEARCH RESULTS ================= -->
+
+        @if (searchResults().length > 0) {
+
+          <div
+            class="absolute left-0 right-0 top-full z-[999]
+                   mt-2 overflow-hidden
+                   rounded-xl border border-gray-200
+                   bg-white shadow-2xl">
+
+            @for (
+              result of searchResults();
+              track result.resultType
+            ) {
+
+              <div
+                (click)="onSearchResultClick(result)"
+                class="flex cursor-pointer items-center gap-4
+                       border-b border-gray-100
+                       px-4 py-3
+                       transition
+                       last:border-b-0
+                       hover:bg-gray-50">
+
+                <div class="min-w-0 flex-1">
+
+                  @if (result.resultType == "Model") {
+
+                    <p class="truncate text-sm font-semibold text-gray-900">
+
+                      {{ result.brandName }}
+                      {{ result.modelName }}
+
+                    </p>
+
+                  }
+                  @else {
+
+                    <p class="truncate text-sm font-semibold text-gray-900">
+
+                      {{ result.brandName }}
+                      {{ result.modelName }}
+                      {{ result.name }}
+
+                    </p>
+
+                  }
+
+                  <p class="mt-1 text-xs text-gray-500">
+
+                    {{ result.resultType }}
+
+                  </p>
+
+                </div>
+
+                <div class="text-gray-400 text-lg">
+
+                  →
+
+                </div>
+
+              </div>
+
             }
-            @else {
-              <p
-              class="truncate text-sm font-semibold
-                     text-gray-900">
-
-              {{ result.brandName }} {{ result.modelName }} {{ result.name }}
-
-            </p>
-            }
-            
-
-            <p class="mt-1 text-xs text-gray-500">
-
-              {{ result.resultType }}
-
-            </p>
 
           </div>
 
+        }
 
-          <!-- Arrow -->
-          <div class="text-gray-400">
-            →
+      </div>
+
+
+
+      <!-- ===================================================== -->
+      <!-- DESKTOP NAVIGATION                                    -->
+      <!-- ===================================================== -->
+
+      <div class="hidden md:flex items-center gap-1">
+
+        <!-- ================= HOME ================= -->
+
+        <a
+          class="p-2 flex items-center text-sm
+                 bg-navbar-nav-active
+                 text-navbar-nav-foreground
+                 hover:bg-navbar-nav-hover
+                 rounded-lg
+                 focus:outline-hidden
+                 focus:bg-navbar-nav-focus"
+          href="#"
+          aria-current="page">
+
+          Home
+
+        </a>
+
+
+        <!-- ===================================================== -->
+        <!-- CARS DROPDOWN                                         -->
+        <!-- ===================================================== -->
+
+        <div
+          class="hs-dropdown relative
+                 [--strategy:static]
+                 md:[--strategy:fixed]
+                 [--adaptive:none]
+                 md:[--adaptive:adaptive]">
+
+          <!-- Cars Button -->
+
+          <button
+            id="hs-header-base-dropdown"
+            type="button"
+            class="hs-dropdown-toggle
+                   p-2 flex items-center
+                   text-sm font-medium
+                   text-navbar-nav-foreground
+                   hover:bg-navbar-nav-hover
+                   rounded-lg
+                   focus:outline-hidden
+                   focus:bg-navbar-nav-focus
+                   transition-colors duration-200"
+            aria-haspopup="menu"
+            aria-expanded="false">
+
+            Cars
+
+            <svg
+              class="hs-dropdown-open:-rotate-180
+                     duration-300
+                     shrink-0
+                     size-4
+                     ms-1"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="m6 9 6 6 6-6"></path>
+
+            </svg>
+
+          </button>
+
+
+          <!-- Cars Dropdown Menu -->
+
+          <div
+            class="hs-dropdown-menu
+                   absolute
+                   left-0
+                   top-full
+                   z-[1000]
+
+                   mt-2
+                   min-w-[230px]
+
+                   origin-top
+
+                   opacity-0
+                   invisible
+                   -translate-y-3
+
+                   hs-dropdown-open:opacity-100
+                   hs-dropdown-open:visible
+                   hs-dropdown-open:translate-y-0
+
+                   transition-[opacity,transform]
+                   duration-300
+                   ease-out
+
+                   bg-dropdown
+                   border
+                   border-dropdown-line
+                   rounded-xl
+                   shadow-xl"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="hs-header-base-dropdown">
+
+            <div class="p-2">
+
+
+              <!-- Search Cars -->
+
+              <a
+                href="#"
+                class="group flex items-center gap-3
+                       rounded-lg
+                       px-3 py-3
+                       text-sm
+                       text-dropdown-item-foreground
+                       transition-all duration-200
+                       hover:bg-dropdown-item-hover"
+                role="menuitem">
+
+                <div
+                  class="flex size-9 shrink-0
+                         items-center justify-center
+                         rounded-lg
+                         bg-blue-50
+                         text-blue-600
+                         transition-colors
+                         group-hover:bg-blue-100">
+
+                  <svg
+                    class="size-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+
+                  </svg>
+
+                </div>
+
+                <div>
+
+                  <div class="font-medium">
+                    Search Cars
+                  </div>
+
+                  <div class="text-xs opacity-60">
+                    Find cars by brand or model
+                  </div>
+
+                </div>
+
+              </a>
+
+
+              <!-- All Brands -->
+
+              <a
+                href="#"
+                class="group mt-1 flex items-center gap-3
+                       rounded-lg
+                       px-3 py-3
+                       text-sm
+                       text-dropdown-item-foreground
+                       transition-all duration-200
+                       hover:bg-dropdown-item-hover"
+                role="menuitem">
+
+                <div
+                  class="flex size-9 shrink-0
+                         items-center justify-center
+                         rounded-lg
+                         bg-indigo-50
+                         text-indigo-600
+                         transition-colors
+                         group-hover:bg-indigo-100">
+
+                  <svg
+                    class="size-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path d="M12 3v18"></path>
+                    <path d="M3 12h18"></path>
+                    <path d="M5 5h14v14H5z"></path>
+
+                  </svg>
+
+                </div>
+
+                <div>
+
+                  <div class="font-medium">
+                    All Brands
+                  </div>
+
+                  <div class="text-xs opacity-60">
+                    Explore car brands
+                  </div>
+
+                </div>
+
+              </a>
+
+
+              <!-- Popular Cars -->
+
+              <a
+                href="#"
+                class="group mt-1 flex items-center gap-3
+                       rounded-lg
+                       px-3 py-3
+                       text-sm
+                       text-dropdown-item-foreground
+                       transition-all duration-200
+                       hover:bg-dropdown-item-hover"
+                role="menuitem">
+
+                <div
+                  class="flex size-9 shrink-0
+                         items-center justify-center
+                         rounded-lg
+                         bg-orange-50
+                         text-orange-500
+                         transition-colors
+                         group-hover:bg-orange-100">
+
+                  <svg
+                    class="size-5"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round">
+
+                    <path
+                      d="m12 2 3.09 6.26L22 9.27
+                         l-5 4.87 1.18 6.88L12 17.77
+                         5.82 21.02 7 14.14
+                         2 9.27l6.91-1.01L12 2z">
+                    </path>
+
+                  </svg>
+
+                </div>
+
+                <div>
+
+                  <div class="font-medium">
+                    Popular Cars
+                  </div>
+
+                  <div class="text-xs opacity-60">
+                    Check trending cars
+                  </div>
+
+                </div>
+
+              </a>
+
+            </div>
+
           </div>
+
+        </div>
+
+
+        <!-- ================= ACCOUNT ================= -->
+
+        <a
+          class="p-2 flex items-center text-sm
+                 text-navbar-nav-foreground
+                 hover:bg-navbar-nav-hover
+                 rounded-lg
+                 focus:outline-hidden
+                 focus:bg-navbar-nav-focus"
+          href="#">
+
+          Account
+
+        </a>
+
+      </div>
+
+
+
+      <!-- ===================================================== -->
+      <!-- DESKTOP ADMIN BUTTONS                                 -->
+      <!-- ===================================================== -->
+
+      @if (isAdminLoggedIn()) {
+
+        <div class="hidden md:flex items-center gap-2">
+
+          <!-- Dashboard -->
+
+          <button
+            type="button"
+            (click)="routeToDashboard()"
+            class="inline-flex items-center
+                   gap-2
+                   rounded-lg
+                   bg-blue-600
+                   px-4 py-2.5
+                   text-sm font-semibold
+                   text-white
+                   transition-all duration-200
+                   hover:bg-blue-700
+                   hover:shadow-lg">
+
+            Dashboard
+
+          </button>
+
+
+          <!-- Logout -->
+
+          <button
+            type="button"
+            (click)="logout()"
+            class="inline-flex items-center
+                   gap-2
+                   rounded-lg
+                   bg-red-600
+                   px-4 py-2.5
+                   text-sm font-semibold
+                   text-white
+                   transition-all duration-200
+                   hover:bg-red-700
+                   hover:shadow-lg">
+
+            Logout
+
+          </button>
 
         </div>
 
       }
+      @else {
+
+        <!-- Admin Login -->
+
+        <a
+          [routerLink]="['/login']"
+          class="hidden md:inline-flex
+                 items-center
+                 font-medium
+                 text-sm
+                 rounded-lg
+                 bg-layer
+                 border
+                 border-layer-line
+                 text-layer-foreground
+                 shadow-2xs
+                 hover:bg-layer-hover
+                 px-3 py-2
+                 transition-colors duration-200">
+
+          Admin Login
+
+        </a>
+
+      }
+
+
+
+      <!-- ===================================================== -->
+      <!-- MOBILE BUTTONS                                        -->
+      <!-- ===================================================== -->
+
+      <div class="md:hidden flex items-center gap-1">
+
+        <!-- Mobile Search -->
+
+        <button
+          type="button"
+          (click)="showMobileSearch = !showMobileSearch"
+          class="size-10
+                 inline-flex
+                 items-center
+                 justify-center
+                 rounded-lg
+                 text-navbar-nav-foreground
+                 hover:bg-navbar-nav-hover
+                 focus:outline-none
+                 transition-colors duration-200"
+          aria-label="Search">
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round">
+
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+
+          </svg>
+
+        </button>
+
+
+        <!-- Mobile Menu -->
+
+        <button
+          type="button"
+          (click)="mobileMenuOpen = !mobileMenuOpen"
+          class="size-10
+                 inline-flex
+                 items-center
+                 justify-center
+                 rounded-lg
+                 bg-layer
+                 border
+                 border-layer-line
+                 text-layer-foreground
+                 hover:bg-layer-hover
+                 focus:outline-none
+                 transition-all duration-200"
+          aria-label="Toggle menu"
+          [attr.aria-expanded]="mobileMenuOpen">
+
+          @if (!mobileMenuOpen) {
+
+            <!-- Hamburger -->
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <line x1="3" x2="21" y1="6" y2="6"></line>
+              <line x1="3" x2="21" y1="12" y2="12"></line>
+              <line x1="3" x2="21" y1="18" y2="18"></line>
+
+            </svg>
+
+          }
+          @else {
+
+            <!-- Close -->
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+
+            </svg>
+
+          }
+
+        </button>
+
+      </div>
 
     </div>
 
-  }
 
-</div>
 
-@if (isAdminLoggedIn()) {
-  <!-- Button Group -->
+    <!-- ===================================================== -->
+    <!-- MOBILE SEARCH BAR                                      -->
+    <!-- ===================================================== -->
+
+    @if (showMobileSearch) {
+
+      <div
+        class="md:hidden pt-3
+               relative z-[1100]">
+
+        <div class="relative">
+
+          <input
+            type="text"
+            placeholder="Search cars, brands, models..."
+            [(ngModel)]="searchText"
+            (input)="onSearch()"
+            class="w-full
+                   rounded-xl
+                   border border-gray-300
+                   bg-white
+                   px-4 py-3
+                   pr-12
+                   text-sm
+                   text-gray-900
+                   outline-none
+                   transition
+                   focus:border-blue-500
+                   focus:ring-2
+                   focus:ring-blue-200"
+          />
+
           <button
-              type="button"
-              (click)="routeToDashboard()"
-              class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700">
-              Dashboard
-            </button>
+            type="button"
+            class="absolute
+                   right-3
+                   top-1/2
+                   -translate-y-1/2
+                   text-gray-500">
 
-            <button
-              type="button"
-              (click)="logout()"
-              class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700">
-              Logout
-            </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round">
 
-          <!-- <div class="md:ms-auto mt-2 md:mt-0 flex flex-wrap items-center gap-x-1.5">
-            <button (click)="logout()" class="py-2 px-2.5 inline-flex items-center font-medium text-sm rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-layer-focus">
-              Logout
-            </button>
-            
-          </div> -->
-          <!-- End Button Group -->
-} @else {
-   <!-- Button Group -->
-          <div class="md:ms-auto mt-2 md:mt-0 flex flex-wrap items-center gap-x-1.5">
-            <a [routerLink]="['/login']" class="py-2 px-2.5 inline-flex items-center font-medium text-sm rounded-lg bg-layer border border-layer-line text-layer-foreground shadow-2xs hover:bg-layer-hover disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-layer-focus">
-              Admin Login
-            </a>
-            
-          </div>
-          <!-- End Button Group -->
-}          
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
 
+            </svg>
+
+          </button>
+
+
+          <!-- Mobile Search Results -->
+
+          @if (searchResults().length > 0) {
+
+            <div
+              class="absolute
+                     left-0
+                     right-0
+                     top-full
+                     z-[1200]
+                     mt-2
+                     overflow-hidden
+                     rounded-xl
+                     border
+                     border-gray-200
+                     bg-white
+                     shadow-2xl">
+
+              @for (
+                result of searchResults();
+                track result.resultType
+              ) {
+
+                <div
+                  (click)="onSearchResultClick(result)"
+                  class="flex
+                         cursor-pointer
+                         items-center
+                         gap-4
+                         border-b
+                         border-gray-100
+                         px-4 py-3
+                         transition
+                         last:border-b-0
+                         hover:bg-gray-50">
+
+                  <div class="min-w-0 flex-1">
+
+                    @if (result.resultType == "Model") {
+
+                      <p
+                        class="truncate
+                               text-sm
+                               font-semibold
+                               text-gray-900">
+
+                        {{ result.brandName }}
+                        {{ result.modelName }}
+
+                      </p>
+
+                    }
+                    @else {
+
+                      <p
+                        class="truncate
+                               text-sm
+                               font-semibold
+                               text-gray-900">
+
+                        {{ result.brandName }}
+                        {{ result.modelName }}
+                        {{ result.name }}
+
+                      </p>
+
+                    }
+
+                    <p class="mt-1 text-xs text-gray-500">
+
+                      {{ result.resultType }}
+
+                    </p>
+
+                  </div>
+
+                  <div class="text-gray-400 text-lg">
+
+                    →
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+          }
 
         </div>
+
       </div>
-    </div>
-    <!-- End Collapse -->
+
+    }
+
+
+
+    <!-- ===================================================== -->
+    <!-- MOBILE MENU                                            -->
+    <!-- ===================================================== -->
+
+    @if (mobileMenuOpen) {
+
+      <div
+        class="md:hidden
+               absolute
+               left-0
+               right-0
+               top-full
+               z-[1000]
+               origin-top
+               animate-dropdown">
+
+        <div
+          class="mx-3
+                 mt-2
+                 rounded-2xl
+                 border
+                 border-slate-200
+                 bg-white
+                 shadow-2xl
+                 shadow-black/20">
+
+          <div class="flex flex-col p-2">
+
+
+            <!-- ================= HOME ================= -->
+
+            <a
+              href="#"
+              (click)="mobileMenuOpen = false"
+              class="flex items-center gap-3
+                     rounded-lg
+                     px-4 py-3
+                     text-sm
+                     text-slate-900
+                     transition-all duration-200
+                     hover:bg-slate-100">
+
+              <svg
+                class="size-5 shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z" />
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 22V12h6v10" />
+
+              </svg>
+
+              <span>Home</span>
+
+            </a>
+
+
+
+            <!-- ================================================= -->
+            <!-- MOBILE CARS                                       -->
+            <!-- ================================================= -->
+
+            <div class="relative">
+
+              <!-- Cars Button -->
+
+              <button
+                type="button"
+                (click)="mobileCarsOpen = !mobileCarsOpen"
+                class="w-full
+                       flex items-center justify-between
+                       gap-3
+                       rounded-lg
+                       px-4 py-3
+                       text-sm
+                       text-slate-900
+                       transition-all duration-200
+                       hover:bg-slate-100"
+                [attr.aria-expanded]="mobileCarsOpen">
+
+                <div class="flex items-center gap-3">
+
+                  <svg
+                    class="size-5 shrink-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 17h14M6 17l1.5-5h9L18 17" />
+
+                    <circle cx="7.5" cy="17.5" r="1.5" />
+                    <circle cx="16.5" cy="17.5" r="1.5" />
+
+                  </svg>
+
+                  <span>Cars</span>
+
+                </div>
+
+
+                <!-- Arrow -->
+
+                <svg
+                  class="size-4
+                         transition-transform duration-300"
+                  [class.rotate-180]="mobileCarsOpen"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round">
+
+                  <path d="m6 9 6 6 6-6"></path>
+
+                </svg>
+
+              </button>
+
+
+
+              <!-- ================================================= -->
+              <!-- MOBILE CARS SUBMENU                              -->
+              <!-- ================================================= -->
+
+              @if (mobileCarsOpen) {
+
+                <div
+                  class="absolute
+                         left-2
+                         right-2
+                         top-full
+                         z-[2000]
+                         mt-2
+
+                         origin-top
+
+                         animate-cars-dropdown">
+
+                  <div
+                    class="overflow-hidden
+                           rounded-xl
+                           border
+                           border-slate-200
+                           bg-white
+                           p-2
+                           shadow-2xl
+                           shadow-black/25">
+
+
+                    <!-- Search Cars -->
+
+                    <a
+                      href="#"
+                      (click)="mobileMenuOpen = false; mobileCarsOpen = false"
+                      class="group flex items-center gap-3
+                             rounded-lg
+                             px-3 py-3
+                             text-sm
+                             text-slate-900
+                             transition-all duration-200
+                             hover:bg-slate-100">
+
+                      <div
+                        class="flex size-9 shrink-0
+                               items-center justify-center
+                               rounded-lg
+                               bg-blue-50
+                               text-blue-600">
+
+                        <svg
+                          class="size-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <path d="m21 21-4.3-4.3"></path>
+
+                        </svg>
+
+                      </div>
+
+                      <div>
+
+                        <div class="font-medium">
+                          Search Cars
+                        </div>
+
+                        <div class="text-xs text-slate-500">
+                          Find cars by brand or model
+                        </div>
+
+                      </div>
+
+                    </a>
+
+
+                    <!-- All Brands -->
+
+                    <a
+                      href="#"
+                      (click)="mobileMenuOpen = false; mobileCarsOpen = false"
+                      class="group mt-1 flex items-center gap-3
+                             rounded-lg
+                             px-3 py-3
+                             text-sm
+                             text-slate-900
+                             transition-all duration-200
+                             hover:bg-slate-100">
+
+                      <div
+                        class="flex size-9 shrink-0
+                               items-center justify-center
+                               rounded-lg
+                               bg-indigo-50
+                               text-indigo-600">
+
+                        <svg
+                          class="size-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+
+                          <path d="M12 3v18"></path>
+                          <path d="M3 12h18"></path>
+                          <path d="M5 5h14v14H5z"></path>
+
+                        </svg>
+
+                      </div>
+
+                      <div>
+
+                        <div class="font-medium">
+                          All Brands
+                        </div>
+
+                        <div class="text-xs text-slate-500">
+                          Explore car brands
+                        </div>
+
+                      </div>
+
+                    </a>
+
+
+                    <!-- Popular Cars -->
+
+                    <a
+                      href="#"
+                      (click)="mobileMenuOpen = false; mobileCarsOpen = false"
+                      class="group mt-1 flex items-center gap-3
+                             rounded-lg
+                             px-3 py-3
+                             text-sm
+                             text-slate-900
+                             transition-all duration-200
+                             hover:bg-slate-100">
+
+                      <div
+                        class="flex size-9 shrink-0
+                               items-center justify-center
+                               rounded-lg
+                               bg-orange-50
+                               text-orange-500">
+
+                        <svg
+                          class="size-5"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+
+                          <path
+                            d="m12 2 3.09 6.26L22 9.27
+                               l-5 4.87 1.18 6.88L12 17.77
+                               5.82 21.02 7 14.14
+                               2 9.27l6.91-1.01L12 2z">
+                          </path>
+
+                        </svg>
+
+                      </div>
+
+                      <div>
+
+                        <div class="font-medium">
+                          Popular Cars
+                        </div>
+
+                        <div class="text-xs text-slate-500">
+                          Check trending cars
+                        </div>
+
+                      </div>
+
+                    </a>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+
+
+            <!-- ================= ACCOUNT ================= -->
+
+            <a
+              href="#"
+              (click)="mobileMenuOpen = false"
+              class="flex items-center gap-3
+                     rounded-lg
+                     px-4 py-3
+                     text-sm
+                     text-slate-900
+                     transition-all duration-200
+                     hover:bg-slate-100">
+
+              <svg
+                class="size-5 shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 21a8 8 0 0 0-16 0" />
+
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4" />
+
+              </svg>
+
+              <span>Account</span>
+
+            </a>
+
+
+
+            <!-- ================= DIVIDER ================= -->
+
+            <div class="my-2 border-t border-slate-200"></div>
+
+
+
+            <!-- ================================================= -->
+            <!-- MOBILE ADMIN                                      -->
+            <!-- ================================================= -->
+
+            @if (isAdminLoggedIn()) {
+
+              <!-- Dashboard -->
+
+              <button
+                type="button"
+                (click)="routeToDashboard(); mobileMenuOpen = false"
+                class="flex w-full items-center justify-center
+                       gap-2
+                       rounded-lg
+                       bg-blue-600
+                       px-4 py-3
+                       text-sm font-semibold
+                       text-white
+                       transition-all duration-200
+                       hover:bg-blue-700
+                       hover:shadow-lg">
+
+                Dashboard
+
+              </button>
+
+
+              <!-- Logout -->
+
+              <button
+                type="button"
+                (click)="logout(); mobileMenuOpen = false"
+                class="mt-2
+                       flex w-full items-center justify-center
+                       gap-2
+                       rounded-lg
+                       bg-red-600
+                       px-4 py-3
+                       text-sm font-semibold
+                       text-white
+                       transition-all duration-200
+                       hover:bg-red-700
+                       hover:shadow-lg">
+
+                Logout
+
+              </button>
+
+            }
+            @else {
+
+              <!-- Admin Login -->
+
+              <a
+                [routerLink]="['/login']"
+                (click)="mobileMenuOpen = false"
+                class="flex w-full
+                       items-center
+                       justify-center
+                       rounded-xl
+                       border
+                       border-slate-300
+                       bg-slate-50
+                       px-4 py-3
+                       text-sm
+                       font-semibold
+                       text-slate-700
+                       transition-all duration-200
+                       hover:bg-slate-100
+                       hover:border-slate-400
+                       hover:text-slate-950
+                       hover:shadow-md">
+
+                Admin Login
+
+              </a>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
   </nav>
-  <!-- Attractive Navbar Bottom Line -->
-<!-- Navbar Bottom Accent -->
-<div
-  class="absolute bottom-0 left-0 w-full h-[2px]
-         overflow-hidden bg-green-950/10">
+
+
+
+  <!-- ===================================================== -->
+  <!-- NAVBAR BOTTOM ACCENT                                  -->
+  <!-- ===================================================== -->
 
   <div
-    class="absolute top-0 -left-1/3
-           w-1/3 h-full
-           bg-gradient-to-r
-           from-transparent
-           via-green-400
-           to-transparent
-           blur-[1px]
-           animate-navbar-glow">
+    class="absolute
+           bottom-0
+           left-0
+           w-full
+           h-[2px]
+           overflow-hidden
+           bg-green-950/10">
+
+    <div
+      class="absolute
+             top-0
+             -left-1/3
+             w-1/3
+             h-full
+             bg-gradient-to-r
+             from-transparent
+             via-green-400
+             to-transparent
+             blur-[1px]
+             animate-navbar-glow">
+    </div>
+
   </div>
 
-</div>
 
-<style>
-  @keyframes navbar-glow {
-    0% {
-      transform: translateX(0);
+
+  <!-- ===================================================== -->
+  <!-- NAVBAR ANIMATIONS                                     -->
+  <!-- ===================================================== -->
+
+  <style>
+
+    /* Bottom glowing line */
+
+    @keyframes navbar-glow {
+
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(400%);
+      }
+
     }
 
-    100% {
-      transform: translateX(400%);
-    }
-  }
 
-  .animate-navbar-glow {
-    animation: navbar-glow 3s ease-in-out infinite;
-  }
-</style>
+    .animate-navbar-glow {
+
+      animation:
+        navbar-glow
+        3s
+        ease-in-out
+        infinite;
+
+    }
+
+
+    /* Mobile main menu */
+
+    @keyframes dropdown {
+
+      0% {
+
+        opacity: 0;
+
+        transform:
+          translateY(-12px)
+          scaleY(0.96);
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform:
+          translateY(0)
+          scaleY(1);
+
+      }
+
+    }
+
+
+    .animate-dropdown {
+
+      animation:
+        dropdown
+        280ms
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+
+    }
+
+
+    /* Mobile Cars submenu */
+
+    @keyframes cars-dropdown {
+
+      0% {
+
+        opacity: 0;
+
+        transform:
+          translateY(-10px)
+          scaleY(0.95);
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform:
+          translateY(0)
+          scaleY(1);
+
+      }
+
+    }
+
+
+    .animate-cars-dropdown {
+
+      animation:
+        cars-dropdown
+        300ms
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+
+    }
+
+  </style>
 
 </header>

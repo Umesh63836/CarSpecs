@@ -22,6 +22,10 @@ export class Navbar implements OnInit{
 
  searchResults = signal<ISearch[]>([]);
 
+ showMobileSearch = false;
+ mobileMenuOpen = false;
+ mobileCarsOpen = false;
+
  ngOnInit(): void {
    this.isAdminLoggedIn = this.authService.isloggedIn;
  }
