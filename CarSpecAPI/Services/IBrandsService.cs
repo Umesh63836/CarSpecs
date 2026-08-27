@@ -5,7 +5,7 @@ namespace CarSpecAPI.Services
 {
     public interface IBrandsService
     {
-        Task<BrandDto> CreateBrandAsync(CreateBrandDto dto);
+        public Task<BrandDto> CreateBrandAsync(CreateBrandDto dto);
         public Task<List<BrandDto>> GetAllBrandsAsync();
     }
 }

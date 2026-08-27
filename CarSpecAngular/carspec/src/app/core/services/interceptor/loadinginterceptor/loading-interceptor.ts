@@ -6,7 +6,7 @@ import { finalize } from 'rxjs';
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
 
-  if (req.url.includes('/search')) {
+  if (req.url.includes('/search') || req.url.includes('/chat')) {
     return next(req);
   }
 

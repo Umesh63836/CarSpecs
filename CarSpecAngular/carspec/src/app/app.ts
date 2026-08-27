@@ -6,10 +6,11 @@ import { LoadingService } from './core/services/loading/loading';
 import { Loading } from "./shared/loading/loading";
 import { Router } from '@angular/router';
 import { Error } from './core/services/error/error';
+import { Chatbot } from './shared/chatbot/chatbot';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer, Loading],
+  imports: [RouterOutlet, Navbar, Footer, Loading, Chatbot],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

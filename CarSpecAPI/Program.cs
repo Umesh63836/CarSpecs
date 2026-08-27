@@ -85,6 +85,7 @@ builder.Services.AddScoped<IVariantsService, VariantsService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ISpecificationService, SpecificationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAIService, AIService>();
 
 builder.Services.AddControllers();
 

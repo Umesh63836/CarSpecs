@@ -1,0 +1,26 @@
+.ask-ai-label {
+  animation: askAiPulse 3.5s ease-in-out infinite;
+  transform-origin: right center;
+}
+
+@keyframes askAiPulse {
+  0% {
+    opacity: 0;
+    transform: translateX(10px) scale(0.96);
+  }
+
+  25% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(10px) scale(0.96);
+  }
+}
