@@ -86,6 +86,8 @@ builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ISpecificationService, SpecificationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAIService, AIService>();
+builder.Services.AddScoped<ICarsService, CarsService>();
+builder.Services.AddSingleton<ConversationService>();
 
 builder.Services.AddControllers();
 

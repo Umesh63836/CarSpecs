@@ -1,0 +1,840 @@
+<div class="min-h-screen bg-gray-50 px-4 py-8">
+
+  <div class="mx-auto max-w-7xl">
+<!-- ====================================================== -->
+<!-- Header -->
+<!-- ====================================================== -->
+
+<div class="mb-8">
+
+  <h1
+    class="text-3xl font-bold
+           tracking-tight text-gray-900"
+  >
+    Cars
+  </h1>
+
+  <p class="mt-1 text-sm text-gray-500">
+
+    @if (!isLoading()) {
+
+      {{ results.totalModels }}
+      models found
+
+    } @else {
+
+      Finding cars...
+
+    }
+
+  </p>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- Quick Filters -->
+<!-- ====================================================== -->
+
+<div class="mb-5">
+
+  <div
+    class="mb-3 text-sm font-semibold
+           text-gray-700"
+  >
+    Quick filters
+  </div>
+
+  <div class="flex flex-wrap gap-2">
+
+    <!-- Under 10 Lakh -->
+
+    <button
+      type="button"
+      (click)="applyFilter({ maxPrice: 10 })"
+      [class.bg-green-100]="filters().maxPrice === 10"
+      [class.text-green-700]="filters().maxPrice === 10"
+      [class.border-green-300]="filters().maxPrice === 10"
+      [class.bg-white]="filters().maxPrice !== 10"
+      class="rounded-full
+             border border-gray-200
+             px-4 py-2
+             text-sm font-medium
+             text-gray-700
+             shadow-sm
+             transition
+             hover:border-green-300
+             hover:bg-green-50"
+    >
+      Under ₹10 Lakh
+    </button>
+
+
+    <!-- Under 15 Lakh -->
+
+    <button
+      type="button"
+      (click)="applyFilter({ maxPrice: 15 })"
+      [class.bg-green-100]="filters().maxPrice === 15"
+      [class.text-green-700]="filters().maxPrice === 15"
+      [class.border-green-300]="filters().maxPrice === 15"
+      [class.bg-white]="filters().maxPrice !== 15"
+      class="rounded-full
+             border border-gray-200
+             px-4 py-2
+             text-sm font-medium
+             text-gray-700
+             shadow-sm
+             transition
+             hover:border-green-300
+             hover:bg-green-50"
+    >
+      Under ₹15 Lakh
+    </button>
+
+
+    <!-- Above 70 PS -->
+
+    <button
+      type="button"
+      (click)="applyFilter({ minPower: 70 })"
+      [class.bg-green-100]="filters().minPower === 70"
+      [class.text-green-700]="filters().minPower === 70"
+      [class.border-green-300]="filters().minPower === 70"
+      [class.bg-white]="filters().minPower !== 70"
+      class="rounded-full
+             border border-gray-200
+             px-4 py-2
+             text-sm font-medium
+             text-gray-700
+             shadow-sm
+             transition
+             hover:border-green-300
+             hover:bg-green-50"
+    >
+      Above 70 PS
+    </button>
+
+
+    <!-- Petrol -->
+
+    <button
+      type="button"
+      (click)="applyFilter({ fuelType: 'Petrol' })"
+      [class.bg-green-100]="filters().fuelType === 'Petrol'"
+      [class.text-green-700]="filters().fuelType === 'Petrol'"
+      [class.border-green-300]="filters().fuelType === 'Petrol'"
+      [class.bg-white]="filters().fuelType !== 'Petrol'"
+      class="rounded-full
+             border border-gray-200
+             px-4 py-2
+             text-sm font-medium
+             text-gray-700
+             shadow-sm
+             transition
+             hover:border-green-300
+             hover:bg-green-50"
+    >
+      Petrol
+    </button>
+
+
+    <!-- Automatic -->
+
+    <button
+      type="button"
+      (click)="applyFilter({ transmissionType: 'Automatic' })"
+      [class.bg-green-100]="filters().transmissionType === 'Automatic'"
+      [class.text-green-700]="filters().transmissionType === 'Automatic'"
+      [class.border-green-300]="filters().transmissionType === 'Automatic'"
+      [class.bg-white]="filters().transmissionType !== 'Automatic'"
+      class="rounded-full
+             border border-gray-200
+             px-4 py-2
+             text-sm font-medium
+             text-gray-700
+             shadow-sm
+             transition
+             hover:border-green-300
+             hover:bg-green-50"
+    >
+      Automatic
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- Applied Filters -->
+<!-- ====================================================== -->
+
+@if (hasAppliedFilters()) {
+
+  <div
+    class="mb-6 rounded-xl
+           border border-green-100
+           bg-green-50/50
+           px-4 py-3"
+  >
+
+    <div
+      class="mb-2 text-xs
+             font-semibold uppercase
+             tracking-wide
+             text-gray-500"
+    >
+      Applied filters
+    </div>
+
+
+    <div class="flex flex-wrap gap-2">
+
+      <!-- Max Price -->
+
+      @if (filters().maxPrice !== undefined) {
+
+        <button
+          type="button"
+          (click)="removeFilter('maxPrice')"
+          class="flex items-center gap-2
+                 rounded-full
+                 border border-green-200
+                 bg-green-100
+                 px-3 py-1.5
+                 text-sm font-medium
+                 text-green-800
+                 transition
+                 hover:bg-green-200"
+        >
+          Under ₹{{ filters().maxPrice }} Lakh
+
+          <span class="text-green-700">
+            ×
+          </span>
+
+        </button>
+
+      }
+
+
+      <!-- Min Power -->
+
+      @if (filters().minPower !== undefined) {
+
+        <button
+          type="button"
+          (click)="removeFilter('minPower')"
+          class="flex items-center gap-2
+                 rounded-full
+                 border border-green-200
+                 bg-green-100
+                 px-3 py-1.5
+                 text-sm font-medium
+                 text-green-800
+                 transition
+                 hover:bg-green-200"
+        >
+          Above {{ filters().minPower }} PS
+
+          <span class="text-green-700">
+            ×
+          </span>
+
+        </button>
+
+      }
+
+
+      <!-- Fuel -->
+
+      @if (filters().fuelType) {
+
+        <button
+          type="button"
+          (click)="removeFilter('fuelType')"
+          class="flex items-center gap-2
+                 rounded-full
+                 border border-green-200
+                 bg-green-100
+                 px-3 py-1.5
+                 text-sm font-medium
+                 text-green-800
+                 transition
+                 hover:bg-green-200"
+        >
+          {{ filters().fuelType }}
+
+          <span class="text-green-700">
+            ×
+          </span>
+
+        </button>
+
+      }
+
+
+      <!-- Transmission -->
+
+      @if (filters().transmissionType) {
+
+        <button
+          type="button"
+          (click)="removeFilter('transmissionType')"
+          class="flex items-center gap-2
+                 rounded-full
+                 border border-green-200
+                 bg-green-100
+                 px-3 py-1.5
+                 text-sm font-medium
+                 text-green-800
+                 transition
+                 hover:bg-green-200"
+        >
+          {{ filters().transmissionType }}
+
+          <span class="text-green-700">
+            ×
+          </span>
+
+        </button>
+
+      }
+
+    </div>
+
+  </div>
+
+}
+
+
+<!-- ====================================================== -->
+<!-- Loading -->
+<!-- ====================================================== -->
+
+@if (isLoading()) {
+
+  <div
+    class="grid gap-5
+           sm:grid-cols-2
+           lg:grid-cols-3"
+  >
+
+    @for (item of [1,2,3,4,5,6]; track item) {
+
+      <div
+        class="overflow-hidden
+               rounded-2xl
+               border border-gray-200
+               bg-white
+               shadow-sm"
+      >
+
+        <div
+          class="h-48
+                 animate-pulse
+                 bg-gray-200"
+        ></div>
+
+        <div class="space-y-3 p-5">
+
+          <div
+            class="h-5 w-32
+                   animate-pulse
+                   rounded
+                   bg-gray-200"
+          ></div>
+
+          <div
+            class="h-4 w-24
+                   animate-pulse
+                   rounded
+                   bg-gray-200"
+          ></div>
+
+          <div
+            class="h-16
+                   animate-pulse
+                   rounded-xl
+                   bg-gray-200"
+          ></div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+}
+
+
+<!-- ====================================================== -->
+<!-- No Results -->
+<!-- ====================================================== -->
+
+@if (
+  !isLoading() &&
+  results.models.length === 0
+) {
+
+  <div
+    class="rounded-2xl
+           border border-gray-200
+           bg-white
+           p-12
+           text-center"
+  >
+
+    <div class="text-5xl">
+      🚗
+    </div>
+
+    <h2
+      class="mt-4 text-lg
+             font-semibold
+             text-gray-900"
+    >
+      No cars found
+    </h2>
+
+    <p
+      class="mt-2 text-sm
+             text-gray-500"
+    >
+      Try changing some of your filters.
+    </p>
+
+  </div>
+
+}
+
+
+<!-- ====================================================== -->
+<!-- Results -->
+<!-- ====================================================== -->
+
+@if (
+  !isLoading() &&
+  results.models.length > 0
+) {
+
+  <div
+    class="grid gap-5
+           sm:grid-cols-2
+           lg:grid-cols-3"
+  >
+
+    @for (
+      car of results.models;
+      track car.modelId
+    ) {
+
+      <!-- ================================================== -->
+      <!-- Model Card -->
+      <!-- ================================================== -->
+
+      <div
+        class="group overflow-hidden
+               rounded-2xl
+               border border-gray-200
+               bg-white
+               shadow-sm
+               transition duration-300
+               hover:-translate-y-1
+               hover:shadow-xl"
+      >
+
+
+        <!-- ================================================ -->
+        <!-- Model Image -->
+        <!-- ================================================ -->
+
+        <div
+          class="relative h-48
+                 overflow-hidden
+                 bg-gray-100"
+        >
+
+          @if (car.modelImageUrl) {
+
+            <img
+              [src]="car.modelImageUrl"
+              [alt]="car.brand + ' ' + car.model"
+              class="h-full w-full
+                     object-contain
+                     p-4
+                     transition duration-500
+                     group-hover:scale-105"
+            />
+
+          } @else {
+
+            <div
+              class="flex h-full
+                     items-center
+                     justify-center
+                     text-sm
+                     text-gray-400"
+            >
+              No image available
+            </div>
+
+          }
+
+
+          <!-- Variant count badge -->
+
+          <div
+            class="absolute right-3
+                   top-3
+                   rounded-full
+                   bg-white/95
+                   px-3 py-1
+                   text-xs
+                   font-semibold
+                   text-gray-700
+                   shadow-sm"
+          >
+            {{ car.variants.length }}
+
+            {{
+              car.variants.length === 1
+                ? 'Variant'
+                : 'Variants'
+            }}
+
+            found
+          </div>
+
+        </div>
+
+
+        <!-- ================================================ -->
+        <!-- Model Information -->
+        <!-- ================================================ -->
+
+        <div class="p-5">
+
+
+          <!-- Brand -->
+
+          <p
+            class="text-xs
+                   font-semibold
+                   uppercase
+                   tracking-wide
+                   text-gray-400"
+          >
+            {{ car.brand }}
+          </p>
+
+
+          <!-- Model + Price -->
+
+          <div
+            class="mt-1 flex
+                   items-center
+                   justify-between
+                   gap-3"
+          >
+
+            <h2
+              class="text-xl
+                     font-bold
+                     text-gray-900"
+            >
+              {{ car.model }}
+            </h2>
+
+
+            <!-- Price Range -->
+
+            <div
+              class="shrink-0
+                     text-right"
+            >
+
+              <div
+                class="text-sm
+                       font-bold
+                       text-gray-900"
+              >
+                ₹{{ getMinPrice(car) | number:'1.2-2' }}L
+                -
+                ₹{{ getMaxPrice(car) | number:'1.2-2' }}L
+              </div>
+
+              <div
+                class="text-[11px]
+                       text-gray-400"
+              >
+                Ex-showroom
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ============================================== -->
+          <!-- Matching Variants -->
+          <!-- ============================================== -->
+
+          <div class="mt-4">
+
+            <!-- Header -->
+
+            <div
+              class="mb-2 flex
+                     items-center
+                     justify-between"
+            >
+
+              <div class="flex items-center gap-2">
+
+                <span
+                  class="text-sm
+                         font-semibold
+                         text-gray-700"
+                >
+                  Matching variants
+                </span>
+
+                <span
+                  class="rounded-full
+                         bg-gray-100
+                         px-2 py-0.5
+                         text-[11px]
+                         font-semibold
+                         text-gray-500"
+                >
+                  {{ car.variants.length }}
+                </span>
+
+              </div>
+
+
+              <!-- View All -->
+
+              <button
+                type="button"
+                [routerLink]="['/variants', car.modelId]"
+                class="rounded-full
+                       px-2.5 py-1
+                       text-xs
+                       font-semibold
+                       text-gray-500
+                       transition
+                       hover:bg-gray-100
+                       hover:text-gray-900"
+              >
+                View all →
+              </button>
+
+            </div>
+
+
+            <!-- ============================================ -->
+            <!-- Compact Variant Window -->
+            <!-- ============================================ -->
+
+            @if (car.variants.length > 0) {
+
+              @let variantIndex =
+                currentVariantIndex()[car.modelId] ?? 0;
+
+              @let variant =
+                car.variants[variantIndex];
+
+
+              <div
+                class="relative
+                       overflow-hidden
+                       rounded-xl
+                       border
+                       border-gray-200
+                       bg-gray-50"
+              >
+
+                <!-- Variant -->
+
+                <div
+                  class="relative
+                         min-h-[76px]
+                         px-3 py-3
+                         pr-12"
+                >
+
+                  <!-- Variant information -->
+
+                  <div
+                    class="flex
+                           min-w-0
+                           items-center
+                           justify-between
+                           gap-3"
+                  >
+
+                    <!-- Name + specs -->
+
+                    <div class="min-w-0">
+
+                      <p
+                        class="truncate
+                               text-sm
+                               font-semibold
+                               text-gray-900"
+                      >
+                        {{ variant.variantName }}
+                      </p>
+
+                      <p
+                        class="mt-1
+                               truncate
+                               text-xs
+                               text-gray-500"
+                      >
+                        {{ variant.fuelType }}
+                        ·
+                        {{ variant.transmissionType }}
+                        ·
+                        {{ variant.drivetrainType }}
+                      </p>
+
+                    </div>
+
+
+                    <!-- Price + Power -->
+
+                    <div
+                      class="shrink-0
+                             text-right"
+                    >
+
+                      <p
+                        class="text-sm
+                               font-semibold
+                               text-gray-900"
+                      >
+                        ₹{{ variant.exShowroomPrice }}L
+                      </p>
+
+                      <p
+                        class="mt-1
+                               text-[11px]
+                               text-gray-400"
+                      >
+                        {{ variant.maxPower }} PS
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- Next Arrow -->
+
+                  @if (car.variants.length > 1) {
+
+                    <button
+                      type="button"
+                      (click)="
+                        nextVariant(
+                          car.modelId,
+                          car.variants.length
+                        )
+                      "
+                      class="absolute
+                             right-2
+                             top-1/2
+                             flex
+                             h-8
+                             w-8
+                             -translate-y-1/2
+                             items-center
+                             justify-center
+                             rounded-full
+                             bg-white
+                             text-gray-500
+                             shadow-sm
+                             ring-1
+                             ring-gray-200
+                             transition
+                             hover:bg-gray-100
+                             hover:text-gray-900"
+                      aria-label="Next variant"
+                    >
+                      →
+                    </button>
+
+                  }
+
+                </div>
+
+
+                <!-- ======================================== -->
+                <!-- Variant Position Indicators -->
+                <!-- ======================================== -->
+
+                @if (car.variants.length > 1) {
+
+                  <div
+                    class="flex
+                           justify-center
+                           gap-1
+                           pb-2"
+                  >
+
+                    @for (
+                      item of car.variants;
+                      track item.variantId;
+                      let i = $index
+                    ) {
+
+                      <span
+                        class="h-1
+                               rounded-full
+                               transition-all
+                               duration-300"
+                        [class.w-4]="
+                          i === variantIndex
+                        "
+                        [class.w-1]="
+                          i !== variantIndex
+                        "
+                        [class.bg-gray-700]="
+                          i === variantIndex
+                        "
+                        [class.bg-gray-300]="
+                          i !== variantIndex
+                        "
+                      ></span>
+
+                    }
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+}
+
+  </div>
+
+</div>

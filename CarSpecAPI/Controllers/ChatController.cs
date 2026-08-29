@@ -17,16 +17,21 @@ namespace CarSpecAPI.Controllers
             this.aIService = aIService;
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequestDto request)
         {
-            var response = await aIService.GetResponseAsync(request.Message);
+            if (string.IsNullOrWhiteSpace(request.ConversationId)) 
+            { 
+                return BadRequest("ConversationId is required."); 
+            } 
 
-            return Ok(new
-            {
-                message = response
-            });
+            if (string.IsNullOrWhiteSpace(request.Message)) 
+            { 
+                return BadRequest("Message is required."); 
+            } 
+
+            var response = await aIService.GetResponseAsync(request.ConversationId, request.Message ); 
+            return Ok(new { message = response });
         }
     }
 }

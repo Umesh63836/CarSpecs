@@ -22,6 +22,7 @@ export class Variants implements OnInit{
 
   model = signal<IVariantModel | null>(null);
   variants = signal<IVariant[]>([]);
+  variantsExpanded = signal(false);
 
   expandedVariantId = signal<number | null>(null);
 
@@ -50,6 +51,10 @@ export class Variants implements OnInit{
     });
   }
 
+  getEngineSize(cc: number | null): string {
+  return cc !== null ? (Math.ceil(cc / 100) / 10).toFixed(1) : 'N/A';
+  }
+
   toggleVariant(variantId: number): void {
 
   if (this.expandedVariantId() === variantId) {
@@ -59,7 +64,8 @@ export class Variants implements OnInit{
     // Expand selected variant
     this.expandedVariantId.set(variantId);
   }
-
   }
+
+  
 
 }

@@ -1,6 +1,6 @@
 ﻿namespace CarSpecAPI.Data.Models.ResponseModel
 {
-    public class VariantModelResponseDto
+    public class ModelResponseDto
     {
         public int ModelId { get; set; }
 

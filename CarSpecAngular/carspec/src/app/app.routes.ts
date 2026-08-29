@@ -9,6 +9,7 @@ import { CreateVariant } from './features/admin/create-variant/create-variant';
 import { AdminDashboard } from './features/admin/admin-dashboard/admin-dashboard';
 import { AdminLogin } from './features/admin/admin-login/admin-login';
 import { authguardGuard } from './core/services/guard/authguard-guard';
+import { FilterCars } from './features/filter/filter-cars/filter-cars';
 
 export const routes: Routes = [
     {
@@ -30,6 +31,10 @@ export const routes: Routes = [
     {
         path: "specifications/:variantId",
         component: Specifications
+    },
+    {
+        path: 'cars',
+        component: FilterCars
     },
     {
         path: "createbrand",

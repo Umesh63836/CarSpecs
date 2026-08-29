@@ -10,7 +10,7 @@ export class Chatservice {
 
     private apiUrl: string = environment.apiUrl;
 
-    sendMessage(message: string): Observable<IChatResponse> {
-        return this.http.post<IChatResponse>( this.apiUrl + "/chat", {message: message} );
+    sendMessage(conversationId: string, message: string): Observable<IChatResponse> {
+        return this.http.post<IChatResponse>( this.apiUrl + "/chat", { conversationId, message } );
     }
 }

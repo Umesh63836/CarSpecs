@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { IChatMessage } from '../../core/models/interfaces/ichat-message';
 import { Chatservice } from '../../core/services/chatbot/chatservice';
 import { FormsModule } from '@angular/forms';
+import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
   selector: 'app-chatbot',
-  imports: [FormsModule],
+  imports: [FormsModule, MarkdownComponent],
   templateUrl: './chatbot.html',
   styleUrl: './chatbot.css',
 })
@@ -14,10 +15,12 @@ export class Chatbot {
 
   userMessage = '';
 
+  conversationId = crypto.randomUUID();
+
   messages = signal<IChatMessage[]>([
     {
       role: 'assistant',
-      content: 'Hi! I am CarsSpec. AI Assistant. Ask me about cars, models, variants, prices or comparison.'
+      content: 'Hi! I am CarsSpec. AI Assistant. Ask me anything about cars, models, variants, prices or comparison.'
     }
   ]);
 
@@ -41,7 +44,7 @@ export class Chatbot {
     ]);
     this.userMessage = '';
     this.isLoading.set(true);
-    this.chatservice.sendMessage(message).subscribe({next: response => {
+    this.chatservice.sendMessage(this.conversationId, message).subscribe({next: response => {
         this.messages.update(messages => [
           ...messages,
           { role: 'assistant',
@@ -61,7 +64,6 @@ export class Chatbot {
 
   onEnter() {
     this.sendMessage();
-    this.userMessage = '';
   }
 
 }

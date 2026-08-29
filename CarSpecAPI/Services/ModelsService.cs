@@ -33,10 +33,10 @@ namespace CarSpecAPI.Services
             return result;
         }
 
-        public async Task<VariantModelResponseDto> GetModelByIdAsync(int modelId)
+        public async Task<ModelResponseDto> GetModelByIdAsync(int modelId)
         {
             var result = await carDbContext.Models.Where(m => m.ModelId == modelId).Include(m => m.Brand).Include(m => m.Variants).FirstAsync();
-            VariantModelResponseDto dto = new VariantModelResponseDto
+            ModelResponseDto dto = new ModelResponseDto
             {
                 ModelId = result.ModelId,
                 BrandName = result.Brand.BrandName,

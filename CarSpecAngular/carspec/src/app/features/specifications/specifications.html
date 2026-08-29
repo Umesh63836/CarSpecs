@@ -1,478 +1,542 @@
-  <div class="min-h-screen">
-      <!-- Variant Header Card -->
-    <div class="mx-auto max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
-    
-      <div
-        class="overflow-hidden rounded-2xl border border-gray-200
-               bg-white shadow-sm"
-      >
-    
-        <div class="flex flex-col sm:flex-row">
-        
-          <!-- Vehicle Image -->
-          <div
-            class="flex h-52 w-full items-center justify-center
-                   bg-gray-50 p-5
-                   sm:h-60 sm:w-2/5 sm:shrink-0"
-          >
-    
-            <img
-              [src]="specifications()?.varientImageURL"
-              [alt]="specifications()?.variant"
-              class="h-full w-full object-contain
-                     transition-transform duration-300
-                     hover:scale-105"
-            >
-    
-          </div>
-        
-        
-          <!-- Variant Information -->
+<div class="min-h-screen">
+
+  <!-- Variant Header -->
+  <div class="mx-auto max-w-6xl px-4 pt-5 sm:px-6 lg:px-8">
+
+    <div
+      class="overflow-hidden rounded-2xl bg-gray-50
+             transition-all duration-300
+             hover:shadow-md hover:shadow-gray-200/60"
+    >
+
+      <div class="flex flex-col sm:flex-row">
+
+        <!-- Vehicle Image -->
         <div
-          class="flex min-w-0 flex-1 flex-col justify-start
-                 px-5 pt-6 pb-4
-                 sm:px-6 sm:pt-8"
+          class="flex h-52 w-full items-center justify-center
+                 p-5
+                 sm:h-60 sm:w-2/5 sm:shrink-0"
         >
 
-          <!-- Brand + Model + Variant -->
+          <img
+            [src]="specifications()?.varientImageURL"
+            [alt]="specifications()?.variant"
+            class="h-full w-full object-contain
+                   transition-transform duration-300
+                   hover:scale-105"
+          >
+
+        </div>
+
+
+        <!-- Variant Information -->
+        <div
+          class="flex min-w-0 flex-1 flex-col justify-center
+                 px-5 py-6
+                 sm:px-6 sm:py-8"
+        >
+
+          <!-- Brand / Model / Variant -->
           <p
-            class="text-1.5xl font-bold leading-tight tracking-tight text-gray-700
-                   sm:text-3xl lg:text-3xl"
+            class="text-xl font-bold leading-tight tracking-tight
+                   text-gray-900
+                   sm:text-2xl lg:text-3xl"
           >
             {{ specifications()?.brand }}
             {{ specifications()?.model }}
             {{ specifications()?.variant }}
           </p>
-        
-        
+
+
           <!-- Price -->
           <div class="mt-5">
-          
-            <p class="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Ex-showroom Price
-            </p>
-          
-            <p class="mt-1 text-xl font-bold leading-tight text-gray-900 sm:text-2xl">
+
+            <p
+              class="text-xl font-extrabold leading-tight tracking-tight
+                     text-gray-900
+                     sm:text-2xl"
+            >
               ₹{{ specifications()?.exShowroomPrice }} Lakhs
             </p>
-          
+
+            <p class="mt-1 text-xs font-medium text-gray-400">
+              Ex-showroom
+            </p>
+
           </div>
-        
+
         </div>
-        
-          <!-- Quick Specifications -->
-          <div
-            class="grid grid-cols-2 gap-x-6 gap-y-3
-                   border-t border-gray-100
-                   px-5 py-4
-                   sm:flex sm:w-48 sm:shrink-0 sm:flex-col
-                   sm:justify-center sm:border-l sm:border-t-0"
-          >
-    
-            <!-- Engine -->
-            <div>
-            
-              <p class="text-xs text-gray-500">
-                Engine
-              </p>
-            
-              <p class="mt-0.5 text-sm font-semibold text-gray-900">
-                {{ specifications()?.displacement }} cc
-              </p>
-            
-            </div>
-          
-          
-            <!-- Power -->
-            <div>
-            
-              <p class="text-xs text-gray-500">
-                Max Power
-              </p>
-            
-              <p class="mt-0.5 text-sm font-semibold text-gray-900">
-                {{ specifications()?.maxPower }} PS
-              </p>
-            
-            </div>
-          
-          
-            <!-- Torque -->
-            <div>
-            
-              <p class="text-xs text-gray-500">
-                Max Torque
-              </p>
-            
-              <p class="mt-0.5 text-sm font-semibold text-gray-900">
-                {{ specifications()?.maxTorque }} Nm
-              </p>
-            
-            </div>
-          
-          
-            <!-- Fuel -->
-            <div>
-            
-              <p class="text-xs text-gray-500">
-                Fuel
-              </p>
-            
-              <p class="mt-0.5 text-sm font-semibold text-gray-900">
-                {{ specifications()?.fuelType }}
-              </p>
-            
-            </div>
-          
-          </div>
-        
-        </div>
-      
+
       </div>
-    
+
     </div>
 
+  </div>
+
+
   <!-- Main Content -->
-  <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+  <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
 
 
-    <!-- Key Highlights -->
-    <section class="mb-5">
+    <!-- Page Heading -->
+    <div class="mb-4">
 
-      <h2 class="mb-3 text-lg font-bold text-gray-900">
-        Key Specifications
+      <h2
+        class="text-xl font-bold tracking-tight text-gray-900
+               md:text-2xl"
+      >
+        Specifications
       </h2>
 
-      <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <p class="mt-1 text-xs text-gray-500 sm:text-sm">
+        Detailed specifications of this variant
+      </p>
 
-        <!-- Power -->
-        <div class="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-
-          <div class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-base">
-            ⚡
-          </div>
-
-          <p class="text-xs text-gray-500">
-            Max Power
-          </p>
-
-          <p class="mt-0.5 text-lg font-bold leading-tight text-gray-900">
-            {{ specifications()?.maxPower }} PS
-          </p>
-
-        </div>
+    </div>
 
 
-        <!-- Torque -->
-        <div class="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-
-          <div class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-base">
-            🔧
-          </div>
-
-          <p class="text-xs text-gray-500">
-            Max Torque
-          </p>
-
-          <p class="mt-0.5 text-lg font-bold leading-tight text-gray-900">
-            {{ specifications()?.maxTorque }} Nm
-          </p>
-
-        </div>
+    <!-- Specification Accordion -->
+<div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
 
 
-        <!-- Displacement -->
-        <div class="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+  <!-- ====================================================== -->
+  <!-- ENGINE & PERFORMANCE -->
+  <!-- ====================================================== -->
 
-          <div class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-base">
-            🔥
-          </div>
+  <div class="overflow-hidden rounded-xl bg-white">
 
-          <p class="text-xs text-gray-500">
-            Displacement
-          </p>
+    <!-- Header -->
+    <button
+      type="button"
+      (click)="toggleSpecification('engine')"
+      class="flex w-full items-center justify-between
+             bg-gray-50
+             px-4 py-4 text-left
+             transition-colors duration-200
+             hover:bg-gray-100
+             sm:px-5"
+      [attr.aria-expanded]="expandedSpecification() === 'engine'"
+    >
 
-          <p class="mt-0.5 text-lg font-bold leading-tight text-gray-900">
-            {{ specifications()?.displacement }} cc
-          </p>
+      <div>
 
-        </div>
+        <h3
+          class="text-sm font-bold text-gray-900
+                 sm:text-base"
+        >
+          Engine & Performance
+        </h3>
 
-
-        <!-- Fuel -->
-        <div class="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
-
-          <div class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-base">
-            ⛽
-          </div>
-
-          <p class="text-xs text-gray-500">
-            Fuel Type
-          </p>
-
-          <p class="mt-0.5 text-lg font-bold leading-tight text-gray-900">
-            {{ specifications()?.fuelType }}
-          </p>
-
-        </div>
+        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
+          Engine, power, torque and performance details
+        </p>
 
       </div>
 
-    </section>
 
-
-    <!-- Engine Specifications -->
-    <section class="mb-5">
-
-      <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
-
-        <div class="border-b border-gray-100 px-4 py-3">
-
-          <h2 class="text-lg font-bold leading-tight text-gray-900">
-            Engine Specifications
-          </h2>
-
-          <p class="mt-0.5 text-xs text-gray-500">
-            Detailed information about the engine
-          </p>
-
-        </div>
-
-
-        <div class="grid grid-cols-1 divide-y divide-gray-100 md:grid-cols-2 md:divide-x md:divide-y-0">
-
-          <div class="divide-y divide-gray-100">
-
-            <!-- Engine -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Engine
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.engine }}
-              </span>
-            </div>
-
-
-            <!-- Fuel -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Fuel Type
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.fuelType }}
-              </span>
-            </div>
-
-
-            <!-- Cylinders -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Number of Cylinders
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.noOfCyl }}
-              </span>
-            </div>
-
-
-            <!-- Valves -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Number of Valves
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.noOfValves }}
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="divide-y divide-gray-100">
-
-            <!-- Displacement -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Displacement
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.displacement }} cc
-              </span>
-            </div>
-
-
-            <!-- Power -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Max Power
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.maxPower }} PS
-              </span>
-            </div>
-
-
-            <!-- Torque -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-              <span class="text-sm text-gray-500">
-                Max Torque
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.maxTorque }} Nm
-              </span>
-            </div>
-
-
-            <!-- Turbo -->
-            <div class="flex items-center justify-between px-4 py-2.5">
-
-              <span class="text-sm text-gray-500">
-                Turbocharged
-              </span>
-
-              @if (specifications()?.isTurbocharged) {
-
-                <span class="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
-                  Yes
-                </span>
-
-              } @else {
-
-                <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                  No
-                </span>
-
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- Transmission & Drivetrain -->
-    <section class="mb-5">
-
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-
-
-        <!-- Transmission -->
-        <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
-
-          <div class="border-b border-gray-100 px-4 py-3">
-
-            <h2 class="text-lg font-bold leading-tight text-gray-900">
-              Transmission
-            </h2>
-
-          </div>
-
-          <div class="divide-y divide-gray-100">
-
-            <div class="flex items-center justify-between px-4 py-2.5">
-
-              <span class="text-sm text-gray-500">
-                Type
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.transmissionType }}
-              </span>
-
-            </div>
-
-
-            <div class="flex items-center justify-between px-4 py-2.5">
-
-              <span class="text-sm text-gray-500">
-                Gears
-              </span>
-
-              <span class="text-sm font-medium text-gray-900">
-                {{ specifications()?.noOfGears }}
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- Drivetrain -->
-        <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
-
-          <div class="border-b border-gray-100 px-4 py-3">
-
-            <h2 class="text-lg font-bold leading-tight text-gray-900">
-              Drivetrain
-            </h2>
-
-          </div>
-
-          <div class="px-4 py-3">
-
-            <p class="text-xs text-gray-500">
-              Drivetrain Type
-            </p>
-
-            <p class="mt-1 text-lg font-bold leading-tight text-gray-900">
-              {{ specifications()?.drivetrain }}
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- Emission -->
-    <section>
-
-      <div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <!-- Plus / Minus -->
+      <span
+        class="ml-4 flex h-6 w-6 shrink-0 items-center
+               justify-center text-lg font-light text-gray-500"
+      >
+        {{ expandedSpecification() === 'engine' ? '−' : '+' }}
+      </span>
+
+    </button>
+
+
+    <!-- Content -->
+    <div
+      class="grid transition-[grid-template-rows]
+             duration-500 ease-in-out"
+      [class.grid-rows-[1fr]]="expandedSpecification() === 'engine'"
+      [class.grid-rows-[0fr]]="expandedSpecification() !== 'engine'"
+    >
+
+      <div class="min-h-0 overflow-hidden">
 
         <div
-          class="flex flex-col gap-2 px-4 py-3
-                 sm:flex-row sm:items-center sm:justify-between"
+          class="divide-y divide-gray-100
+                 bg-white
+                 border-t border-gray-100"
         >
 
-          <div>
+          <!-- Engine -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Engine
+            </span>
 
-            <h2 class="text-lg font-bold leading-tight text-gray-900">
-              Emission
-            </h2>
-
-            <p class="mt-0.5 text-xs text-gray-500">
-              Applicable emission standard
-            </p>
-
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.engine }}
+            </span>
           </div>
 
-          <span class="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700">
-            {{ specifications()?.emmissionStandard }}
-          </span>
+
+          <!-- Fuel -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Fuel Type
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.fuelType }}
+            </span>
+          </div>
+
+
+          <!-- Displacement -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Displacement
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.displacement }} cc
+            </span>
+          </div>
+
+
+          <!-- Cylinders -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Number of Cylinders
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.noOfCyl }}
+            </span>
+          </div>
+
+
+          <!-- Valves -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Number of Valves
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.noOfValves }}
+            </span>
+          </div>
+
+
+          <!-- Max Power -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Max Power
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.maxPower }} PS
+            </span>
+          </div>
+
+
+          <!-- Max Torque -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Max Torque
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.maxTorque }} Nm
+            </span>
+          </div>
+
+
+          <!-- Turbocharged -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Turbocharged
+            </span>
+
+            @if (specifications()?.isTurbocharged) {
+
+              <span
+                class="rounded-full bg-green-100 px-2.5 py-0.5
+                       text-[10px] font-semibold text-green-700
+                       sm:text-xs"
+              >
+                Yes
+              </span>
+
+            } @else {
+
+              <span
+                class="rounded-full bg-gray-100 px-2.5 py-0.5
+                       text-[10px] font-semibold text-gray-500
+                       sm:text-xs"
+              >
+                No
+              </span>
+
+            }
+
+          </div>
 
         </div>
 
       </div>
 
-    </section>
+    </div>
+
+  </div>
+
+
+
+  <!-- ====================================================== -->
+  <!-- TRANSMISSION & DRIVETRAIN -->
+  <!-- ====================================================== -->
+
+  <div class="overflow-hidden rounded-xl bg-white">
+
+    <!-- Header -->
+    <button
+      type="button"
+      (click)="toggleSpecification('transmission')"
+      class="flex w-full items-center justify-between
+             bg-gray-50
+             px-4 py-4 text-left
+             transition-colors duration-200
+             hover:bg-gray-100
+             sm:px-5"
+      [attr.aria-expanded]="expandedSpecification() === 'transmission'"
+    >
+
+      <div>
+
+        <h3
+          class="text-sm font-bold text-gray-900
+                 sm:text-base"
+        >
+          Transmission & Drivetrain
+        </h3>
+
+        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
+          Transmission, gears and drivetrain information
+        </p>
+
+      </div>
+
+
+      <!-- Plus / Minus -->
+      <span
+        class="ml-4 flex h-6 w-6 shrink-0 items-center
+               justify-center text-lg font-light text-gray-500"
+      >
+        {{ expandedSpecification() === 'transmission' ? '−' : '+' }}
+      </span>
+
+    </button>
+
+
+    <!-- Content -->
+    <div
+      class="grid transition-[grid-template-rows]
+             duration-500 ease-in-out"
+      [class.grid-rows-[1fr]]="expandedSpecification() === 'transmission'"
+      [class.grid-rows-[0fr]]="expandedSpecification() !== 'transmission'"
+    >
+
+      <div class="min-h-0 overflow-hidden">
+
+        <div
+          class="divide-y divide-gray-100
+                 bg-white
+                 border-t border-gray-100"
+        >
+
+          <!-- Transmission -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Transmission Type
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.transmissionType }}
+            </span>
+          </div>
+
+
+          <!-- Gears -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Number of Gears
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.noOfGears }}
+            </span>
+          </div>
+
+
+          <!-- Drivetrain -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Drivetrain
+            </span>
+
+            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
+              {{ specifications()?.drivetrain }}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ====================================================== -->
+  <!-- SAFETY & EMISSION -->
+  <!-- ====================================================== -->
+
+  <div
+    class="overflow-hidden rounded-xl bg-white
+           lg:col-span-2"
+  >
+
+    <!-- Header -->
+    <button
+      type="button"
+      (click)="toggleSpecification('safety')"
+      class="flex w-full items-center justify-between
+             bg-gray-50
+             px-4 py-4 text-left
+             transition-colors duration-200
+             hover:bg-gray-100
+             sm:px-5"
+      [attr.aria-expanded]="expandedSpecification() === 'safety'"
+    >
+
+      <div>
+
+        <h3
+          class="text-sm font-bold text-gray-900
+                 sm:text-base"
+        >
+          Safety & Emission Standards
+        </h3>
+
+        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
+          Safety and applicable emission standards
+        </p>
+
+      </div>
+
+
+      <!-- Plus / Minus -->
+      <span
+        class="ml-4 flex h-6 w-6 shrink-0 items-center
+               justify-center text-lg font-light text-gray-500"
+      >
+        {{ expandedSpecification() === 'safety' ? '−' : '+' }}
+      </span>
+
+    </button>
+
+
+    <!-- Content -->
+    <div
+      class="grid transition-[grid-template-rows]
+             duration-500 ease-in-out"
+      [class.grid-rows-[1fr]]="expandedSpecification() === 'safety'"
+      [class.grid-rows-[0fr]]="expandedSpecification() !== 'safety'"
+    >
+
+      <div class="min-h-0 overflow-hidden">
+
+        <div
+          class="divide-y divide-gray-100
+                 bg-white
+                 border-t border-gray-100"
+        >
+
+          <!-- Emission -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Emission Standard
+            </span>
+
+            <span
+              class="rounded-full bg-gray-100
+                     px-2.5 py-0.5
+                     text-[10px] font-semibold text-gray-700
+                     sm:text-xs"
+            >
+              {{ specifications()?.emmissionStandard }}
+            </span>
+
+          </div>
+
+
+          <!-- Safety -->
+          <div
+            class="flex items-center justify-between gap-4
+                   px-4 py-3 sm:px-5"
+          >
+
+            <span class="text-xs text-gray-500 sm:text-sm">
+              Safety Specifications
+            </span>
+
+            <span class="text-xs font-medium text-gray-400 sm:text-sm">
+              Coming soon
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
   </main>
 

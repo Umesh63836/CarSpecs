@@ -14,6 +14,8 @@ export class Specifications implements OnInit{
   private route = inject(ActivatedRoute);
 
   variantId!: number;
+  expandedSpecification = signal<string | null>('engine');
+
 
   specifications = signal<ISpecs | null>(null);
 
@@ -26,6 +28,12 @@ export class Specifications implements OnInit{
         error: (error) => console.error('Error loading specifications:', error)
       });
     });
+  }
+
+toggleSpecification(section: string): void {
+  this.expandedSpecification.update(
+    current => current === section ? null : section
+  );
   }
 
 }

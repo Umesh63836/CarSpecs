@@ -6,7 +6,7 @@ namespace CarSpecAPI.Services
     public interface IModelsService
     {
         Task<ModelDto?> CreateModelAsync(CreateModelDto dto);
-        Task<VariantModelResponseDto> GetModelByIdAsync(int modelId);
+        Task<ModelResponseDto> GetModelByIdAsync(int modelId);
         public Task<List<ModelDto>> GetModelsAsync(int brandId);
     }
 }
