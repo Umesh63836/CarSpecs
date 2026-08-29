@@ -17,6 +17,7 @@ namespace CarSpecAPI.Controllers
             this.aIService = aIService;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequestDto request)
         {
