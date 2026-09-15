@@ -4,12 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IVariant } from '../../core/models/interfaces/variant';
 import { Model } from '../../core/services/model/model';
 import { IModel } from '../../core/models/interfaces/model';
-import { UpperCasePipe } from '@angular/common';
+import { DecimalPipe, UpperCasePipe } from '@angular/common';
 import { IVariantModel } from '../../core/models/interfaces/variant-model';
 
 @Component({
   selector: 'app-variants',
-  imports: [RouterLink, UpperCasePipe],
+  imports: [RouterLink, UpperCasePipe, DecimalPipe],
   templateUrl: './variants.html',
   styleUrl: './variants.css',
 })

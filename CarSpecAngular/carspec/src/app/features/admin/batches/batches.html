@@ -1,0 +1,1816 @@
+<style>
+/* Compact Import Batches table */
+.batches-compact {
+  font-size: 13px;
+}
+
+.batches-compact thead th {
+  padding: 8px 12px !important;
+  font-size: 11px !important;
+  line-height: 16px !important;
+  letter-spacing: 0.045em !important;
+}
+
+.batches-compact tbody td {
+  padding: 10px 12px !important;
+  line-height: 18px !important;
+}
+
+.batches-compact tbody td .text-sm {
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+.batches-compact tbody td .text-xs {
+  font-size: 11px !important;
+  line-height: 14px !important;
+}
+
+.batches-compact tbody td .font-semibold {
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+
+.batches-compact tbody td span.inline-flex {
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  line-height: 14px !important;
+  gap: 4px !important;
+}
+
+.batches-compact tbody td span.inline-flex svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.batches-compact tbody td.max-w-xs {
+  max-width: 12rem !important;
+}
+
+.batches-compact tbody td .truncate {
+  max-width: 12rem;
+}
+
+.batches-compact tbody tr {
+  min-height: 44px;
+}
+
+@media (max-width: 1024px) {
+  .batches-compact thead th,
+  .batches-compact tbody td {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
+</style>
+
+<div class="mx-auto max-w-7xl">
+
+  <!-- =========================================================
+       PAGE HEADER
+       ========================================================= -->
+
+  <div class="mb-8">
+
+    <div
+      class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+    >
+
+      <!-- TITLE -->
+
+      <div>
+
+        <h2 class="text-xl font-bold text-red-700">
+          Import Batches
+        </h2>
+
+        <p class="mt-1 text-sm text-gray-500">
+          View and manage brochure import batches.
+        </p>
+
+      </div>
+
+
+      <!-- RIGHT SIDE ACTIONS -->
+
+      <div class="flex items-center gap-3">
+
+        @if (!isLoading()) {
+
+          <div
+            class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 shadow-sm"
+          >
+
+            <span class="font-semibold text-gray-900">
+              {{ totalRecords() }}
+            </span>
+
+            {{ totalRecords() === 1 ? 'Batch' : 'Batches' }}
+
+          </div>
+
+        }
+
+
+        <!-- REFRESH -->
+
+        <button
+          type="button"
+          (click)="refreshBatches()"
+          [disabled]="isLoading() || isStaging()"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          title="Refresh batches"
+        >
+
+          <svg
+            class="h-4 w-4"
+            [class.animate-spin]="isLoading()"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M20 11a8.1 8.1 0 00-14.7-4.7L4 8"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M4 4v4h4"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M4 13a8.1 8.1 0 0014.7 4.7L20 16"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M20 20v-4h-4"
+            />
+
+          </svg>
+
+
+          @if (isLoading()) {
+
+            Refreshing...
+
+          } @else {
+
+            Refresh
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       ERROR
+       ========================================================= -->
+
+  @if (errorMessage()) {
+
+    <div
+      class="mb-6 flex items-center justify-between gap-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3"
+    >
+
+      <div class="flex items-center gap-3">
+
+        <svg
+          class="h-5 w-5 shrink-0 text-red-600"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v4m0 4h.01M10.29 3.86l-7.82 13a2 2 0 001.71 3h15.64a2 2 0 001.71-3l-7.82-13a2 2 0 00-3.42 0z"
+          />
+
+        </svg>
+
+
+        <p class="text-sm font-medium text-red-700">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        (click)="refreshBatches()"
+        class="shrink-0 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-700 transition hover:bg-red-50"
+      >
+        Retry
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- =========================================================
+       TABLE
+       ========================================================= -->
+
+  <div
+    class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+  >
+
+    <!-- =======================================================
+         STAGING OVERLAY
+         ======================================================= -->
+
+    @if (isStaging()) {
+
+      <div
+        class="absolute inset-0 z-50 flex items-center justify-center bg-white/75 backdrop-blur-[1px]"
+      >
+
+        <div
+          class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-medium text-gray-700 shadow-lg"
+        >
+
+          <svg
+            class="h-5 w-5 animate-spin text-red-600"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+
+          </svg>
+
+          Validating and staging batch...
+
+        </div>
+
+      </div>
+
+    }
+
+
+    <!-- =======================================================
+         TABLE HEADER
+         ======================================================= -->
+
+    <div
+      class="flex w-full items-center justify-between gap-6 border-b border-gray-100 px-6 py-5"
+    >
+
+      <!-- LEFT: IMPORT HISTORY -->
+
+      <div class="min-w-0">
+
+        <h4 class="text-lg font-semibold text-red-600">
+          Import History
+        </h4>
+
+        <p class="mt-1 text-xs text-gray-500">
+          View and manage brochure import batches
+        </p>
+
+      </div>
+
+
+      <!-- =====================================================
+           RIGHT: SELECTED BATCH ACTIONS
+           ===================================================== -->
+
+      @if (selectedBatchId() !== null) {
+
+        <div
+          class="ml-auto flex shrink-0 items-center justify-end gap-2"
+        >
+
+          <!-- VALIDATE AND STAGE -->
+
+          <button
+            type="button"
+            (click)="validateAndStageSelectedBatch()"
+            [disabled]="isStaging()"
+            class="inline-flex shrink-0 items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+
+            @if (isStaging()) {
+
+              <svg
+                class="h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  class="opacity-25"
+                />
+
+                <path
+                  d="M21 12a9 9 0 00-9-9"
+                  class="opacity-75"
+                />
+
+              </svg>
+
+              Staging...
+
+            } @else {
+
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+
+                <path
+                  d="M5 12h14M12 5l7 7-7 7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+
+              </svg>
+
+              Validate and Stage
+
+            }
+
+          </button>
+
+
+          <!-- PREVIEW AND EDIT -->
+
+          <button
+            type="button"
+            (click)="previewAndEditSelectedBatch()"
+            class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <path
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+
+              <path
+                d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"
+              />
+
+            </svg>
+
+            Preview and Edit
+
+          </button>
+
+
+          <!-- SHOW REVIEW -->
+
+          <button
+            type="button"
+            (click)="showReviewSelectedBatch()"
+            class="inline-flex shrink-0 items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+
+              <path
+                d="M9 12l2 2 4-4"
+              />
+
+              <path
+                d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+              />
+
+            </svg>
+
+            Show Review
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- =======================================================
+         LOADING SKELETON
+         ======================================================= -->
+
+    @if (isLoading()) {
+
+      <div class="divide-y divide-gray-100">
+
+        @for (
+          row of [1, 2, 3, 4, 5, 6, 7];
+          track row
+        ) {
+
+          <div class="animate-pulse px-6 py-5">
+
+            <div class="grid grid-cols-12 gap-4">
+
+              <div class="col-span-1">
+                <div class="h-4 w-12 rounded bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-2">
+                <div class="h-4 w-28 rounded bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-2">
+                <div class="h-4 w-28 rounded bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-1">
+                <div class="h-6 w-20 rounded-full bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-1">
+                <div class="h-4 w-16 rounded bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-2">
+                <div class="h-4 w-24 rounded bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-1">
+                <div class="h-6 w-20 rounded-full bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-1">
+                <div class="h-6 w-20 rounded-full bg-gray-200"></div>
+              </div>
+
+              <div class="col-span-1">
+                <div class="h-4 w-24 rounded bg-gray-200"></div>
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- =======================================================
+         EMPTY
+         ======================================================= -->
+
+    @else if (
+      !errorMessage() &&
+      batches().length === 0
+    ) {
+
+      <div
+        class="flex min-h-[350px] flex-col items-center justify-center px-6 text-center"
+      >
+
+        <div
+          class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100"
+        >
+
+          <svg
+            class="h-7 w-7 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M9 13h6m-6 4h6m2 4H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M14 3v5h5"
+            />
+
+          </svg>
+
+        </div>
+
+
+        <h3 class="text-base font-semibold text-gray-900">
+          No import batches
+        </h3>
+
+
+        <p class="mt-1 max-w-sm text-sm text-gray-500">
+          Import batches will appear here after a brochure has been imported.
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- =======================================================
+         DATA TABLE
+         ======================================================= -->
+
+    @else {
+
+      <div class="batches-compact overflow-x-auto">
+
+        <table class="min-w-full">
+
+          <thead class="bg-gray-50">
+
+            <tr class="border-b border-gray-200">
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Batch
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Started
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Completed
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Status
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Imported By
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                AI Model
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                AI Result
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Final Result
+              </th>
+
+              <th
+                class="whitespace-nowrap px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
+              >
+                Document
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody class="divide-y divide-gray-100 bg-white">
+
+            @for (
+              batch of batches();
+              track batch.importBatchId
+            ) {
+
+              <tr
+                tabindex="0"
+                (click)="selectBatch(batch)"
+                (keydown)="onBatchKeydown($event, batch)"
+                class="group transition"
+
+                [class.cursor-pointer]="
+                  isBatchSelectable(batch) &&
+                  !isStaging()
+                "
+
+                [class.cursor-default]="
+                  !isBatchSelectable(batch) ||
+                  isStaging()
+                "
+
+                [class.bg-red-50]="
+                  isReviewedAndMerged(batch) &&
+                  !isSelected(batch)
+                "
+
+                [class.hover:bg-red-100]="
+                  isReviewedAndMerged(batch) &&
+                  !isSelected(batch) &&
+                  !isStaging()
+                "
+
+                [class.bg-green-200]="
+                  isSelected(batch)
+                "
+
+                [class.hover:bg-gray-50]="
+                  isBatchSelectable(batch) &&
+                  !isReviewedAndMerged(batch) &&
+                  !isSelected(batch) &&
+                  !isStaging()
+                "
+
+                [class.focus:outline-none]="
+                  isBatchSelectable(batch) &&
+                  !isStaging()
+                "
+
+                [class.focus:ring-2]="
+                  isBatchSelectable(batch) &&
+                  !isStaging()
+                "
+
+                [class.focus:ring-inset]="
+                  isBatchSelectable(batch) &&
+                  !isStaging()
+                "
+
+                [class.focus:ring-grey-600]="
+                  isReviewedAndMerged(batch) &&
+                  !isSelected(batch) &&
+                  !isStaging()
+                "
+              >
+
+                <!-- BATCH -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  <div class="flex items-center gap-3">
+
+                    <div class="flex min-w-0 items-center gap-3">
+
+                      <span
+                        class="font-semibold text-gray-900"
+                      >
+                        #{{ batch.importBatchId }}
+                      </span>
+
+
+                      @if (
+                        isReviewedAndMerged(batch)
+                      ) {
+
+                        <span
+                          class="pointer-events-none inline-flex translate-x-1 items-center gap-1 whitespace-nowrap text-xs font-semibold text-red-600 opacity-0 transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100 group-focus:translate-x-0 group-focus:opacity-100"
+                        >
+
+                          Click to select
+
+                          <svg
+                            class="h-3.5 w-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M5 12h14"
+                            />
+
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M13 6l6 6-6 6"
+                            />
+
+                          </svg>
+
+                        </span>
+
+                      }
+
+                      @else if (
+                        isBatchSelectable(batch)
+                      ) {
+
+                        <span
+                          class="pointer-events-none inline-flex translate-x-1 items-center gap-1 whitespace-nowrap text-xs font-medium text-gray-500 opacity-0 transition-all duration-150 group-hover:translate-x-0 group-hover:opacity-100 group-focus:translate-x-0 group-focus:opacity-100"
+                        >
+
+                          {{ getBatchActionLabel(batch) }}
+
+                          <svg
+                            class="h-3.5 w-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M5 12h14"
+                            />
+
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M13 6l6-6-6 6"
+                            />
+
+                          </svg>
+
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                </td>
+
+
+                <!-- STARTED -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  <span class="text-sm text-gray-700">
+                    {{ formatDate(batch.startedAt) }}
+                  </span>
+
+                </td>
+
+
+                <!-- COMPLETED -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  <span class="text-sm text-gray-700">
+                    {{ formatDate(batch.completedAt) }}
+                  </span>
+
+                </td>
+
+
+                <!-- STATUS -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  <span
+                    class="inline-flex rounded-full border px-2.5 py-1 text-xs font-medium"
+                    [class]="getStatusClass(batch.status)"
+                  >
+                    {{ batch.status }}
+                  </span>
+
+                </td>
+
+
+                <!-- IMPORTED BY -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  @if (batch.importedBy !== null) {
+
+                    <span class="text-sm text-gray-700">
+                      Admin #{{ batch.importedBy }}
+                    </span>
+
+                  } @else {
+
+                    <span class="text-sm text-gray-400">
+                      —
+                    </span>
+
+                  }
+
+                </td>
+
+
+                <!-- AI MODEL -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  @if (batch.aiModel) {
+
+                    <span
+                      class="text-sm font-medium text-gray-700"
+                    >
+                      {{ batch.aiModel }}
+                    </span>
+
+                  } @else {
+
+                    <span class="text-sm text-gray-400">
+                      —
+                    </span>
+
+                  }
+
+                </td>
+
+
+                <!-- AI RESULT -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  @if (batch.hasAIResult) {
+
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700"
+                    >
+
+                      <svg
+                        class="h-3.5 w-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+
+                      </svg>
+
+                      Available
+
+                    </span>
+
+                  } @else {
+
+                    <span
+                      class="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-500"
+                    >
+                      Not Available
+                    </span>
+
+                  }
+
+                </td>
+
+
+                <!-- FINAL RESULT -->
+
+                <td class="whitespace-nowrap px-6 py-4">
+
+                  @if (batch.hasFinalResult) {
+
+                    <span
+                      class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700"
+                    >
+
+                      <svg
+                        class="h-3.5 w-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+
+                      </svg>
+
+                      Available
+
+                    </span>
+
+                  } @else {
+
+                    <span
+                      class="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-500"
+                    >
+                      Not Available
+                    </span>
+
+                  }
+
+                </td>
+
+
+                <!-- DOCUMENT -->
+
+                <td class="max-w-xs px-6 py-4">
+
+                  @if (
+                    batch.documents &&
+                    batch.documents.length
+                  ) {
+
+                    <div class="flex flex-col">
+
+                      <span
+                        class="truncate text-sm font-medium text-gray-700"
+                        [title]="batch.documents[0].documentName"
+                      >
+                        {{ getDocumentSummary(batch) }}
+                      </span>
+
+
+                      @if (
+                        batch.documents.length === 1
+                      ) {
+
+                        <span
+                          class="mt-0.5 text-xs text-gray-400"
+                        >
+
+                          {{ batch.documents[0].documentType }}
+
+                          ·
+
+                          {{
+                            formatFileSize(
+                              batch.documents[0].fileSizeBytes
+                            )
+                          }}
+
+                        </span>
+
+                      }
+
+                    </div>
+
+                  } @else {
+
+                    <span class="text-sm text-gray-400">
+                      —
+                    </span>
+
+                  }
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    }
+
+
+    <!-- =========================================================
+         PAGINATION
+         ========================================================= -->
+
+    @if (
+      !isLoading() &&
+      totalPages() > 0
+    ) {
+
+      <div
+        class="flex flex-col gap-4 border-t border-gray-200 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+
+        <p class="text-sm text-gray-500">
+
+          Page
+
+          <span class="font-medium text-gray-900">
+            {{ currentPage() }}
+          </span>
+
+          of
+
+          <span class="font-medium text-gray-900">
+            {{ totalPages() }}
+          </span>
+
+        </p>
+
+
+        <div class="flex items-center gap-1">
+
+          <!-- PREVIOUS -->
+
+          <button
+            type="button"
+            (click)="previousPage()"
+            [disabled]="
+              !hasPreviousPage() ||
+              isStaging()
+            "
+            class="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            title="Previous page"
+          >
+
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+
+            </svg>
+
+          </button>
+
+
+          <!-- PAGE NUMBERS -->
+
+          @for (
+            page of getPageNumbers();
+            track $index
+          ) {
+
+            @if (page === -1) {
+
+              <span
+                class="flex h-9 w-9 items-center justify-center text-sm text-gray-400"
+              >
+                ...
+              </span>
+
+            } @else {
+
+              <button
+                type="button"
+                (click)="goToPage(page)"
+                [disabled]="isStaging()"
+                class="flex h-9 min-w-9 items-center justify-center rounded-lg border px-3 text-sm font-medium transition"
+
+                [class.border-blue-600]="
+                  page === currentPage()
+                "
+
+                [class.bg-blue-600]="
+                  page === currentPage()
+                "
+
+                [class.text-white]="
+                  page === currentPage()
+                "
+
+                [class.border-gray-200]="
+                  page !== currentPage()
+                "
+
+                [class.bg-white]="
+                  page !== currentPage()
+                "
+
+                [class.text-gray-600]="
+                  page !== currentPage()
+                "
+
+                [class.hover:bg-gray-50]="
+                  page !== currentPage()
+                "
+              >
+
+                {{ page }}
+
+              </button>
+
+            }
+
+          }
+
+
+          <!-- NEXT -->
+
+          <button
+            type="button"
+            (click)="nextPage()"
+            [disabled]="
+              !hasNextPage() ||
+              isStaging()
+            "
+            class="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            title="Next page"
+          >
+
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+
+            </svg>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+
+  <!-- =========================================================
+       FLOATING SUCCESS / ERROR NOTIFICATION
+       ========================================================= -->
+
+  @if (notificationMessage()) {
+
+    <div
+      class="fixed right-6 top-6 z-[100] w-[min(420px,calc(100vw-3rem))]"
+      role="alert"
+      aria-live="polite"
+    >
+
+      <div
+        class="flex items-start gap-3 rounded-xl border px-4 py-3 shadow-xl"
+
+        [class.border-green-200]="
+          notificationType() === 'success'
+        "
+
+        [class.bg-green-50]="
+          notificationType() === 'success'
+        "
+
+        [class.text-green-800]="
+          notificationType() === 'success'
+        "
+
+        [class.border-red-200]="
+          notificationType() === 'error'
+        "
+
+        [class.bg-red-50]="
+          notificationType() === 'error'
+        "
+
+        [class.text-red-800]="
+          notificationType() === 'error'
+        "
+      >
+
+        @if (
+          notificationType() === 'success'
+        ) {
+
+          <svg
+            class="mt-0.5 h-5 w-5 shrink-0 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+
+          </svg>
+
+        } @else {
+
+          <svg
+            class="mt-0.5 h-5 w-5 shrink-0 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v4m0 4h.01M10.29 3.86l-7.82 13a2 2 0 001.71 3h15.64a2 2 0 001.71-3l-7.82-13a2 2 0 00-3.42 0z"
+            />
+
+          </svg>
+
+        }
+
+
+        <p class="min-w-0 flex-1 text-sm font-medium">
+          {{ notificationMessage() }}
+        </p>
+
+
+        <button
+          type="button"
+          (click)="closeNotification()"
+          class="shrink-0 rounded-md p-1 opacity-60 transition hover:bg-black/5 hover:opacity-100"
+          aria-label="Close notification"
+        >
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M6 6l12 12M18 6L6 18"
+            />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- =========================================================
+       STAGING RESULT MODAL
+       ========================================================= -->
+
+  @if (
+    isStageResultPopupOpen() &&
+    stageResult()
+  ) {
+
+    <!-- BACKDROP -->
+
+    <div
+      class="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+      role="presentation"
+    >
+
+      <!-- MODAL -->
+
+      <div
+        class="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="stage-result-title"
+      >
+
+        <!-- ===================================================
+             MODAL HEADER
+             =================================================== -->
+
+        <div
+          class="flex items-start justify-between border-b border-gray-200 px-6 py-5"
+        >
+
+          <div class="flex items-start gap-3">
+
+            <!-- SUCCESS ICON -->
+
+            <div
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-100"
+            >
+
+              <svg
+                class="h-5 w-5 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                />
+
+              </svg>
+
+            </div>
+
+
+            <div>
+
+              <h2
+                id="stage-result-title"
+                class="text-lg font-semibold text-gray-900"
+              >
+                Batch staged successfully
+              </h2>
+
+              <p class="mt-1 text-sm text-gray-500">
+
+                Batch
+
+                <span class="font-semibold text-gray-700">
+                  #{{ stageResult()?.importBatchId }}
+                </span>
+
+                has been validated and staged.
+
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- CLOSE -->
+
+          <button
+            type="button"
+            (click)="closeStageResultPopup()"
+            class="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+            aria-label="Close staging result"
+            title="Close"
+          >
+
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M6 6l12 12M18 6L6 18"
+              />
+
+            </svg>
+
+          </button>
+
+        </div>
+
+
+        <!-- ===================================================
+             STATUS SUMMARY
+             =================================================== -->
+
+        <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+
+          <div class="flex flex-wrap items-center gap-3">
+
+            <span class="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Status
+            </span>
+
+            <span
+              class="inline-flex rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700"
+            >
+              {{ stageResult()?.status }}
+            </span>
+
+
+            <span class="h-4 w-px bg-gray-300"></span>
+
+
+            <span class="text-xs font-medium text-gray-500">
+              Import Model ID
+            </span>
+
+            <span class="text-sm font-semibold text-gray-900">
+              #{{ stageResult()?.importModelId }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             INSERT SUMMARY
+             =================================================== -->
+
+        <div class="max-h-[65vh] overflow-y-auto px-6 py-6">
+
+          <h3
+            class="mb-4 text-sm font-semibold text-gray-900"
+          >
+            Staging Summary
+          </h3>
+
+
+          <div
+            class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+          >
+
+            <!-- POWERTRAINS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Powertrains
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.powertrainsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- ENGINES -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Engines
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.enginesInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- ENGINE PERFORMANCES -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Engine Performances
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.enginePerformancesInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- MOTOR PERFORMANCES -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Motor Performances
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.motorPerformancesInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- TRANSMISSIONS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Transmissions
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.transmissionsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- DRIVETRAINS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Drivetrains
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.drivetrainsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- VARIANT PARENTS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Variant Parents
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.variantParentsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- VARIANTS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Variants
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.variantsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- FEATURE VARIANTS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Feature Variants
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.featureVariantsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- SPECIFICATION VARIANTS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Specification Variants
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.specificationVariantsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- FUEL EFFICIENCIES -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Fuel Efficiencies
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.fuelEfficienciesInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- FUEL EFFICIENCY VARIANTS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Fuel Efficiency Variants
+              </p>
+
+              <p class="mt-1 text-2xl font-bold text-gray-900">
+                {{ stageResult()?.fuelEfficiencyVariantsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+
+            <!-- WARNINGS -->
+
+            <div
+              class="rounded-xl border border-gray-200 bg-white p-4"
+            >
+
+              <p class="text-xs text-gray-500">
+                Warnings
+              </p>
+
+              <p
+                class="mt-1 text-2xl font-bold"
+
+                [class.text-orange-600]="
+                  (stageResult()?.warningsInserted ?? 0) > 0
+                "
+
+                [class.text-gray-900]="
+                  (stageResult()?.warningsInserted ?? 0) === 0
+                "
+              >
+                {{ stageResult()?.warningsInserted ?? 0 }}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- =================================================
+               WARNINGS FROM RESPONSE
+               ================================================= -->
+
+          @if (
+            stageResult()?.warnings &&
+            stageResult()!.warnings.length > 0
+          ) {
+
+            <div
+              class="mt-6 rounded-xl border border-orange-200 bg-orange-50 p-4"
+            >
+
+              <div class="flex items-start gap-3">
+
+                <svg
+                  class="mt-0.5 h-5 w-5 shrink-0 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v4m0 4h.01M10.29 3.86l-7.82 13a2 2 0 001.71 3h15.64a2 2 0 001.71-3l-7.82-13a2 2 0 00-3.42 0z"
+                  />
+
+                </svg>
+
+
+                <div class="min-w-0">
+
+                  <h4
+                    class="text-sm font-semibold text-orange-800"
+                  >
+                    Staging warnings
+                  </h4>
+
+
+                  <ul
+                    class="mt-2 space-y-1"
+                  >
+
+                    @for (
+                      warning of stageResult()?.warnings ?? [];
+                      track $index
+                    ) {
+
+                      <li
+                        class="text-sm text-orange-700"
+                      >
+                        {{ warning }}
+                      </li>
+
+                    }
+
+                  </ul>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- ===================================================
+             MODAL FOOTER
+             =================================================== -->
+
+        <div
+          class="flex items-center justify-end border-t border-gray-200 bg-gray-50 px-6 py-4"
+        >
+
+          <button
+            type="button"
+            (click)="closeStageResultPopup()"
+            class="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+          >
+            Close
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

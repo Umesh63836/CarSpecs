@@ -9,7 +9,7 @@ public partial class Brand
 
     public string BrandName { get; set; } = null!;
 
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
 
     public string? LogoUrl { get; set; }
 

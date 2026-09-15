@@ -11,5 +11,11 @@ public partial class Transmission
 
     public byte? NumberOfGears { get; set; }
 
+    public bool? TransmissionFeature { get; set; }
+
+    public bool? HasManualOverride { get; set; }
+
+    public bool? HasPaddleShifters { get; set; }
+
     public virtual ICollection<Variant> Variants { get; set; } = new List<Variant>();
 }

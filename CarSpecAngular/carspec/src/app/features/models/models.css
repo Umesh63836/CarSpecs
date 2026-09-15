@@ -1,0 +1,14 @@
+:root {
+  /* =====================================================
+     CARSSPEC THEME COLOR
+     Change ONLY this color
+     ===================================================== */
+
+  --cs-accent: #f20505;
+
+  /* Automatically generated shades */
+  --cs-accent-light: color-mix(in srgb, var(--cs-accent) 12%, white);
+  --cs-accent-lighter: color-mix(in srgb, var(--cs-accent) 6%, white);
+  --cs-accent-hover: color-mix(in srgb, var(--cs-accent) 75%, black);
+  --cs-accent-shadow: color-mix(in srgb, var(--cs-accent) 20%, transparent);
+}

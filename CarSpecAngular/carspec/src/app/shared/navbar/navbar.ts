@@ -36,11 +36,8 @@ export class Navbar implements OnInit{
     return;
   }
 
-  this.searchService
-    .search(this.searchText())
-    .subscribe({
-      next: results => {
-        this.searchResults.set(results);
+  this.searchService.search(this.searchText()).subscribe({next: results => { 
+    this.searchResults.set(results);
       },
       error: err => {
         console.error(err);
@@ -50,15 +47,11 @@ export class Navbar implements OnInit{
 
  onSearchResultClick(result: ISearch){
   if (result.resultType === 'Model') {
-
     this.router.navigate(['/variants', result.id]);
     console.log(result.id)
-
   }
   else if (result.resultType === 'Variant') {
-
     this.router.navigate(['/specifications', result.id]);
-
   }
 
   // Hide dropdown after selection

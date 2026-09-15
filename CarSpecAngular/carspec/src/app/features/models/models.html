@@ -1,10 +1,13 @@
-
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
 
-  <!-- Title -->
+  <!-- =========================================================
+       TITLE
+       ========================================================= -->
   <div class="mx-auto mb-6 max-w-2xl text-center md:mb-8">
 
-    <h2 class="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">
+    <h2
+      class="cs-accent text-2xl font-bold tracking-tight md:text-3xl"
+    >
       Explore Models
     </h2>
 
@@ -15,125 +18,941 @@
   </div>
 
 
-  <!-- Models Grid -->
-  <div
-    class="grid grid-cols-2 gap-2
-           sm:grid-cols-2 sm:gap-3
-           md:grid-cols-3 md:gap-4
-           lg:grid-cols-3
-           xl:grid-cols-4"
-  >
+  <!-- =========================================================
+       MODELS CAROUSEL
+       ========================================================= -->
 
-    @for (model of models(); track model.modelId) {
+  <div class="relative">
 
-      <a
-        [routerLink]="['/variants', model.modelId]"
-        class="group flex flex-col overflow-hidden
-               rounded-xl bg-gray-50 p-2
-               transition-all duration-300 ease-out
-               hover:-translate-y-1 hover:shadow-lg
-               hover:shadow-gray-200/60
-               sm:p-3"
+    <!-- =======================================================
+         LEFT ARROW
+
+         Hidden automatically when scroll position is at the
+         beginning.
+         ======================================================= -->
+
+    <button
+      type="button"
+      aria-label="Previous models"
+
+      [class.hidden]="!showLeftArrow()"
+
+      (click)="scrollModels('prev')"
+
+      class="absolute
+             left-2
+             top-1/2
+             z-20
+             flex
+             h-9
+             w-9
+             -translate-y-1/2
+             items-center
+             justify-center
+             rounded-full
+             border
+             border-gray-200
+             bg-white/95
+             text-gray-700
+             shadow-md
+             backdrop-blur-sm
+             transition-all
+             duration-200
+             hover:scale-105
+             hover:shadow-lg
+             sm:h-10
+             sm:w-10"
+    >
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="h-4 w-4 sm:h-5 sm:w-5"
       >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5 8.25 12l7.5-7.5"
+        />
+      </svg>
 
-        <!-- Car Image -->
-        <div
-          class="flex h-28 w-full items-center justify-center
-                 sm:h-36
-                 md:h-40"
+    </button>
+
+
+    <!-- =======================================================
+         SCROLL CONTAINER
+         ======================================================= -->
+
+    <div
+      #modelsContainer
+      (scroll)="onModelsScroll()"
+      (window:resize)="onModelsResize()"
+
+      class="flex
+             gap-4
+             overflow-x-auto
+             overscroll-x-contain
+             scroll-smooth
+             snap-x
+             snap-mandatory
+             px-3
+             pb-3
+             [scroll-padding-inline:1rem]
+             [&::-webkit-scrollbar]:hidden
+             [-ms-overflow-style:none]
+             [scrollbar-width:none]"
+    >
+
+      @for (model of models(); track model.modelId) {
+
+        <!-- ===================================================
+             MODEL CARD
+             =================================================== -->
+
+        <a
+          [routerLink]="['/variants', model.modelId]"
+
+          class="model-card
+                 group
+                 flex
+                 shrink-0
+                 snap-start
+                 [scroll-snap-stop:always]
+                 flex-col
+                 overflow-hidden
+                 rounded-xl
+                 border
+                 border-gray-200
+                 bg-white
+                 p-3
+                 shadow-sm
+                 transition-all
+                 duration-300
+                 ease-out
+                 hover:-translate-y-1
+                 hover:shadow-lg
+
+                 w-[63vw]
+
+                 sm:w-[calc(50%-0.5rem)]
+
+                 md:w-[calc(33.333%-0.667rem)]
+
+                 lg:w-[calc(25%-0.75rem)]"
         >
 
-          @if (model.modelImageUrl) {
+          <!-- =================================================
+               CAR IMAGE
+               ================================================= -->
 
-            <img
-              [src]="model.modelImageUrl"
-              [alt]="model.modelName"
-              class="h-full w-full object-contain
-                     transition-transform duration-300 ease-out
-                     group-hover:scale-105"
+          <div
+            class="relative
+                   flex
+                   h-32
+                   w-full
+                   items-center
+                   justify-center
+                   sm:h-36
+                   md:h-40"
+          >
+
+            @if (model.modelImageUrl) {
+
+              <img
+                [src]="model.modelImageUrl"
+                [alt]="model.modelName"
+                loading="lazy"
+
+                class="h-full
+                       w-full
+                       object-contain
+                       transition-transform
+                       duration-300
+                       ease-out
+                       group-hover:scale-105"
+              >
+
+            } @else {
+
+              <span
+                class="text-xs text-gray-400"
+              >
+                Image not available
+              </span>
+
+            }
+
+
+            <!-- =================================================
+                 FAVOURITE BUTTON
+                 ================================================= -->
+
+            <button
+              type="button"
+              aria-label="Add to favourites"
+
+              (click)="$event.preventDefault(); $event.stopPropagation()"
+
+              class="absolute
+                     right-1
+                     top-1
+                     flex
+                     h-8
+                     w-8
+                     items-center
+                     justify-center
+                     rounded-full
+                     bg-white/90
+                     text-gray-600
+                     shadow-sm
+                     transition-all
+                     duration-200
+                     hover:scale-110
+                     hover:text-red-500"
             >
 
-          } @else {
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.8"
+                stroke="currentColor"
+                class="h-5 w-5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5
+                     -1.935 0-3.597 1.126-4.312 2.733
+                     -.715-1.607-2.377-2.733-4.313-2.733
+                     C5.099 3.75 3 5.765 3 8.25
+                     c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
 
-            <span class="text-[10px] text-gray-400 sm:text-xs">
-              Image not available
-            </span>
+            </button>
 
-          }
-
-        </div>
+          </div>
 
 
-        <!-- Model Information -->
-        <div class="flex flex-1 flex-col px-1 pb-1 pt-3 sm:pt-4">
+          <!-- =================================================
+               MODEL INFORMATION
+               ================================================= -->
 
-          <!-- Model Name + Power -->
-          <div class="flex items-center justify-between gap-2">
+          <div
+            class="flex
+                   flex-1
+                   flex-col
+                   px-1
+                   pb-1
+                   pt-3"
+          >
+
+            <!-- Model Name -->
 
             <h3
-              class="min-w-0 truncate text-base font-bold leading-tight
-                     tracking-tight text-gray-900
-                     transition-colors duration-200
-                     group-hover:text-gray-700
-                     sm:text-lg md:text-lg"
+              class="cs-accent
+                     cs-accent-hover
+                     truncate
+                     text-base
+                     font-bold
+                     leading-tight
+                     tracking-tight
+                     transition-colors
+                     duration-200
+                     sm:text-lg"
             >
               {{ model.modelName }}
             </h3>
 
-            <!-- Power -->
-            <span
-              class="shrink-0 text-[9px] font-medium tracking-wide text-gray-500
-                     sm:text-[10px]
-                     md:text-xs"
+
+            <!-- =================================================
+                 PRICE
+                 ================================================= -->
+
+            <div class="mt-4">
+
+              <p
+                class="text-base
+                       font-bold
+                       leading-tight
+                       tracking-tight
+                       text-gray-800
+                       sm:text-lg"
+              >
+                Rs.
+                {{ (model.minPrice ?? 0) / 100000 | number:'1.2-2' }}
+                -
+                {{ (model.maxPrice ?? 0) / 100000 | number:'1.2-2' }}
+                Lakhs
+              </p>
+
+              <p
+                class="mt-1
+                       text-[10px]
+                       font-medium
+                       tracking-wide
+                       text-gray-400
+                       sm:text-xs"
+              >
+                Ex-showroom
+              </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 SAFETY RATING
+
+                 Fixed height keeps every card aligned.
+                 ================================================= -->
+
+            <div
+              class="mt-4
+                     h-[68px]
+                     border-t
+                     border-gray-100
+                     pt-3"
             >
-              {{ model.minPower }}–{{ model.maxPower }} bhp
-            </span>
+
+              @if (model.safetyRating !== null) {
+
+                <div
+                  class="flex
+                         items-center
+                         gap-2"
+                >
+
+                  <!-- Shield -->
+
+                  <div
+                    class="flex
+                           h-8
+                           w-8
+                           shrink-0
+                           items-center
+                           justify-center
+                           text-gray-700"
+                  >
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.7"
+                      stroke="currentColor"
+                      class="h-7 w-7"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75
+                           M21 12c0 5.245-3.34 8.25-9 9.75
+                           C6.34 20.25 3 17.245 3 12V5.25
+                           L12 2.25l9 3V12Z"
+                      />
+                    </svg>
+
+                  </div>
+
+
+                  <div class="min-w-0">
+
+                    <p
+                      class="text-xs
+                             font-medium
+                             leading-tight
+                             text-gray-700
+                             sm:text-sm"
+                    >
+                      {{ model.safetyRating }}
+                      Star Safety Rating
+                    </p>
+
+
+                    <div
+                      class="mt-0.5
+                             flex
+                             min-w-0
+                             items-center
+                             gap-2"
+                    >
+
+                      <!-- Stars -->
+
+                      <div
+                        class="flex
+                               shrink-0
+                               items-center
+                               gap-0.5
+                               text-amber-400"
+                      >
+
+                        @for (
+                          star of [1, 2, 3, 4, 5];
+                          track star
+                        ) {
+
+                          @if (
+                            star <= (model.safetyRating ?? 0)
+                          ) {
+
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              class="h-4 w-4"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10.788 3.21c.12-.43.515-.73.962-.73h.5
+                                   c.447 0 .842.3.962.73l1.24 4.424
+                                   4.541.19c.441.019.81.31.941.732
+                                   .131.422-.005.88-.345 1.15l-3.55 2.82
+                                   1.18 4.61c.116.455-.056.934-.434 1.21
+                                   -.378.276-.888.292-1.284.04L12 15.91
+                                   l-3.501 2.477c-.396.252-.906.236-1.284-.04
+                                   -.378-.276-.55-.755-.434-1.21l1.18-4.61
+                                   -3.55-2.82c-.34-.27-.476-.728-.345-1.15
+                                   .131-.422.5-.713.941-.732l4.541-.19
+                                   1.24-4.424Z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+
+                          } @else {
+
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              class="h-4 w-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="m12 3.5 1.53 5.47 5.67.24
+                                   -4.43 3.52 1.47 5.72L12 15.4
+                                   7.76 18.45l1.47-5.72L4.8 9.21l5.67-.24
+                                   L12 3.5Z"
+                              />
+                            </svg>
+
+                          }
+
+                        }
+
+                      </div>
+
+
+                      @if (model.safetyRatingSource) {
+
+                        <span
+                          class="min-w-0
+                                 truncate
+                                 text-[10px]
+                                 text-gray-500
+                                 sm:text-xs"
+                        >
+                          ({{ model.safetyRatingSource }})
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              } @else {
+
+                <!-- Safety unavailable -->
+
+                <div
+                  class="flex
+                         h-full
+                         items-center
+                         gap-2
+                         text-gray-400"
+                >
+
+                  <div
+                    class="flex
+                           h-8
+                           w-8
+                           shrink-0
+                           items-center
+                           justify-center"
+                  >
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="h-7 w-7"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75
+                           M21 12c0 5.245-3.34 8.25-9 9.75
+                           C6.34 20.25 3 17.245 3 12V5.25
+                           L12 2.25l9 3V12Z"
+                      />
+                    </svg>
+
+                  </div>
+
+
+                  <div>
+
+                    <p
+                      class="text-xs
+                             font-medium
+                             leading-tight
+                             text-gray-400
+                             sm:text-sm"
+                    >
+                      Safety Rating
+                    </p>
+
+                    <p
+                      class="mt-0.5
+                             text-[10px]
+                             text-gray-400
+                             sm:text-xs"
+                    >
+                      Not available
+                    </p>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+
+            <!-- =================================================
+                 SPECS
+                 ================================================= -->
+
+            <div
+              class="grid
+                     grid-cols-2
+                     gap-x-2
+                     gap-y-3
+                     border-t
+                     border-gray-100
+                     pt-3"
+            >
+
+              <!-- ENGINE CC -->
+
+              <div
+                class="flex
+                       min-w-0
+                       items-center
+                       gap-1.5"
+              >
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.7"
+                  stroke="currentColor"
+                  class="h-4
+                         w-4
+                         shrink-0
+                         text-gray-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 7h10v10H4z
+                       M14 10h3l2 2v5h-5
+                       M7 7V4h4v3
+                       M19 13h2
+                       M7 17v2
+                       M11 17v2"
+                  />
+                </svg>
+
+
+                <span
+                  class="min-w-0
+                         truncate
+                         whitespace-nowrap
+                         text-[11px]
+                         font-medium
+                         text-gray-700
+                         sm:text-xs"
+
+                  [title]="
+                    model.engineCC.length > 0
+                      ? model.engineCC.join(' / ') + ' cc'
+                      : 'Engine displacement not available'
+                  "
+                >
+
+                  @if (model.engineCC.length > 0) {
+
+                    {{ model.engineCC.join(' / ') }} cc
+
+                  } @else {
+
+                    —
+
+                  }
+
+                </span>
+
+              </div>
+
+
+              <!-- FUEL TYPE -->
+
+              <div
+                class="flex
+                       min-w-0
+                       items-center
+                       gap-1.5"
+              >
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.7"
+                  stroke="currentColor"
+                  class="h-4
+                         w-4
+                         shrink-0
+                         text-gray-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M7 3h8v18H7z
+                       M9 5h4v5H9z
+                       M15 7h2l2 2v7
+                       a2 2 0 0 0 2 2
+                       M19 9h-2"
+                  />
+                </svg>
+
+
+                <span
+                  class="min-w-0
+                         truncate
+                         whitespace-nowrap
+                         text-[11px]
+                         font-medium
+                         text-gray-700
+                         sm:text-xs"
+
+                  [title]="
+                    model.fuelTypes.length > 0
+                      ? model.fuelTypes.join(' / ')
+                      : 'Fuel type not available'
+                  "
+                >
+
+                  @if (model.fuelTypes.length > 0) {
+
+                    {{ model.fuelTypes.join(' / ') }}
+
+                  } @else {
+
+                    —
+
+                  }
+
+                </span>
+
+              </div>
+
+
+              <!-- POWER -->
+
+              <div
+                class="flex
+                       min-w-0
+                       items-center
+                       gap-1.5"
+              >
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.7"
+                  stroke="currentColor"
+                  class="h-4
+                         w-4
+                         shrink-0
+                         text-gray-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"
+                  />
+                </svg>
+
+
+                <span
+                  class="truncate
+                         whitespace-nowrap
+                         text-[11px]
+                         font-medium
+                         text-gray-700
+                         sm:text-xs"
+                >
+
+                  @if (
+                    model.minPower !== null &&
+                    model.maxPower !== null
+                  ) {
+
+                    @if (model.minPower === model.maxPower) {
+
+                      {{ model.minPower }} bhp
+
+                    } @else {
+
+                      {{ model.minPower }}–{{ model.maxPower }} bhp
+
+                    }
+
+                  } @else {
+
+                    —
+
+                  }
+
+                </span>
+
+              </div>
+
+
+              <!-- FUEL EFFICIENCY -->
+
+              <div
+                class="flex
+                       min-w-0
+                       items-center
+                       gap-1.5"
+              >
+
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.7"
+                  stroke="currentColor"
+                  class="h-4
+                         w-4
+                         shrink-0
+                         text-gray-600"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 18h2
+                       M9 15h2
+                       M13 11h2
+                       M17 7h2
+                       M4 20 20 4"
+                  />
+                </svg>
+
+
+                <span
+                  class="truncate
+                         whitespace-nowrap
+                         text-[11px]
+                         font-medium
+                         text-gray-700
+                         sm:text-xs"
+
+                  [title]="
+                    model.fuelEfficiency !== null
+                      ? model.fuelEfficiency + ' ' +
+                        (model.fuelEfficiencyUnit ?? '')
+                      : 'Fuel efficiency not available'
+                  "
+                >
+
+                  @if (model.fuelEfficiency !== null) {
+
+                    {{ model.fuelEfficiency | number:'1.1-2' }}
+
+                    @if (model.fuelEfficiencyUnit) {
+                      {{ model.fuelEfficiencyUnit }}
+                    }
+
+                  } @else {
+
+                    —
+
+                  }
+
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 VIEW VARIANTS
+                 ================================================= -->
+
+            <div
+              class="mt-4
+                     flex
+                     items-center
+                     justify-center
+                     rounded-lg
+                     border
+                     border-red-400
+                     py-2
+                     text-xs
+                     font-medium
+                     transition-all
+                     duration-200
+                     cs-accent
+                     group-hover:bg-red-50"
+            >
+
+              View Variants
+
+              <span
+                class="ml-1
+                       transition-transform
+                       duration-200
+                       group-hover:translate-x-1"
+              >
+                →
+              </span>
+
+            </div>
 
           </div>
 
+        </a>
 
-          <!-- Price -->
-          <div class="mt-5">
+      }
 
-            <p
-              class="text-lg font-bold leading-none tracking-tight text-gray-800
-                     sm:text-lg md:text-lg"
-            >
-              Rs. {{ model.minPrice }} - {{ model.maxPrice }} Lakhs
-            </p>
-
-          </div>
+    </div>
 
 
-          <!-- Price Type + View Variants -->
-          <div class="mt-1.5 flex items-center justify-between">
+    <!-- =======================================================
+         RIGHT ARROW
 
-            <span
-              class="text-[10px] font-medium tracking-wide text-gray-400
-                     sm:text-xs"
-            >
-              Ex-showroom
-            </span>
+         Hidden automatically when there is no more content
+         to scroll.
+         ======================================================= -->
 
-            <span
-              class="text-[10px] font-medium text-gray-400
-                     transition-all duration-200
-                     group-hover:translate-x-1
-                     group-hover:text-gray-700
-                     sm:text-xs"
-            >
-              View variants →
-            </span>
+    <button
+      type="button"
+      aria-label="Next models"
 
-          </div>
+      [class.hidden]="!showRightArrow()"
 
-        </div>
+      (click)="scrollModels('next')"
 
-      </a>
+      class="absolute
+             right-2
+             top-1/2
+             z-20
+             flex
+             h-9
+             w-9
+             -translate-y-1/2
+             items-center
+             justify-center
+             rounded-full
+             border
+             border-gray-200
+             bg-white/95
+             text-gray-700
+             shadow-md
+             backdrop-blur-sm
+             transition-all
+             duration-200
+             hover:scale-105
+             hover:shadow-lg
+             sm:h-10
+             sm:w-10"
+    >
 
-    }
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="h-4 w-4 sm:h-5 sm:w-5"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="m8.25 4.5 7.5 7.5-7.5 7.5"
+        />
+      </svg>
+
+    </button>
+
+  </div>
+
+
+  <!-- =========================================================
+       MOBILE SCROLL HINT
+       ========================================================= -->
+
+  <div
+    class="mt-1
+           flex
+           items-center
+           justify-center
+           gap-1.5
+           text-[10px]
+           text-gray-400
+           sm:text-xs
+           md:hidden"
+  >
+
+    <span>
+      Swipe to explore more models
+    </span>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="h-3.5 w-3.5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+      />
+    </svg>
 
   </div>
 
 </div>
-

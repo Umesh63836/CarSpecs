@@ -9,5 +9,7 @@ public partial class Drivetrain
 
     public string DrivetrainType { get; set; } = null!;
 
+    public string? DifferentialType { get; set; }
+
     public virtual ICollection<Variant> Variants { get; set; } = new List<Variant>();
 }

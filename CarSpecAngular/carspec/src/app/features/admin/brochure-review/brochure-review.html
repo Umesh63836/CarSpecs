@@ -1,0 +1,2839 @@
+<div class="min-h-full bg-gray-50 p-4 sm:p-6">
+
+  <!-- ============================================================
+       PAGE HEADER
+       ============================================================ -->
+
+  <div class="mb-5">
+
+    <div
+      class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
+    >
+
+      <div class="flex items-start gap-3">
+
+        <div
+          class="
+            flex h-11 w-11 shrink-0 items-center justify-center
+            rounded-xl bg-red-50 text-red-600
+            ring-1 ring-red-100
+          "
+        >
+          <svg
+            class="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M9 5a3 3 0 016 0h-6z"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M9 13h6M9 17h4"
+            />
+          </svg>
+        </div>
+
+        <div>
+
+          <div class="flex flex-wrap items-center gap-2">
+
+            <h1
+              class="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl"
+            >
+              Admin Review
+            </h1>
+
+            @if (review(); as currentReview) {
+
+              <span
+                class="
+                  rounded-full px-2.5 py-1
+                  text-[10px] font-bold uppercase tracking-wide
+                "
+                [ngClass]="{
+                  'bg-amber-50 text-amber-700 ring-1 ring-amber-200':
+                    currentReview.status === 'AdminReview',
+
+                  'bg-green-50 text-green-700 ring-1 ring-green-200':
+                    currentReview.status === 'Approved',
+
+                  'bg-gray-100 text-gray-600':
+                    currentReview.status !== 'AdminReview' &&
+                    currentReview.status !== 'Approved'
+                }"
+              >
+                {{ currentReview.status || 'Unknown' }}
+              </span>
+
+            }
+
+          </div>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Review AI extraction against the brochure before final approval.
+          </p>
+
+          <div class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+
+            <span class="text-xs font-medium text-gray-500">
+              Batch #{{ importBatchId() }}
+            </span>
+
+            <span class="text-gray-300">•</span>
+
+            <span class="text-xs text-gray-400">
+              {{ totalCount }} proposed changes
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- REFRESH -->
+
+      <button
+        type="button"
+        (click)="loadReview()"
+        [disabled]="loading() || saving() || approving()"
+        class="
+          inline-flex items-center justify-center gap-2
+          self-start rounded-lg border border-gray-200
+          bg-white px-3.5 py-2
+          text-xs font-semibold text-gray-700
+          shadow-sm transition
+          hover:border-red-200 hover:bg-red-50 hover:text-red-600
+          disabled:cursor-not-allowed disabled:opacity-50
+          lg:self-center
+        "
+      >
+
+        @if (loading()) {
+
+          <svg
+            class="h-4 w-4 animate-spin"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="9"
+              stroke="currentColor"
+              stroke-width="3"
+            />
+
+            <path
+              fill="currentColor"
+              d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+            />
+          </svg>
+
+          Refreshing...
+
+        } @else {
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M4 4v5h5M20 20v-5h-5"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M5.5 9A7 7 0 0118 6.5L20 9M18.5 15A7 7 0 016 17.5L4 15"
+            />
+          </svg>
+
+          Refresh Review
+
+        }
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       GLOBAL ERROR
+       ============================================================ -->
+
+  @if (errorMessage()) {
+
+    <div
+      class="
+        mb-5 flex items-start gap-3
+        rounded-xl border border-red-200
+        bg-red-50 px-4 py-3
+        text-red-800 shadow-sm
+      "
+    >
+
+      <div
+        class="
+          mt-0.5 flex h-7 w-7 shrink-0
+          items-center justify-center
+          rounded-full bg-red-100 text-red-600
+        "
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v4m0 4h.01M10.3 3.8l-7.1 12.4A2 2 0 005 19h14a2 2 0 001.8-2.8L13.7 3.8a2 2 0 00-3.4 0z"
+          />
+        </svg>
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <p class="text-xs font-bold uppercase tracking-wide text-red-700">
+          Action failed
+        </p>
+
+        <p class="mt-0.5 break-words text-sm leading-5">
+          {{ errorMessage() }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        (click)="dismissError()"
+        class="rounded-md p-1 text-red-500 transition hover:bg-red-100"
+        aria-label="Dismiss error"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 6l12 12M18 6L6 18"
+          />
+        </svg>
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       GLOBAL SUCCESS
+       ============================================================ -->
+
+  @if (successMessage()) {
+
+    <div
+      class="
+        mb-5 flex items-start gap-3
+        rounded-xl border border-green-200
+        bg-green-50 px-4 py-3
+        text-green-800 shadow-sm
+      "
+    >
+
+      <div
+        class="
+          mt-0.5 flex h-7 w-7 shrink-0
+          items-center justify-center
+          rounded-full bg-green-100 text-green-600
+        "
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
+
+      <div class="min-w-0 flex-1">
+
+        <p class="text-xs font-bold uppercase tracking-wide text-green-700">
+          Success
+        </p>
+
+        <p class="mt-0.5 break-words text-sm leading-5">
+          {{ successMessage() }}
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        (click)="dismissSuccess()"
+        class="rounded-md p-1 text-green-500 transition hover:bg-green-100"
+        aria-label="Dismiss success message"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 6l12 12M18 6L6 18"
+          />
+        </svg>
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       INITIAL LOADING
+       ============================================================ -->
+
+  @if (loading() && !review()) {
+
+    <div class="space-y-5">
+
+      <div
+        class="
+          grid grid-cols-2 gap-3
+          sm:grid-cols-3
+          lg:grid-cols-5
+        "
+      >
+
+        @for (item of [1,2,3,4,5]; track item) {
+
+          <div
+            class="
+              h-24 animate-pulse rounded-xl
+              border border-gray-200 bg-white
+            "
+          ></div>
+
+        }
+
+      </div>
+
+      <div
+        class="
+          h-20 animate-pulse rounded-xl
+          border border-gray-200 bg-white
+        "
+      ></div>
+
+      <div
+        class="
+          h-[500px] animate-pulse rounded-2xl
+          border border-gray-200 bg-white
+        "
+      ></div>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       REVIEW
+       ============================================================ -->
+
+  @if (review(); as currentReview) {
+
+
+    <!-- ==========================================================
+         SUMMARY
+         ========================================================== -->
+
+    <div
+      class="
+        mb-5 grid grid-cols-2 gap-3
+        sm:grid-cols-3
+        lg:grid-cols-5
+      "
+    >
+
+      <!-- TOTAL -->
+
+      <button
+        type="button"
+        (click)="setFilter('All')"
+        class="summary-card text-left"
+        [class.summary-card-active]="activeFilter() === 'All'"
+      >
+
+        <div class="summary-icon bg-gray-100 text-gray-600">
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"
+            />
+          </svg>
+
+        </div>
+
+        <div>
+          <p class="summary-label">
+            Total Changes
+          </p>
+
+          <p class="summary-value">
+            {{ totalCount }}
+          </p>
+        </div>
+
+      </button>
+
+
+      <!-- PENDING -->
+
+      <button
+        type="button"
+        (click)="setFilter('Pending')"
+        class="summary-card text-left"
+        [class.summary-card-active]="activeFilter() === 'Pending'"
+      >
+
+        <div class="summary-icon bg-amber-50 text-amber-600">
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="8.5"
+              stroke="currentColor"
+              stroke-width="1.8"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-width="1.8"
+              d="M12 7.5v5l3 1.5"
+            />
+          </svg>
+
+        </div>
+
+        <div>
+          <p class="summary-label">
+            Pending
+          </p>
+
+          <p class="summary-value text-amber-600">
+            {{ pendingCount }}
+          </p>
+        </div>
+
+      </button>
+
+
+      <!-- ACCEPTED -->
+
+      <button
+        type="button"
+        (click)="setFilter('Accepted')"
+        class="summary-card text-left"
+        [class.summary-card-active]="activeFilter() === 'Accepted'"
+      >
+
+        <div class="summary-icon bg-green-50 text-green-600">
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+
+        </div>
+
+        <div>
+          <p class="summary-label">
+            Accepted
+          </p>
+
+          <p class="summary-value text-green-600">
+            {{ acceptedCount }}
+          </p>
+        </div>
+
+      </button>
+
+
+      <!-- MODIFIED -->
+
+      <button
+        type="button"
+        (click)="setFilter('Modified')"
+        class="summary-card text-left"
+        [class.summary-card-active]="activeFilter() === 'Modified'"
+      >
+
+        <div class="summary-icon bg-blue-50 text-blue-600">
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M12 20h9"
+            />
+
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="M16.5 3.5a2.1 2.1 0 013 3L8 18l-4 1 1-4z"
+            />
+          </svg>
+
+        </div>
+
+        <div>
+          <p class="summary-label">
+            Modified
+          </p>
+
+          <p class="summary-value text-blue-600">
+            {{ modifiedCount }}
+          </p>
+        </div>
+
+      </button>
+
+
+      <!-- REJECTED -->
+
+      <button
+        type="button"
+        (click)="setFilter('Rejected')"
+        class="summary-card text-left"
+        [class.summary-card-active]="activeFilter() === 'Rejected'"
+      >
+
+        <div class="summary-icon bg-red-50 text-red-600">
+
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 6l12 12M18 6L6 18"
+            />
+          </svg>
+
+        </div>
+
+        <div>
+          <p class="summary-label">
+            Rejected
+          </p>
+
+          <p class="summary-value text-red-600">
+            {{ rejectedCount }}
+          </p>
+        </div>
+
+      </button>
+
+    </div>
+
+
+    <!-- ==========================================================
+         PROGRESS
+         ========================================================== -->
+
+    <div
+      class="
+        mb-5 rounded-xl border border-gray-200
+        bg-white px-4 py-3 shadow-sm
+      "
+    >
+
+      <div
+        class="
+          flex flex-col gap-2
+          sm:flex-row sm:items-center
+          sm:justify-between
+        "
+      >
+
+        <div>
+
+          <p class="text-xs font-bold uppercase tracking-wide text-gray-500">
+            Review Progress
+          </p>
+
+          <p class="mt-0.5 text-sm text-gray-700">
+
+            @if (pendingCount === 0) {
+
+              <span class="font-semibold text-green-600">
+                All changes reviewed
+              </span>
+
+            } @else {
+
+              <span class="font-semibold text-gray-900">
+                {{ reviewedCount }}
+              </span>
+
+              <span class="text-gray-500">
+                of {{ totalCount }} changes reviewed
+              </span>
+
+            }
+
+          </p>
+
+        </div>
+
+        <div class="flex items-center gap-3">
+
+          <div class="h-2 w-32 overflow-hidden rounded-full bg-gray-100">
+
+            <div
+              class="h-full rounded-full bg-red-500 transition-all duration-300"
+              [style.width.%]="reviewProgress"
+            ></div>
+
+          </div>
+
+          <span class="text-xs font-bold text-gray-700">
+            {{ reviewProgress }}%
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         WARNINGS
+         ========================================================== -->
+
+    @if (
+      currentReview.warnings &&
+      currentReview.warnings.length > 0
+    ) {
+
+      <div
+        class="
+          mb-5 overflow-hidden rounded-xl
+          border border-amber-200 bg-amber-50
+        "
+      >
+
+        <div
+          class="
+            flex items-center gap-2
+            border-b border-amber-200
+            px-4 py-3
+          "
+        >
+
+          <div
+            class="
+              flex h-7 w-7 items-center justify-center
+              rounded-full bg-amber-100 text-amber-600
+            "
+          >
+
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M12 9v4m0 4h.01M10.3 3.8l-7.1 12.4A2 2 0 005 19h14a2 2 0 001.8-2.8L13.7 3.8a2 2 0 00-3.4 0z"
+              />
+            </svg>
+
+          </div>
+
+          <div>
+
+            <p class="text-sm font-bold text-amber-800">
+              Import Warnings
+            </p>
+
+            <p class="text-xs text-amber-700">
+              {{ currentReview.warnings.length }}
+              warning(s) were reported during extraction.
+            </p>
+
+          </div>
+
+        </div>
+
+        <ul class="space-y-1 px-5 py-3 text-sm text-amber-800">
+
+          @for (
+            warning of currentReview.warnings;
+            track $index
+          ) {
+
+            <li class="flex gap-2">
+
+              <span
+                class="
+                  mt-2 h-1 w-1 shrink-0
+                  rounded-full bg-amber-500
+                "
+              ></span>
+
+              <span class="break-words">
+                {{ warning }}
+              </span>
+
+            </li>
+
+          }
+
+        </ul>
+
+      </div>
+
+    }
+
+
+    <!-- ==========================================================
+         MAIN REVIEW WORKSPACE
+         ========================================================== -->
+
+    <div class="review-workspace">
+
+
+      <!-- ========================================================
+           LEFT SIDE - AUDIT REVIEW
+           ======================================================== -->
+
+      <main class="min-w-0">
+
+
+        <!-- ======================================================
+             TOOLBAR
+             ====================================================== -->
+
+        <div
+          class="
+            mb-4 rounded-xl border border-gray-200
+            bg-white p-3 shadow-sm
+          "
+        >
+
+          <div
+            class="
+              flex flex-col gap-3
+              xl:flex-row xl:items-center
+              xl:justify-between
+            "
+          >
+
+            <!-- SEARCH -->
+
+            <div class="relative min-w-0 flex-1">
+
+              <svg
+                class="
+                  pointer-events-none absolute left-3 top-1/2
+                  h-4 w-4 -translate-y-1/2 text-gray-400
+                "
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  cx="11"
+                  cy="11"
+                  r="7"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+
+                <path
+                  stroke-linecap="round"
+                  stroke-width="1.8"
+                  d="M20 20l-4-4"
+                />
+              </svg>
+
+              <input
+                type="text"
+                [value]="searchTerm()"
+                (input)="setSearchTerm($any($event.target).value)"
+                placeholder="Search change ID, identity, collection, reason..."
+                class="
+                  w-full rounded-lg border border-gray-200
+                  bg-gray-50 py-2.5 pl-9 pr-9
+                  text-sm text-gray-900 outline-none
+                  transition
+                  placeholder:text-gray-400
+                  focus:border-red-400
+                  focus:bg-white
+                  focus:ring-2 focus:ring-red-100
+                "
+              />
+
+              @if (searchTerm()) {
+
+                <button
+                  type="button"
+                  (click)="clearSearch()"
+                  class="
+                    absolute right-2 top-1/2
+                    -translate-y-1/2 rounded-md p-1
+                    text-gray-400
+                    hover:bg-gray-100 hover:text-gray-700
+                  "
+                  aria-label="Clear search"
+                >
+
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 6l12 12M18 6L6 18"
+                    />
+                  </svg>
+
+                </button>
+
+              }
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div
+              class="
+                flex items-center gap-1 overflow-x-auto
+                rounded-lg bg-gray-100 p-1
+              "
+            >
+
+              @for (
+                filter of ['All', 'Pending', 'Accepted', 'Modified', 'Rejected'];
+                track filter
+              ) {
+
+                <button
+                  type="button"
+                  (click)="setFilter(filter)"
+                  class="
+                    whitespace-nowrap rounded-md px-3 py-1.5
+                    text-[11px] font-semibold transition
+                  "
+                  [ngClass]="
+                    activeFilter() === filter
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-800'
+                  "
+                >
+                  {{ filter }}
+                </button>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="
+              mt-2 flex flex-wrap items-center
+              justify-between gap-2 px-1
+            "
+          >
+
+            <span class="text-[11px] text-gray-400">
+
+              Showing
+
+              <span class="font-semibold text-gray-600">
+                {{ filteredChanges.length }}
+              </span>
+
+              of
+
+              <span class="font-semibold text-gray-600">
+                {{ totalCount }}
+              </span>
+
+              changes
+
+            </span>
+
+            @if (searchTerm()) {
+
+              <span class="truncate text-[11px] text-gray-400">
+                Search: "{{ searchTerm() }}"
+              </span>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- ======================================================
+             EMPTY
+             ====================================================== -->
+
+        @if (filteredChanges.length === 0) {
+
+          <div
+            class="
+              flex min-h-[260px] items-center justify-center
+              rounded-2xl border border-dashed
+              border-gray-200 bg-white
+            "
+          >
+
+            <div class="max-w-sm px-6 text-center">
+
+              <div
+                class="
+                  mx-auto mb-3 flex h-12 w-12
+                  items-center justify-center
+                  rounded-xl bg-gray-50
+                  text-gray-400 ring-1 ring-gray-100
+                "
+              >
+
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                  />
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="1.6"
+                    d="M20 20l-4-4"
+                  />
+                </svg>
+
+              </div>
+
+              <h3 class="text-sm font-semibold text-gray-800">
+                No changes found
+              </h3>
+
+              <p class="mt-1 text-xs leading-5 text-gray-500">
+                Try another filter or search term.
+              </p>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <!-- ======================================================
+             AUDIT CHANGES
+             ====================================================== -->
+
+        <div class="space-y-4">
+
+          @for (
+            change of filteredChanges;
+            track trackByChangeId($index, change)
+          ) {
+
+            <article
+              class="
+                overflow-hidden rounded-2xl
+                border border-gray-200 bg-white
+                shadow-sm transition
+                hover:border-gray-300 hover:shadow-md
+              "
+              [class.ring-1]="change.decision === 'Pending'"
+              [class.ring-amber-100]="change.decision === 'Pending'"
+            >
+
+
+              <!-- CARD HEADER -->
+
+              <div
+                class="
+                  flex flex-col gap-4
+                  border-b border-gray-100
+                  px-4 py-4 sm:px-5
+                  xl:flex-row xl:items-center
+                  xl:justify-between
+                "
+              >
+
+                <div class="min-w-0">
+
+                  <div class="flex flex-wrap items-center gap-2">
+
+                    <span
+                      class="
+                        font-mono text-xs font-bold
+                        text-gray-900
+                      "
+                    >
+                      {{ change.changeId || 'Unknown' }}
+                    </span>
+
+                    <span
+                      class="status-pill"
+                      [ngClass]="getSeverityClass(change.severity)"
+                    >
+                      {{ change.severity || 'Unknown' }}
+                    </span>
+
+                    <span
+                      class="status-pill"
+                      [ngClass]="getActionClass(change.action)"
+                    >
+                      {{ change.action || 'Unknown' }}
+                    </span>
+
+                    <span
+                      class="status-pill"
+                      [ngClass]="getDecisionClass(change.decision)"
+                    >
+                      {{ change.decision || 'Pending' }}
+                    </span>
+
+                  </div>
+
+                  <div
+                    class="
+                      mt-2 flex flex-wrap items-center
+                      gap-x-2 gap-y-1 text-xs
+                    "
+                  >
+
+                    <span class="font-medium text-gray-700">
+                      {{ change.issueType || 'Unspecified issue' }}
+                    </span>
+
+                    <span class="text-gray-300">•</span>
+
+                    <span class="text-gray-500">
+                      {{ change.category || 'Uncategorized' }}
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <!-- DECISION BUTTONS -->
+
+                <div
+                  class="
+                    flex flex-wrap items-center gap-1.5
+                    xl:shrink-0
+                  "
+                >
+
+                  <button
+                    type="button"
+                    (click)="setDecision(change, 'Accepted')"
+                    [disabled]="
+                      saving() ||
+                      approving() ||
+                      currentReview.status === 'Approved'
+                    "
+                    class="decision-button"
+                    [ngClass]="
+                      change.decision === 'Accepted'
+                        ? 'decision-button-active-green'
+                        : 'decision-button-green'
+                    "
+                  >
+
+                    <svg
+                      class="h-3.5 w-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+
+                    Accept
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    (click)="setDecision(change, 'Rejected')"
+                    [disabled]="
+                      saving() ||
+                      approving() ||
+                      currentReview.status === 'Approved'
+                    "
+                    class="decision-button"
+                    [ngClass]="
+                      change.decision === 'Rejected'
+                        ? 'decision-button-active-red'
+                        : 'decision-button-red'
+                    "
+                  >
+
+                    <svg
+                      class="h-3.5 w-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 6l12 12M18 6L6 18"
+                      />
+                    </svg>
+
+                    Reject
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    (click)="setDecision(change, 'Modified')"
+                    [disabled]="
+                      saving() ||
+                      approving() ||
+                      currentReview.status === 'Approved'
+                    "
+                    class="decision-button"
+                    [ngClass]="
+                      change.decision === 'Modified'
+                        ? 'decision-button-active-blue'
+                        : 'decision-button-blue'
+                    "
+                  >
+
+                    <svg
+                      class="h-3.5 w-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        d="M12 20h9"
+                      />
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        d="M16.5 3.5a2.1 2.1 0 013 3L8 18l-4 1 1-4z"
+                      />
+                    </svg>
+
+                    Modify
+
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <!-- TARGET -->
+
+              <div
+                class="
+                  grid grid-cols-1 gap-3
+                  border-b border-gray-100
+                  bg-gray-50/70 px-4 py-3
+                  sm:grid-cols-2
+                  xl:grid-cols-4
+                  sm:px-5
+                "
+              >
+
+                <div>
+                  <p class="meta-label">
+                    Collection
+                  </p>
+
+                  <p class="meta-value font-mono">
+                    {{ change.collection || '-' }}
+                  </p>
+                </div>
+
+
+                <div>
+                  <p class="meta-label">
+                    Identity
+                  </p>
+
+                  <p
+                    class="
+                      meta-value break-all
+                      font-mono
+                    "
+                  >
+                    {{ change.identity || '-' }}
+                  </p>
+                </div>
+
+
+                <div>
+                  <p class="meta-label">
+                    Target Index
+                  </p>
+
+                  <p class="meta-value font-mono">
+
+                    @if (
+                      change.indexId !== null &&
+                      change.indexId !== undefined
+                    ) {
+
+                      [{{ change.indexId }}]
+
+                    } @else {
+
+                      -
+
+                    }
+
+                  </p>
+                </div>
+
+
+                <div>
+                  <p class="meta-label">
+                    Brochure Page
+                  </p>
+
+                  <p class="meta-value">
+
+                    @if (
+                      change.pageNumber !== null &&
+                      change.pageNumber !== undefined
+                    ) {
+
+                      <span
+                        class="
+                          inline-flex items-center gap-1
+                          rounded-md bg-white px-2 py-1
+                          text-xs font-semibold text-gray-700
+                          ring-1 ring-gray-200
+                        "
+                      >
+                        Page {{ change.pageNumber }}
+                      </span>
+
+                    } @else {
+
+                      -
+
+                    }
+
+                  </p>
+                </div>
+
+              </div>
+
+
+              <!-- CONTENT -->
+
+              <div class="p-4 sm:p-5">
+
+
+                <!-- REASON -->
+
+                @if (change.reason) {
+
+                  <section class="mb-4">
+
+                    <div class="section-heading">
+
+                      <span
+                        class="
+                          section-heading-icon
+                          bg-amber-50 text-amber-600
+                        "
+                      >
+                        <svg
+                          class="h-3.5 w-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.8"
+                            d="M12 9v4m0 4h.01M10.3 3.8l-7.1 12.4A2 2 0 005 19h14a2 2 0 001.8-2.8L13.7 3.8a2 2 0 00-3.4 0z"
+                          />
+                        </svg>
+                      </span>
+
+                      AI Reason
+
+                    </div>
+
+                    <div
+                      class="
+                        mt-2 rounded-lg
+                        border border-amber-100
+                        bg-amber-50/50
+                        px-3 py-2.5
+                        text-sm leading-6 text-gray-700
+                      "
+                    >
+                      {{ change.reason }}
+                    </div>
+
+                  </section>
+
+                }
+
+
+                <!-- EVIDENCE -->
+
+                @if (change.evidence) {
+
+                  <section class="mb-4">
+
+                    <div class="section-heading">
+
+                      <span
+                        class="
+                          section-heading-icon
+                          bg-red-50 text-red-600
+                        "
+                      >
+                        <svg
+                          class="h-3.5 w-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="8.5"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                          />
+
+                          <path
+                            stroke-linecap="round"
+                            stroke-width="1.8"
+                            d="M12 11v5"
+                          />
+
+                          <path
+                            stroke-linecap="round"
+                            stroke-width="2"
+                            d="M12 8h.01"
+                          />
+                        </svg>
+                      </span>
+
+                      Brochure Evidence
+
+                    </div>
+
+                    <div
+                      class="
+                        mt-2 rounded-lg
+                        border border-gray-200
+                        bg-gray-50
+                        px-3 py-2.5
+                        text-sm leading-6 text-gray-700
+                      "
+                    >
+
+                      <div
+                        [class.line-clamp-3]="
+                          !isEvidenceExpanded(change.changeId)
+                        "
+                      >
+                        {{ change.evidence }}
+                      </div>
+
+                      @if (change.evidence.length > 220) {
+
+                        <button
+                          type="button"
+                          (click)="toggleEvidence(change.changeId)"
+                          class="
+                            mt-2 text-xs font-semibold
+                            text-red-600
+                            hover:text-red-700
+                          "
+                        >
+                          {{
+                            isEvidenceExpanded(change.changeId)
+                              ? 'Show less'
+                              : 'Show more'
+                          }}
+                        </button>
+
+                      }
+
+                    </div>
+
+                  </section>
+
+                }
+
+
+                <!-- AI DATA -->
+
+                @if (change.data) {
+
+                  <section class="mb-4">
+
+                    <div
+                      class="
+                        flex flex-wrap items-center
+                        justify-between gap-2
+                      "
+                    >
+
+                      <div class="section-heading">
+
+                        <span
+                          class="
+                            section-heading-icon
+                            bg-gray-100 text-gray-600
+                          "
+                        >
+                          <svg
+                            class="h-3.5 w-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M8 9l-3 3 3 3M16 9l3 3-3 3M14 5l-4 14"
+                            />
+                          </svg>
+                        </span>
+
+                        AI Proposed Data
+
+                      </div>
+
+                      <div class="flex items-center gap-1">
+
+                        <button
+                          type="button"
+                          (click)="copyData(change.data)"
+                          class="
+                            inline-flex items-center gap-1.5
+                            rounded-md border border-gray-200
+                            bg-white px-2.5 py-1.5
+                            text-[10px] font-semibold text-gray-600
+                            transition
+                            hover:border-red-200
+                            hover:bg-red-50
+                            hover:text-red-600
+                          "
+                        >
+                          Copy
+                        </button>
+
+                        <button
+                          type="button"
+                          (click)="toggleData(change.changeId)"
+                          class="
+                            rounded-md border border-gray-200
+                            bg-white px-2.5 py-1.5
+                            text-[10px] font-semibold text-gray-600
+                            transition hover:bg-gray-50
+                          "
+                        >
+                          {{
+                            isDataExpanded(change.changeId)
+                              ? 'Collapse'
+                              : 'Expand'
+                          }}
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                    <div
+                      class="
+                        mt-2 overflow-hidden rounded-lg
+                        border border-gray-200
+                        bg-gray-950
+                      "
+                    >
+
+                      <pre
+                        class="
+                          overflow-auto p-4
+                          font-mono text-[11px]
+                          leading-5 text-gray-200
+                        "
+                        [class.max-h-72]="
+                          !isDataExpanded(change.changeId)
+                        "
+                        [class.max-h-[600px]]="
+                          isDataExpanded(change.changeId)
+                        "
+                      >{{ formatJson(change.data) }}</pre>
+
+                    </div>
+
+                  </section>
+
+                }
+
+
+                <!-- MODIFIED DATA -->
+
+                @if (change.decision === 'Modified') {
+
+                  <section
+                    class="
+                      mb-4 rounded-xl
+                      border border-blue-200
+                      bg-blue-50/40 p-3.5
+                    "
+                  >
+
+                    <div
+                      class="
+                        flex flex-wrap items-center
+                        justify-between gap-2
+                      "
+                    >
+
+                      <div class="section-heading">
+
+                        <span
+                          class="
+                            section-heading-icon
+                            bg-blue-100 text-blue-600
+                          "
+                        >
+                          <svg
+                            class="h-3.5 w-3.5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M12 20h9"
+                            />
+
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="1.8"
+                              d="M16.5 3.5a2.1 2.1 0 013 3L8 18l-4 1 1-4z"
+                            />
+                          </svg>
+                        </span>
+
+                        Modified Data
+
+                      </div>
+
+
+                      @if (isValidJson(change.modifiedData)) {
+
+                        <span
+                          class="
+                            inline-flex items-center gap-1
+                            rounded-full bg-green-50
+                            px-2 py-1
+                            text-[10px] font-bold
+                            text-green-700
+                            ring-1 ring-green-200
+                          "
+                        >
+                          <span
+                            class="
+                              h-1.5 w-1.5 rounded-full
+                              bg-green-500
+                            "
+                          ></span>
+
+                          Valid JSON
+                        </span>
+
+                      } @else {
+
+                        <span
+                          class="
+                            inline-flex items-center gap-1
+                            rounded-full bg-red-50
+                            px-2 py-1
+                            text-[10px] font-bold
+                            text-red-700
+                            ring-1 ring-red-200
+                          "
+                        >
+                          <span
+                            class="
+                              h-1.5 w-1.5 rounded-full
+                              bg-red-500
+                            "
+                          ></span>
+
+                          Invalid JSON
+                        </span>
+
+                      }
+
+                    </div>
+
+
+                    <textarea
+                      [(ngModel)]="change.modifiedData"
+                      [disabled]="
+                        saving() ||
+                        approving() ||
+                        currentReview.status === 'Approved'
+                      "
+                      rows="9"
+                      spellcheck="false"
+                      class="
+                        mt-3 w-full resize-y rounded-lg
+                        border border-blue-200
+                        bg-white p-3
+                        font-mono text-[11px]
+                        leading-5 text-gray-800
+                        outline-none transition
+                        placeholder:text-gray-400
+                        focus:border-blue-400
+                        focus:ring-2 focus:ring-blue-100
+                        disabled:cursor-not-allowed
+                        disabled:bg-gray-100
+                      "
+                      placeholder='Enter valid JSON, for example: {"Field":"Value"}'
+                    ></textarea>
+
+
+                    @if (
+                      change.modifiedData?.trim() &&
+                      !isValidJson(change.modifiedData)
+                    ) {
+
+                      <p
+                        class="
+                          mt-2 rounded-md
+                          bg-red-50 px-2.5 py-2
+                          text-[11px] text-red-700
+                        "
+                      >
+                        {{ getJsonError(change.modifiedData) }}
+                      </p>
+
+                    }
+
+
+                    <p class="mt-2 text-[10px] leading-4 text-gray-500">
+                      The modified value will replace the AI-proposed data
+                      when the review is approved.
+                    </p>
+
+                  </section>
+
+                }
+
+
+                <!-- ADMIN NOTES -->
+
+                <section>
+
+                  <label class="section-heading">
+
+                    <span
+                      class="
+                        section-heading-icon
+                        bg-gray-100 text-gray-500
+                      "
+                    >
+                      <svg
+                        class="h-3.5 w-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.8"
+                          d="M5 5h14v14H5z"
+                        />
+
+                        <path
+                          stroke-linecap="round"
+                          stroke-width="1.8"
+                          d="M8 9h8M8 13h6"
+                        />
+                      </svg>
+                    </span>
+
+                    Admin Notes
+
+                  </label>
+
+
+                  <textarea
+                    [(ngModel)]="change.notes"
+                    [disabled]="
+                      saving() ||
+                      approving() ||
+                      currentReview.status === 'Approved'
+                    "
+                    rows="3"
+                    class="
+                      mt-2 w-full resize-y rounded-lg
+                      border border-gray-200
+                      bg-gray-50 px-3 py-2.5
+                      text-xs text-gray-800
+                      outline-none transition
+                      placeholder:text-gray-400
+                      focus:border-red-400
+                      focus:bg-white
+                      focus:ring-2 focus:ring-red-100
+                      disabled:cursor-not-allowed
+                      disabled:bg-gray-100
+                    "
+                    placeholder="Optional note about your decision..."
+                  ></textarea>
+
+                </section>
+
+              </div>
+
+
+              <!-- CARD FOOTER -->
+
+              <div
+                class="
+                  flex flex-wrap items-center
+                  justify-between gap-2
+                  border-t border-gray-100
+                  bg-gray-50/60
+                  px-4 py-2.5 sm:px-5
+                "
+              >
+
+                <span class="text-[10px] text-gray-400">
+                  Audit change {{ change.changeId || '-' }}
+                </span>
+
+
+                @if (change.decision === 'Pending') {
+
+                  <span
+                    class="
+                      inline-flex items-center gap-1.5
+                      text-[10px] font-semibold text-amber-600
+                    "
+                  >
+
+                    <span
+                      class="
+                        h-1.5 w-1.5 animate-pulse
+                        rounded-full bg-amber-500
+                      "
+                    ></span>
+
+                    Requires review
+
+                  </span>
+
+                } @else if (change.decision === 'Accepted') {
+
+                  <span class="text-[10px] font-semibold text-green-600">
+                    Accepted for merge
+                  </span>
+
+                } @else if (change.decision === 'Rejected') {
+
+                  <span class="text-[10px] font-semibold text-red-600">
+                    Will be excluded from merge
+                  </span>
+
+                } @else {
+
+                  <span class="text-[10px] font-semibold text-blue-600">
+                    Modified value will be merged
+                  </span>
+
+                }
+
+              </div>
+
+            </article>
+
+          }
+
+        </div>
+
+      </main>
+
+
+      <!-- ========================================================
+           RIGHT SIDE - MODEL 1 JSON
+           ======================================================== -->
+
+      <aside class="model1-sidebar">
+
+        <div
+          class="
+            overflow-hidden rounded-2xl
+            border border-gray-200
+            bg-white shadow-sm
+          "
+        >
+
+          <!-- MODEL HEADER -->
+
+          <div
+            class="
+              flex items-center justify-between
+              border-b border-gray-200
+              px-4 py-3.5
+            "
+          >
+
+            <button
+              type="button"
+              (click)="toggleModelPanel()"
+              class="
+                flex min-w-0 items-center gap-3
+                text-left
+              "
+            >
+
+              <div
+                class="
+                  flex h-9 w-9 shrink-0
+                  items-center justify-center
+                  rounded-lg bg-red-50
+                  text-red-600
+                  ring-1 ring-red-100
+                "
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    d="M8 9l-3 3 3 3M16 9l3 3-3 3M14 5l-4 14"
+                  />
+                </svg>
+
+              </div>
+
+
+              <div class="min-w-0">
+
+                <p
+                  class="
+                    truncate text-sm font-bold
+                    text-gray-900
+                  "
+                >
+                  Model 1 JSON
+                </p>
+
+                <p
+                  class="
+                    truncate text-[10px]
+                    text-gray-400
+                  "
+                >
+                  Original AI extraction · Read only
+                </p>
+
+              </div>
+
+            </button>
+
+
+            <div class="flex items-center gap-1">
+
+              @if (hasModel1Data) {
+
+                <button
+                  type="button"
+                  (click)="copyData(model1)"
+                  class="
+                    rounded-md border border-gray-200
+                    bg-white px-2.5 py-1.5
+                    text-[10px] font-semibold
+                    text-gray-600
+                    transition
+                    hover:border-red-200
+                    hover:bg-red-50
+                    hover:text-red-600
+                  "
+                >
+                  Copy
+                </button>
+
+              }
+
+
+              <button
+                type="button"
+                (click)="toggleModelPanel()"
+                class="
+                  rounded-md p-1.5
+                  text-gray-400
+                  transition hover:bg-gray-100
+                  hover:text-gray-700
+                "
+                [attr.aria-label]="
+                  model1PanelExpanded()
+                    ? 'Collapse Model 1 JSON'
+                    : 'Expand Model 1 JSON'
+                "
+              >
+
+                <svg
+                  class="
+                    h-4 w-4 transition-transform
+                  "
+                  [class.rotate-180]="
+                    model1PanelExpanded()
+                  "
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    d="M6 9l6 6 6-6"
+                  />
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          @if (model1PanelExpanded()) {
+
+            <!-- MODEL EXPLANATION -->
+
+            <div
+              class="
+                border-b border-gray-100
+                bg-gray-50/70 px-4 py-3
+              "
+            >
+
+              <div class="flex items-start gap-2">
+
+                <div
+                  class="
+                    mt-0.5 flex h-5 w-5 shrink-0
+                    items-center justify-center
+                    rounded-full bg-blue-50
+                    text-blue-600
+                  "
+                >
+
+                  <svg
+                    class="h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.8"
+                      d="M12 16v-4M12 8h.01"
+                    />
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                    />
+                  </svg>
+
+                </div>
+
+
+                <p
+                  class="
+                    text-[10px] leading-4
+                    text-gray-500
+                  "
+                >
+                  This is the exact Model 1 extraction used by the
+                  AI auditor. Compare it with the brochure while
+                  reviewing each proposed change. Nothing here can
+                  be edited at this stage.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- NO MODEL DATA -->
+
+            @if (!hasModel1Data) {
+
+              <div
+                class="
+                  flex min-h-[260px]
+                  items-center justify-center
+                  p-6
+                "
+              >
+
+                <div class="text-center">
+
+                  <div
+                    class="
+                      mx-auto mb-3 flex h-11 w-11
+                      items-center justify-center
+                      rounded-xl bg-gray-50
+                      text-gray-400
+                      ring-1 ring-gray-100
+                    "
+                  >
+
+                    <svg
+                      class="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        d="M4 5h16v14H4z"
+                      />
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-width="1.8"
+                        d="M8 9h8M8 13h5"
+                      />
+                    </svg>
+
+                  </div>
+
+                  <p class="text-sm font-semibold text-gray-700">
+                    Model 1 data unavailable
+                  </p>
+
+                  <p
+                    class="
+                      mx-auto mt-1 max-w-xs
+                      text-[11px] leading-5
+                      text-gray-400
+                    "
+                  >
+                    The review response did not contain Model 1 JSON.
+                  </p>
+
+                </div>
+
+              </div>
+
+            } @else {
+
+              <!-- MODEL TOOLBAR -->
+
+              <div
+                class="
+                  flex items-center justify-between
+                  border-b border-gray-100
+                  px-3 py-2
+                "
+              >
+
+                <span
+                  class="
+                    text-[10px] font-semibold
+                    uppercase tracking-wider
+                    text-gray-400
+                  "
+                >
+                  {{ model1Sections.length }} categories
+                </span>
+
+
+                <div class="flex items-center gap-1">
+
+                  <button
+                    type="button"
+                    (click)="expandAllModelSections()"
+                    class="
+                      rounded-md px-2 py-1
+                      text-[10px] font-semibold
+                      text-gray-500
+                      hover:bg-gray-100
+                      hover:text-gray-800
+                    "
+                  >
+                    Expand all
+                  </button>
+
+                  <button
+                    type="button"
+                    (click)="collapseAllModelSections()"
+                    class="
+                      rounded-md px-2 py-1
+                      text-[10px] font-semibold
+                      text-gray-500
+                      hover:bg-gray-100
+                      hover:text-gray-800
+                    "
+                  >
+                    Collapse all
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <!-- MODEL CATEGORIES -->
+
+              <div class="model1-sections">
+
+                @for (
+                  section of model1Sections;
+                  track trackByModelSection($index, section)
+                ) {
+
+                  <section
+                    class="
+                      border-b border-gray-100
+                      last:border-b-0
+                    "
+                  >
+
+                    <!-- CATEGORY HEADER -->
+
+                    <button
+                      type="button"
+                      (click)="toggleModelSection(section.key)"
+                      class="
+                        flex w-full items-center
+                        gap-3 px-4 py-3
+                        text-left
+                        transition
+                        hover:bg-gray-50
+                      "
+                    >
+
+                      <div
+                        class="
+                          flex h-8 w-8 shrink-0
+                          items-center justify-center
+                          rounded-lg
+                          bg-gray-100
+                          text-gray-500
+                        "
+                      >
+
+                        @switch (
+                          getModelSectionIcon(section.key)
+                        ) {
+
+                          @case ('variants') {
+
+                            <svg
+                              class="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.7"
+                                d="M5 6h14M5 12h14M5 18h14"
+                              />
+                            </svg>
+
+                          }
+
+                          @case ('specifications') {
+
+                            <svg
+                              class="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.7"
+                                d="M5 7h14M5 12h9M5 17h14"
+                              />
+                            </svg>
+
+                          }
+
+                          @case ('features') {
+
+                            <svg
+                              class="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.7"
+                                d="M12 3l2.7 5.5L21 9.4l-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.4l6.3-.9z"
+                              />
+                            </svg>
+
+                          }
+
+                          @default {
+
+                            <svg
+                              class="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.7"
+                                d="M4 5h16v14H4z"
+                              />
+
+                              <path
+                                stroke-linecap="round"
+                                stroke-width="1.7"
+                                d="M8 9h8M8 13h5"
+                              />
+                            </svg>
+
+                          }
+
+                        }
+
+                      </div>
+
+
+                      <div class="min-w-0 flex-1">
+
+                        <div
+                          class="
+                            flex flex-wrap
+                            items-center gap-2
+                          "
+                        >
+
+                          <span
+                            class="
+                              truncate text-xs
+                              font-bold text-gray-800
+                            "
+                          >
+                            {{ section.label }}
+                          </span>
+
+                          @if (section.itemCount !== null) {
+
+                            <span
+                              class="
+                                rounded-full
+                                bg-gray-100
+                                px-1.5 py-0.5
+                                text-[9px]
+                                font-semibold
+                                text-gray-500
+                              "
+                            >
+                              {{ section.itemCount }}
+                            </span>
+
+                          }
+
+                        </div>
+
+                        <p
+                          class="
+                            mt-0.5 text-[9px]
+                            text-gray-400
+                          "
+                        >
+                          {{
+                            section.type === 'array'
+                              ? 'Array'
+                              : section.type === 'object'
+                                ? 'Object'
+                                : 'Value'
+                          }}
+                        </p>
+
+                      </div>
+
+
+                      <svg
+                        class="
+                          h-4 w-4 shrink-0
+                          text-gray-400
+                          transition-transform
+                        "
+                        [class.rotate-180]="
+                          isModelSectionExpanded(section.key)
+                        "
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.8"
+                          d="M6 9l6 6 6-6"
+                        />
+                      </svg>
+
+                    </button>
+
+
+                    <!-- CATEGORY CONTENT -->
+
+                    @if (
+                      isModelSectionExpanded(section.key)
+                    ) {
+
+                      <div class="model-json-container">
+
+                        <div
+                          class="
+                            flex items-center
+                            justify-between
+                            border-b border-gray-800
+                            bg-gray-900
+                            px-3 py-2
+                          "
+                        >
+
+                          <span
+                            class="
+                              font-mono text-[9px]
+                              text-gray-500
+                            "
+                          >
+                            {{ section.key }}
+                          </span>
+
+
+                          <button
+                            type="button"
+                            (click)="copyData(section.value)"
+                            class="
+                              rounded-md px-2 py-1
+                              text-[9px]
+                              font-semibold
+                              text-gray-400
+                              transition
+                              hover:bg-gray-800
+                              hover:text-white
+                            "
+                          >
+                            Copy
+                          </button>
+
+                        </div>
+
+
+                        <pre
+                          class="
+                            model-json
+                            max-h-[480px]
+                            overflow-auto
+                            p-3
+                            font-mono
+                            text-[10px]
+                            leading-5
+                            text-gray-200
+                          "
+                        >{{ formatJson(section.value) }}</pre>
+
+                      </div>
+
+                    }
+
+                  </section>
+
+                }
+
+              </div>
+
+            }
+
+          }
+
+        </div>
+
+
+        <!-- READ ONLY BADGE -->
+
+        @if (
+          hasModel1Data &&
+          model1PanelExpanded()
+        ) {
+
+          <div
+            class="
+              mt-3 flex items-center gap-2
+              rounded-lg border border-gray-200
+              bg-white px-3 py-2
+              shadow-sm
+            "
+          >
+
+            <span
+              class="
+                flex h-5 w-5 items-center
+                justify-center rounded-full
+                bg-gray-100 text-gray-500
+              "
+            >
+
+              <svg
+                class="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                  d="M6 10V8a6 6 0 0112 0v2M5 10h14v10H5z"
+                />
+              </svg>
+
+            </span>
+
+            <span
+              class="
+                text-[10px]
+                font-medium text-gray-500
+              "
+            >
+              Model 1 JSON is read-only during audit review.
+            </span>
+
+          </div>
+
+        }
+
+      </aside>
+
+    </div>
+
+
+    <!-- ==========================================================
+         STICKY ACTION BAR
+         ========================================================== -->
+
+    <div
+      class="
+        sticky bottom-0 z-30 mt-6
+        rounded-xl border border-gray-200
+        bg-white/95 p-3
+        shadow-[0_-6px_25px_rgba(0,0,0,0.08)]
+        backdrop-blur
+        sm:p-4
+      "
+    >
+
+      <div
+        class="
+          flex flex-col gap-3
+          lg:flex-row lg:items-center
+          lg:justify-between
+        "
+      >
+
+        <!-- STATUS -->
+
+        <div class="min-w-0">
+
+          @if (pendingCount > 0) {
+
+            <div class="flex items-center gap-2">
+
+              <span
+                class="
+                  flex h-7 w-7 shrink-0
+                  items-center justify-center
+                  rounded-full bg-amber-50
+                  text-amber-600
+                "
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="8.5"
+                    stroke-width="1.8"
+                  />
+
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="1.8"
+                    d="M12 7.5v5l3 1.5"
+                  />
+                </svg>
+
+              </span>
+
+
+              <div>
+
+                <p class="text-xs font-bold text-amber-700">
+                  Review incomplete
+                </p>
+
+                <p class="text-[11px] text-gray-500">
+                  {{ pendingCount }}
+                  change(s) still need a decision.
+                </p>
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="flex items-center gap-2">
+
+              <span
+                class="
+                  flex h-7 w-7 shrink-0
+                  items-center justify-center
+                  rounded-full bg-green-50
+                  text-green-600
+                "
+              >
+
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+
+              </span>
+
+
+              <div>
+
+                <p class="text-xs font-bold text-green-700">
+                  Ready for approval
+                </p>
+
+                <p class="text-[11px] text-gray-500">
+                  All {{ totalCount }} changes have been reviewed.
+                </p>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div
+          class="
+            flex flex-col gap-2
+            sm:flex-row
+          "
+        >
+
+          <!-- SAVE -->
+
+          <button
+            type="button"
+            (click)="saveDecisions()"
+            [disabled]="
+              saving() ||
+              approving() ||
+              currentReview.status === 'Approved'
+            "
+            class="
+              inline-flex items-center justify-center gap-2
+              rounded-lg border border-gray-200
+              bg-white px-5 py-2.5
+              text-xs font-bold text-gray-700
+              shadow-sm transition
+              hover:border-gray-300
+              hover:bg-gray-50
+              disabled:cursor-not-allowed
+              disabled:opacity-50
+            "
+          >
+
+            @if (saving()) {
+
+              <svg
+                class="h-4 w-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="3"
+                />
+
+                <path
+                  fill="currentColor"
+                  d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+                />
+              </svg>
+
+              Saving...
+
+            } @else {
+
+              Save Decisions
+
+            }
+
+          </button>
+
+
+          <!-- APPROVE -->
+
+          <button
+            type="button"
+            (click)="approveReview()"
+            [disabled]="
+              approving() ||
+              saving() ||
+              pendingCount > 0 ||
+              currentReview.status === 'Approved'
+            "
+            class="
+              inline-flex items-center justify-center gap-2
+              rounded-lg bg-gray-900
+              px-5 py-2.5
+              text-xs font-bold text-white
+              shadow-sm transition
+              hover:bg-red-600
+              active:scale-[0.99]
+              disabled:cursor-not-allowed
+              disabled:bg-gray-300
+              disabled:text-gray-500
+            "
+          >
+
+            @if (approving()) {
+
+              <svg
+                class="h-4 w-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="3"
+                />
+
+                <path
+                  fill="currentColor"
+                  d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+                />
+              </svg>
+
+              Approving...
+
+            } @else if (
+              currentReview.status === 'Approved'
+            ) {
+
+              Approved
+
+            } @else {
+
+              Approve Review
+
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

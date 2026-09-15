@@ -27,11 +27,8 @@ export class FilterCars implements OnInit {
 
   // Currently selected filters
   filters = signal<CarFilterRequest>({});
-
   currentVariantIndex = signal<Record<number, number>>({});
-
   expandedModelId = signal<number | null>(null);
-
   isLoading = signal<boolean>(false);
 
   // ---------------------------------------------------------
@@ -135,31 +132,21 @@ export class FilterCars implements OnInit {
   // ---------------------------------------------------------
 
   private searchCars(filters: CarFilterRequest): void {
-
     this.isLoading.set(true);
-
     this.filterService.FilterCars(filters).subscribe({
-
       next: response => {
-
         this.results = response;
-
         this.isLoading.set(false);
-
         console.log('Filter response:', response);
         console.log('Results:', this.results);
       },
-
       error: error => {
-
         console.error('Filter API error:', error);
-
         // IMPORTANT:
         // Do NOT clear filters here.
         // Selected filters should remain visible even if
         // the API returns an error/no result.
         this.isLoading.set(false);
-
         this.results = {
           totalModels: 0,
           totalVariants: 0,
@@ -174,9 +161,7 @@ export class FilterCars implements OnInit {
   // ---------------------------------------------------------
 
   hasAppliedFilters(): boolean {
-
     const f = this.filters();
-
     return Object.values(f).some(
       value =>
         value !== undefined &&
@@ -185,20 +170,62 @@ export class FilterCars implements OnInit {
     );
   }
 
+  getAppliedFilterChips(): Array<{ key: keyof CarFilterRequest; label: string }> {
+    const f = this.filters();
+    const chips: Array<{ key: keyof CarFilterRequest; label: string }> = [];
+
+    if (f.brand) {
+      chips.push({ key: 'brand', label: f.brand });
+    }
+
+    if (f.model) {
+      chips.push({ key: 'model', label: f.model });
+    }
+
+    if (f.minPrice !== undefined && f.minPrice !== null) {
+      chips.push({
+        key: 'minPrice',
+        label: `From ₹${(f.minPrice / 100000).toFixed(2)} Lakh`
+      });
+    }
+
+    if (f.maxPrice !== undefined && f.maxPrice !== null) {
+      chips.push({
+        key: 'maxPrice',
+        label: `Under ₹${(f.maxPrice / 100000).toFixed(2)} Lakh`
+      });
+    }
+
+    if (f.minPower !== undefined && f.minPower !== null) {
+      chips.push({ key: 'minPower', label: `Above ${f.minPower} PS` });
+    }
+
+    if (f.fuelType) {
+      chips.push({ key: 'fuelType', label: f.fuelType });
+    }
+
+    if (f.transmissionType) {
+      chips.push({ key: 'transmissionType', label: f.transmissionType });
+    }
+
+    if (f.drivetrainType) {
+      chips.push({ key: 'drivetrainType', label: f.drivetrainType });
+    }
+
+    return chips;
+  }
+
   // ---------------------------------------------------------
   // APPLY FILTER
   // ---------------------------------------------------------
 
   applyFilter(filter: Partial<CarFilterRequest>): void {
-
     const updatedFilters: CarFilterRequest = {
       ...this.filters(),
       ...filter
     };
-
     // Update local filter state immediately
     this.filters.set(updatedFilters);
-
     // Update URL and search
     this.updateUrlAndSearch(updatedFilters);
   }
@@ -208,11 +235,8 @@ export class FilterCars implements OnInit {
   // ---------------------------------------------------------
 
   updateUrlAndSearch(filters: CarFilterRequest): void {
-
     const queryParams: Record<string, any> = {};
-
     Object.entries(filters).forEach(([key, value]) => {
-
       if (
         value !== undefined &&
         value !== null &&
@@ -220,7 +244,6 @@ export class FilterCars implements OnInit {
       ) {
         queryParams[key] = value;
       }
-
     });
 
     // Update URL.
@@ -233,7 +256,6 @@ export class FilterCars implements OnInit {
       queryParams,
       queryParamsHandling: ''
     });
-
     // Search immediately.
     this.searchCars(filters);
   }
@@ -278,11 +300,9 @@ export class FilterCars implements OnInit {
   // ---------------------------------------------------------
 
   getMinPrice(car: CarModelFilterResponse): number {
-
     if (!car.variants?.length) {
       return 0;
     }
-
     return Math.min(
       ...car.variants.map(v => v.exShowroomPrice)
     );
@@ -293,11 +313,9 @@ export class FilterCars implements OnInit {
   // ---------------------------------------------------------
 
   getMaxPrice(car: CarModelFilterResponse): number {
-
     if (!car.variants?.length) {
       return 0;
     }
-
     return Math.max(
       ...car.variants.map(v => v.exShowroomPrice)
     );
@@ -311,15 +329,11 @@ export class FilterCars implements OnInit {
     modelId: number,
     totalVariants: number
   ): void {
-
     if (totalVariants <= 0) {
       return;
     }
-
     this.currentVariantIndex.update(current => {
-
       const currentIndex = current[modelId] ?? 0;
-
       return {
         ...current,
         [modelId]:
@@ -336,15 +350,11 @@ export class FilterCars implements OnInit {
     modelId: number,
     totalVariants: number
   ): void {
-
     if (totalVariants <= 0) {
       return;
     }
-
     this.currentVariantIndex.update(current => {
-
       const currentIndex = current[modelId] ?? 0;
-
       return {
         ...current,
         [modelId]:

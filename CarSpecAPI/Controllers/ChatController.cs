@@ -1,5 +1,5 @@
 ﻿using CarSpecAPI.Data.Models.RequestModel;
-using CarSpecAPI.Services;
+using CarSpecAPI.Services.OpenAIServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,6 @@ namespace CarSpecAPI.Controllers
             this.aIService = aIService;
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequestDto request)
         {

@@ -7,9 +7,9 @@ public partial class Engine
 {
     public int EngineId { get; set; }
 
-    public string EngineName { get; set; } = null!;
+    public int PowertrainId { get; set; }
 
-    public int FuelTypeId { get; set; }
+    public string EngineName { get; set; } = null!;
 
     public byte? NumberOfCylinders { get; set; }
 
@@ -17,15 +17,15 @@ public partial class Engine
 
     public decimal? Displacement { get; set; }
 
-    public decimal? MaxPower { get; set; }
-
-    public decimal? MaxTorque { get; set; }
-
     public bool IsTurbocharged { get; set; }
 
     public string? EmissionStandard { get; set; }
 
-    public virtual FuelType FuelType { get; set; } = null!;
+    public string? Aspiration { get; set; }
 
-    public virtual ICollection<Variant> Variants { get; set; } = new List<Variant>();
+    public string? EngineType { get; set; }
+
+    public virtual ICollection<EnginePerformance> EnginePerformances { get; set; } = new List<EnginePerformance>();
+
+    public virtual Powertrain Powertrain { get; set; } = null!;
 }

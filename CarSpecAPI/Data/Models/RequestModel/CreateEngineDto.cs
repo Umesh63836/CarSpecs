@@ -8,6 +8,9 @@
         public string EngineName { get; set; } = null!;
 
         [Range(1, int.MaxValue)]
+        public int PowertrainId { get; set; }
+
+        [Range(1, int.MaxValue)]
         public int FuelTypeId { get; set; }
 
         [Range(1, 20)]

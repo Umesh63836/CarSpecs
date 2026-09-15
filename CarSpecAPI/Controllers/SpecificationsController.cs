@@ -79,7 +79,7 @@ namespace CarSpecAPI.Controllers
         {
             var response = await this.specificationService.CreateEngineAsync(dto);
 
-            return response == null ? NotFound("Fueltype doesnot exist") : Ok(response);
+            return response == null ? NotFound("Powertrain or fuel type not found") : Ok(response);
         }
 
         [Authorize]

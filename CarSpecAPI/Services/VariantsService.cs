@@ -1,6 +1,7 @@
 ﻿using CarSpecAPI.Data;
 using CarSpecAPI.Data.Models.RequestModel;
 using CarSpecAPI.Data.Models.ResponseModel;
+using CarSpecAPI.Data.Models.ServiceModel;
 using CarSpecAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,41 +11,71 @@ namespace CarSpecAPI.Services
     {
         private readonly CarsDbContext carsDbContext;
 
-        public VariantsService(CarsDbContext carsDbContext) 
+        public VariantsService(CarsDbContext carsDbContext)
         {
             this.carsDbContext = carsDbContext;
         }
 
         public async Task<List<VariantDto>> GetVariantsAsync(int modelId)
         {
-            var result = await carsDbContext.Variants.Where(v => v.ModelId == modelId).Select(v => new VariantDto
+            var variants = await carsDbContext.Variants
+                .Where(v => v.ModelId == modelId)
+                .Include(v => v.Powertrain)
+                    .ThenInclude(p => p.Engine)
+                        .ThenInclude(e => e.EnginePerformances)
+                            .ThenInclude(ep => ep.FuelType)
+                .Include(v => v.Transmission)
+                .ToListAsync();
+
+            return variants.Select(v =>
             {
-                VariantId = v.VariantId,
-                VariantName = v.VariantName,
-                CubicCapacity = v.Engine.Displacement,
-                isTurbocharged = v.Engine.IsTurbocharged,
-                FuelType = v.Engine.FuelType.FuelType1,
-                TransmissionType = v.Transmission.TransmissionType,
-                MaxPower = v.Engine.MaxPower,
-                MaxTorque = v.Engine.MaxTorque,
-                ExShowroomPrice = v.ExShowroomPrice
-            }).ToListAsync();
-            return result;            
+                var engine = v.Powertrain.Engine;
+                var maxPower = engine?.EnginePerformances
+                    .Where(ep => ep.MaxPower.HasValue)
+                    .Select(ep => ep.MaxPower)
+                    .Max();
+                var maxTorque = engine?.EnginePerformances
+                    .Where(ep => ep.MaxTorque.HasValue)
+                    .Select(ep => ep.MaxTorque)
+                    .Max();
+                var performance = engine?.EnginePerformances
+                    .Where(ep => ep.MaxPower.HasValue)
+                    .OrderByDescending(ep => ep.MaxPower)
+                    .FirstOrDefault();
+
+                return new VariantDto
+                {
+                    VariantId = v.VariantId,
+                    VariantName = v.VariantName,
+                    CubicCapacity = engine?.Displacement,
+                    isTurbocharged = engine?.IsTurbocharged ?? false,
+                    FuelType = performance?.FuelType?.FuelType1 ?? string.Empty,
+                    TransmissionType = v.Transmission.TransmissionType,
+                    MaxPower = maxPower,
+                    MaxTorque = maxTorque,
+                    ExShowroomPrice = v.ExShowroomPrice
+                };
+            }).ToList();
         }
 
         public async Task<VariantDto?> CreateVariantAsync(int modelId, CreateVariantDto dto)
         {
-            var modelExists = await carsDbContext.Models
-                .AnyAsync(x => x.ModelId == modelId);
+            var modelExists = await carsDbContext.Models.AnyAsync(x => x.ModelId == modelId);
 
             if (!modelExists)
+                return null;
+
+            var powertrainExists = await carsDbContext.Powertrains
+                .AnyAsync(x => x.PowertrainId == dto.PowertrainId);
+
+            if (!powertrainExists)
                 return null;
 
             var variant = new Variant
             {
                 ModelId = modelId,
                 VariantName = dto.VariantName,
-                EngineId = dto.EngineId,
+                PowertrainId = dto.PowertrainId,
                 TransmissionId = dto.TransmissionId,
                 DrivetrainId = dto.DrivetrainId,
                 ExShowroomPrice = dto.ExShowroomPrice
@@ -64,22 +95,70 @@ namespace CarSpecAPI.Services
             await carsDbContext.SaveChangesAsync();
 
             var createdVariant = await carsDbContext.Variants
-            .Include(x => x.Engine)
-            .ThenInclude(x => x.FuelType)
-            .Include(x => x.Transmission)
-            .Where(x => x.VariantId == variant.VariantId).FirstAsync();
+                .Include(x => x.Powertrain)
+                    .ThenInclude(p => p.Engine)
+                        .ThenInclude(e => e.EnginePerformances)
+                            .ThenInclude(ep => ep.FuelType)
+                .Include(x => x.Transmission)
+                .FirstAsync(x => x.VariantId == variant.VariantId);
+
+            var engine = createdVariant.Powertrain?.Engine;
+            var maxPower = engine?.EnginePerformances
+                .Where(ep => ep.MaxPower.HasValue)
+                .Select(ep => ep.MaxPower)
+                .Max();
+            var maxTorque = engine?.EnginePerformances
+                .Where(ep => ep.MaxTorque.HasValue)
+                .Select(ep => ep.MaxTorque)
+                .Max();
+            var performance = engine?.EnginePerformances
+                .Where(ep => ep.MaxPower.HasValue)
+                .OrderByDescending(ep => ep.MaxPower)
+                .FirstOrDefault();
 
             return new VariantDto
             {
                 VariantId = createdVariant.VariantId,
                 VariantName = createdVariant.VariantName,
-                FuelType = createdVariant.Engine.FuelType.FuelType1,
-                CubicCapacity = createdVariant.Engine.Displacement,
-                isTurbocharged = createdVariant.Engine.IsTurbocharged,
+                FuelType = performance?.FuelType?.FuelType1 ?? string.Empty,
+                CubicCapacity = engine?.Displacement,
+                isTurbocharged = engine?.IsTurbocharged ?? false,
                 TransmissionType = createdVariant.Transmission.TransmissionType,
-                MaxPower = createdVariant.Engine.MaxPower,
-                MaxTorque = createdVariant.Engine.MaxTorque,
+                MaxPower = maxPower,
+                MaxTorque = maxTorque,
                 ExShowroomPrice = createdVariant.ExShowroomPrice
+            };
+        }
+
+        public async Task<VariantDetails> GetVariantDetailsAsync(int variantId)
+        {
+            var variant = await carsDbContext.Variants
+                .Include(v => v.Model)
+                    .ThenInclude(m => m.Brand)
+                .Include(v => v.Powertrain)
+                    .ThenInclude(p => p.Engine)
+                        .ThenInclude(e => e.EnginePerformances)
+                            .ThenInclude(ep => ep.FuelType)
+                .FirstOrDefaultAsync(v => v.VariantId == variantId);
+
+            if (variant == null)
+                return new VariantDetails();
+
+            var engine = variant.Powertrain?.Engine;
+            var performance = engine?.EnginePerformances
+                .Where(ep => ep.MaxPower.HasValue)
+                .OrderByDescending(ep => ep.MaxPower)
+                .FirstOrDefault();
+
+            return new VariantDetails
+            {
+                BodyType = variant.Model.BodyType,
+                VehicleCategory = variant.Model.Category,
+                ExShowroomPrice = variant.ExShowroomPrice,
+                SeatingCapacity = variant.SeatingCapacity,
+                CubicCapacity = engine?.Displacement,
+                FuelType = performance?.FuelType?.FuelType1 ?? string.Empty,
+                KerbWeight = variant.KerbWeight
             };
         }
     }

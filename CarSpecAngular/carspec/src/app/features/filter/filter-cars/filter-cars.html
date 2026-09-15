@@ -51,11 +51,11 @@
 
     <button
       type="button"
-      (click)="applyFilter({ maxPrice: 10 })"
-      [class.bg-green-100]="filters().maxPrice === 10"
-      [class.text-green-700]="filters().maxPrice === 10"
-      [class.border-green-300]="filters().maxPrice === 10"
-      [class.bg-white]="filters().maxPrice !== 10"
+      (click)="applyFilter({ maxPrice: 1000000 })"
+      [class.bg-green-100]="filters().maxPrice === 1000000"
+      [class.text-green-700]="filters().maxPrice === 1000000"
+      [class.border-green-300]="filters().maxPrice === 1000000"
+      [class.bg-white]="filters().maxPrice !== 1000000"
       class="rounded-full
              border border-gray-200
              px-4 py-2
@@ -74,11 +74,11 @@
 
     <button
       type="button"
-      (click)="applyFilter({ maxPrice: 15 })"
-      [class.bg-green-100]="filters().maxPrice === 15"
-      [class.text-green-700]="filters().maxPrice === 15"
-      [class.border-green-300]="filters().maxPrice === 15"
-      [class.bg-white]="filters().maxPrice !== 15"
+      (click)="applyFilter({ maxPrice: 1500000 })"
+      [class.bg-green-100]="filters().maxPrice === 1500000"
+      [class.text-green-700]="filters().maxPrice === 1500000"
+      [class.border-green-300]="filters().maxPrice === 1500000"
+      [class.bg-white]="filters().maxPrice !== 1500000"
       class="rounded-full
              border border-gray-200
              px-4 py-2
@@ -191,13 +191,11 @@
 
     <div class="flex flex-wrap gap-2">
 
-      <!-- Max Price -->
-
-      @if (filters().maxPrice !== undefined) {
+      @for (chip of getAppliedFilterChips(); track chip.key) {
 
         <button
           type="button"
-          (click)="removeFilter('maxPrice')"
+          (click)="removeFilter(chip.key)"
           class="flex items-center gap-2
                  rounded-full
                  border border-green-200
@@ -208,91 +206,7 @@
                  transition
                  hover:bg-green-200"
         >
-          Under ₹{{ filters().maxPrice }} Lakh
-
-          <span class="text-green-700">
-            ×
-          </span>
-
-        </button>
-
-      }
-
-
-      <!-- Min Power -->
-
-      @if (filters().minPower !== undefined) {
-
-        <button
-          type="button"
-          (click)="removeFilter('minPower')"
-          class="flex items-center gap-2
-                 rounded-full
-                 border border-green-200
-                 bg-green-100
-                 px-3 py-1.5
-                 text-sm font-medium
-                 text-green-800
-                 transition
-                 hover:bg-green-200"
-        >
-          Above {{ filters().minPower }} PS
-
-          <span class="text-green-700">
-            ×
-          </span>
-
-        </button>
-
-      }
-
-
-      <!-- Fuel -->
-
-      @if (filters().fuelType) {
-
-        <button
-          type="button"
-          (click)="removeFilter('fuelType')"
-          class="flex items-center gap-2
-                 rounded-full
-                 border border-green-200
-                 bg-green-100
-                 px-3 py-1.5
-                 text-sm font-medium
-                 text-green-800
-                 transition
-                 hover:bg-green-200"
-        >
-          {{ filters().fuelType }}
-
-          <span class="text-green-700">
-            ×
-          </span>
-
-        </button>
-
-      }
-
-
-      <!-- Transmission -->
-
-      @if (filters().transmissionType) {
-
-        <button
-          type="button"
-          (click)="removeFilter('transmissionType')"
-          class="flex items-center gap-2
-                 rounded-full
-                 border border-green-200
-                 bg-green-100
-                 px-3 py-1.5
-                 text-sm font-medium
-                 text-green-800
-                 transition
-                 hover:bg-green-200"
-        >
-          {{ filters().transmissionType }}
+          {{ chip.label }}
 
           <span class="text-green-700">
             ×
@@ -562,9 +476,9 @@
                        font-bold
                        text-gray-900"
               >
-                ₹{{ getMinPrice(car) | number:'1.2-2' }}L
+                ₹{{ getMinPrice(car) / 100000 | number:'1.2-2' }}L
                 -
-                ₹{{ getMaxPrice(car) | number:'1.2-2' }}L
+                ₹{{ getMaxPrice(car) / 100000 | number:'1.2-2' }}L
               </div>
 
               <div
@@ -719,7 +633,7 @@
                                font-semibold
                                text-gray-900"
                       >
-                        ₹{{ variant.exShowroomPrice }}L
+                        ₹{{ variant.exShowroomPrice / 100000 | number:'1.2-2'}}L
                       </p>
 
                       <p

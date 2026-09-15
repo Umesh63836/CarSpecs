@@ -1,0 +1,1297 @@
+<div class="min-h-full bg-gray-50 p-4 sm:p-6">
+
+  <!-- =====================================================
+       Page Header
+       ===================================================== -->
+
+  <div class="mb-5">
+
+    <div class="flex items-center gap-3">
+
+      <div
+        class="
+          flex h-10 w-10 shrink-0 items-center justify-center
+          rounded-xl
+          bg-red-50
+          text-red-600
+        "
+      >
+        <svg
+          class="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 18a4.6 4.6 0 01-.9-9.11A5.5 5.5 0 0116.5 7.5h.5a4 4 0 010 8h-1M12 12v8m0 0l-3-3m3 3l3-3"
+          />
+        </svg>
+      </div>
+
+      <div>
+
+        <h2 class="text-lg font-bold tracking-tight text-red-600">
+          Brochure Import
+        </h2>
+
+        <p class="mt-0.5 text-sm text-gray-500">
+          Upload a brochure and select the pages to extract.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       Main Workspace
+       ===================================================== -->
+
+  <div
+    class="
+      grid
+      grid-cols-1
+      gap-5
+      lg:grid-cols-[minmax(300px,380px)_minmax(0,1fr)]
+    "
+  >
+
+    <!-- ===================================================
+         LEFT: Import Form
+         =================================================== -->
+
+    <div
+      class="
+        flex
+        flex-col
+        rounded-2xl
+        border
+        border-gray-200
+        bg-white
+        shadow-sm
+      "
+    >
+
+      <!-- Form Header -->
+
+      <div class="border-b border-gray-100 px-5 py-4">
+
+        <div class="flex items-center justify-between">
+
+          <div>
+
+            <h3 class="text-sm font-semibold text-red-600">
+              Brochure Details
+            </h3>
+
+            <p class="mt-0.5 text-xs text-gray-500">
+              Add the source information before importing.
+            </p>
+
+          </div>
+
+          <span
+            class="
+              rounded-full
+              bg-red-50
+              px-2.5
+              py-1
+              text-[10px]
+              font-semibold
+              uppercase
+              tracking-wide
+              text-red-600
+            "
+          >
+            PDF Import
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- Form Body -->
+
+      <div class="space-y-4 p-5">
+
+        <!-- Source Name -->
+
+        <div>
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-blue-500
+            "
+          >
+            Source Name
+            <span class="text-red-500">*</span>
+          </label>
+
+          <input
+            type="text"
+            [value]="sourceName()"
+            (input)="
+              sourceName.set(
+                $any($event.target).value
+              )
+            "
+            placeholder="Maruti Suzuki Swift Brochure"
+            [disabled]="uploading() || processing()"
+            class="
+              block
+              w-full
+              rounded-lg
+              border
+              border-gray-200
+              bg-gray-50
+              px-3
+              py-2.5
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              placeholder:text-gray-400
+              focus:border-red-400
+              focus:bg-white
+              focus:ring-2
+              focus:ring-red-100
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          />
+
+        </div>
+
+
+        <!-- Publisher -->
+
+        <div>
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-blue-500
+            "
+          >
+            Publisher
+          </label>
+
+          <input
+            type="text"
+            [value]="publisher()"
+            (input)="
+              publisher.set(
+                $any($event.target).value
+              )
+            "
+            placeholder="Maruti Suzuki India Limited"
+            [disabled]="uploading() || processing()"
+            class="
+              block
+              w-full
+              rounded-lg
+              border
+              border-gray-200
+              bg-gray-50
+              px-3
+              py-2.5
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              placeholder:text-gray-400
+              focus:border-red-400
+              focus:bg-white
+              focus:ring-2
+              focus:ring-red-100
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          />
+
+        </div>
+
+
+        <!-- Source URL -->
+
+        <div>
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-blue-500
+            "
+          >
+            Source URL
+          </label>
+
+          <input
+            type="url"
+            [value]="sourceUrl()"
+            (input)="
+              sourceUrl.set(
+                $any($event.target).value
+              )
+            "
+            placeholder="https://www.marutisuzuki.com/"
+            [disabled]="uploading() || processing()"
+            class="
+              block
+              w-full
+              rounded-lg
+              border
+              border-gray-200
+              bg-gray-50
+              px-3
+              py-2.5
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              placeholder:text-gray-400
+              focus:border-red-400
+              focus:bg-white
+              focus:ring-2
+              focus:ring-red-100
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          />
+
+        </div>
+
+
+        <!-- Published Date -->
+
+        <div>
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-blue-500
+            "
+          >
+            Published Date
+          </label>
+
+          <input
+            type="date"
+            [value]="publishedDate()"
+            (input)="
+              publishedDate.set(
+                $any($event.target).value
+              )
+            "
+            [disabled]="uploading() || processing()"
+            class="
+              block
+              w-full
+              rounded-lg
+              border
+              border-gray-200
+              bg-gray-50
+              px-3
+              py-2.5
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              focus:border-red-400
+              focus:bg-white
+              focus:ring-2
+              focus:ring-red-100
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          />
+
+        </div>
+
+
+        <!-- Notes -->
+
+        <div>
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-blue-500
+            "
+          >
+            Notes
+            <span class="font-normal text-gray-400">
+              (optional)
+            </span>
+          </label>
+
+          <textarea
+            rows="2"
+            [value]="notes()"
+            (input)="
+              notes.set(
+                $any($event.target).value
+              )
+            "
+            placeholder="Optional notes about this brochure"
+            [disabled]="uploading() || processing()"
+            class="
+              block
+              w-full
+              resize-none
+              rounded-lg
+              border
+              border-gray-200
+              bg-gray-50
+              px-3
+              py-2.5
+              text-sm
+              text-gray-900
+              outline-none
+              transition
+              placeholder:text-gray-400
+              focus:border-red-400
+              focus:bg-white
+              focus:ring-2
+              focus:ring-red-100
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          ></textarea>
+
+        </div>
+
+
+        <!-- =================================================
+             PDF Upload Area
+             ================================================= -->
+
+        <div class="pt-1">
+
+          <label
+            class="
+              mb-1.5
+              block
+              text-xs
+              font-semibold
+              text-green-600
+            "
+          >
+            Brochure PDF
+            <span class="text-red-500">*</span>
+          </label>
+
+
+          <!-- Hidden native file input -->
+
+          <input
+            #pdfInput
+            type="file"
+            accept="application/pdf"
+            (change)="onFileSelected($event)"
+            [disabled]="uploading() || processing()"
+            class="hidden"
+          />
+
+
+          <!-- Upload Dropzone -->
+
+          <button
+            type="button"
+            (click)="pdfInput.click()"
+            [disabled]="uploading() || processing()"
+            class="
+              group
+              flex
+              w-full
+              items-center
+              gap-3
+              rounded-xl
+              border
+              border-dashed
+              border-gray-300
+              bg-gray-50
+              px-3
+              py-3
+              text-left
+              transition
+              hover:border-red-300
+              hover:bg-red-50/40
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
+          >
+
+            <div
+              class="
+                flex
+                h-10
+                w-10
+                shrink-0
+                items-center
+                justify-center
+                rounded-lg
+                bg-white
+                text-red-500
+                shadow-sm
+                ring-1
+                ring-gray-100
+                transition
+                group-hover:bg-red-50
+              "
+            >
+
+              <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                  d="M7 18h10a4 4 0 000-8h-.5A5.5 5.5 0 006 11.5 3.5 3.5 0 007 18z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.8"
+                  d="M12 8v7m0 0l-2.5-2.5M12 15l2.5-2.5"
+                />
+              </svg>
+
+            </div>
+
+
+            <div class="min-w-0 flex-1">
+
+              @if (selectedFile()) {
+
+                <p class="truncate text-xs font-semibold text-gray-800">
+                  {{ selectedFile()?.name }}
+                </p>
+
+                <p class="mt-0.5 text-[11px] text-gray-500">
+                  PDF selected · Click to replace
+                </p>
+
+              }
+              @else {
+
+                <p class="text-xs font-semibold text-gray-800">
+                  Choose brochure PDF
+                </p>
+
+                <p class="mt-0.5 text-[11px] text-gray-500">
+                  PDF files only
+                </p>
+
+              }
+
+            </div>
+
+
+            <svg
+              class="
+                h-4
+                w-4
+                shrink-0
+                text-gray-400
+                transition
+                group-hover:text-red-500
+              "
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           Import Action
+           ================================================= -->
+
+      <div
+        class="
+          mt-auto
+          border-t
+          border-gray-100
+          bg-gray-50/70
+          px-5
+          py-4
+        "
+      >
+
+        <!-- Status -->
+
+        @if (uploading()) {
+
+          <div
+            class="
+              mb-3
+              flex
+              items-center
+              gap-2
+              rounded-lg
+              bg-blue-50
+              px-3
+              py-2
+              text-xs
+              text-blue-700
+            "
+          >
+
+            <span
+              class="
+                h-2
+                w-2
+                animate-pulse
+                rounded-full
+                bg-blue-500
+              "
+            ></span>
+
+            <span class="font-medium">
+              Uploading brochure…
+            </span>
+
+          </div>
+
+        }
+        @else if (processing()) {
+
+          <div
+            class="
+              mb-3
+              flex
+              items-center
+              gap-2
+              rounded-lg
+              bg-amber-50
+              px-3
+              py-2
+              text-xs
+              text-amber-700
+            "
+          >
+
+            <svg
+              class="h-3.5 w-3.5 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="3"
+              ></circle>
+
+              <path
+                class="opacity-90"
+                fill="currentColor"
+                d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+              ></path>
+            </svg>
+
+            <span class="font-medium">
+              Processing selected pages…
+            </span>
+
+          </div>
+
+        }
+
+
+        <!-- Main Button -->
+
+        <button
+          type="button"
+          [disabled]="
+            uploading() ||
+            processing() ||
+            !sourceName().trim() ||
+            !pages().some(page => page.selected)
+          "
+          (click)="uploadAndProcess()"
+          class="
+            flex
+            w-full
+            items-center
+            justify-center
+            gap-2
+            rounded-xl
+            bg-gray-900
+            px-4
+            py-2.5
+            text-sm
+            font-semibold
+            text-white
+            shadow-sm
+            transition
+            hover:bg-red-600
+            active:scale-[0.99]
+            disabled:cursor-not-allowed
+            disabled:bg-gray-300
+            disabled:text-gray-500
+            disabled:shadow-none
+          "
+        >
+
+          @if (uploading()) {
+
+            <svg
+              class="h-4 w-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="3"
+              ></circle>
+
+              <path
+                class="opacity-90"
+                fill="currentColor"
+                d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+              ></path>
+            </svg>
+
+            Uploading…
+
+          }
+          @else if (processing()) {
+
+            <svg
+              class="h-4 w-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="9"
+                stroke="currentColor"
+                stroke-width="3"
+              ></circle>
+
+              <path
+                class="opacity-90"
+                fill="currentColor"
+                d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+              ></path>
+            </svg>
+
+            Processing…
+
+          }
+          @else {
+
+            <svg
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+                d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"
+              />
+            </svg>
+
+            Upload & Process
+
+          }
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         RIGHT: PDF PREVIEW
+         =================================================== -->
+
+    @if (selectedFile()) {
+
+      <div
+        class="
+          min-w-0
+          rounded-2xl
+          border
+          border-gray-200
+          bg-white
+          shadow-sm
+        "
+      >
+
+        <!-- Preview Header -->
+
+        <div
+          class="
+            flex
+            flex-wrap
+            items-center
+            justify-between
+            gap-3
+            border-b
+            border-gray-100
+            px-4
+            py-3
+            sm:px-5
+          "
+        >
+
+          <div class="min-w-0">
+
+            <div class="flex items-center gap-2">
+
+              <h3 class="text-sm font-semibold text-gray-900">
+                Select Pages
+              </h3>
+
+              <span
+                class="
+                  rounded-full
+                  bg-gray-100
+                  px-2
+                  py-0.5
+                  text-[10px]
+                  font-semibold
+                  text-gray-600
+                "
+              >
+                {{ pages().filter(page => page.selected).length }}
+                /
+                {{ pages().length }}
+              </span>
+
+            </div>
+
+            <p class="mt-0.5 text-xs text-gray-500">
+              Choose the pages that contain vehicle information.
+            </p>
+
+          </div>
+
+
+          <!-- Page Controls -->
+
+          <div class="flex items-center gap-2">
+
+            <button
+              type="button"
+              (click)="selectAll()"
+              [disabled]="uploading() || processing()"
+              class="
+                rounded-lg
+                border
+                border-gray-200
+                bg-white
+                px-2.5
+                py-1.5
+                text-[11px]
+                font-semibold
+                text-gray-700
+                transition
+                hover:border-red-200
+                hover:bg-red-50
+                hover:text-red-600
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              Select All
+            </button>
+
+            <button
+              type="button"
+              (click)="clearAll()"
+              [disabled]="uploading() || processing()"
+              class="
+                rounded-lg
+                border
+                border-gray-200
+                bg-white
+                px-2.5
+                py-1.5
+                text-[11px]
+                font-semibold
+                text-gray-600
+                transition
+                hover:bg-gray-50
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              Clear
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             Processing Overlay / Status
+             ================================================= -->
+
+        @if (uploading() || processing()) {
+
+          <div
+            class="
+              border-b
+              border-gray-100
+              bg-gray-50/80
+              px-4
+              py-2.5
+            "
+          >
+
+            <div class="flex items-center gap-3">
+
+              <div
+                class="
+                  flex
+                  h-7
+                  w-7
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  bg-white
+                  shadow-sm
+                  ring-1
+                  ring-gray-100
+                "
+              >
+
+                <svg
+                  class="
+                    h-3.5
+                    w-3.5
+                    animate-spin
+                    text-red-500
+                  "
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    stroke-width="3"
+                  ></circle>
+
+                  <path
+                    class="opacity-90"
+                    fill="currentColor"
+                    d="M21 12a9 9 0 00-9-9v3a6 6 0 016 6h3z"
+                  ></path>
+                </svg>
+
+              </div>
+
+              <div class="min-w-0 flex-1">
+
+                @if (uploading()) {
+
+                  <p class="text-xs font-semibold text-gray-800">
+                    Uploading brochure
+                  </p>
+
+                  <p class="text-[10px] text-gray-500">
+                    Sending the selected PDF to the server…
+                  </p>
+
+                }
+                @else {
+
+                  <p class="text-xs font-semibold text-gray-800">
+                    Processing brochure
+                  </p>
+
+                  <p class="text-[10px] text-gray-500">
+                    Extracting vehicle data from selected pages…
+                  </p>
+
+                }
+
+              </div>
+
+              <div
+                class="
+                  hidden
+                  h-1
+                  w-20
+                  overflow-hidden
+                  rounded-full
+                  bg-gray-200
+                  sm:block
+                "
+              >
+
+                <div
+                  class="
+                    h-full
+                    w-1/2
+                    animate-[loading_1.4s_ease-in-out_infinite]
+                    rounded-full
+                    bg-red-500
+                  "
+                ></div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        <!-- =================================================
+             PDF Thumbnails
+             ================================================= -->
+
+        <div class="p-4 sm:p-5">
+
+          <div
+            class="
+              grid
+              grid-cols-2
+              gap-3
+              sm:grid-cols-3
+              md:grid-cols-4
+              xl:grid-cols-5
+              2xl:grid-cols-6
+            "
+          >
+
+            @for (
+              page of pages();
+              track page.pageNumber
+            ) {
+
+              <button
+                type="button"
+                [disabled]="uploading() || processing()"
+                (click)="togglePage(page.pageNumber)"
+                class="
+                  group
+                  relative
+                  overflow-hidden
+                  rounded-xl
+                  border
+                  bg-gray-50
+                  text-left
+                  transition
+                  duration-150
+                  hover:-translate-y-0.5
+                  hover:shadow-md
+                  disabled:cursor-not-allowed
+                  disabled:opacity-70
+                "
+                [class.border-red-500]="page.selected"
+                [class.border-gray-200]="!page.selected"
+                [class.ring-2]="page.selected"
+                [class.ring-red-100]="page.selected"
+              >
+
+                <!-- Thumbnail -->
+
+                <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+
+                  <img
+                    [src]="page.imageUrl"
+                    class="
+                      block
+                      h-full
+                      w-full
+                      object-cover
+                      object-top
+                      transition
+                      duration-200
+                      group-hover:scale-[1.015]
+                    "
+                    alt="PDF page {{ page.pageNumber }}"
+                  />
+
+
+                  <!-- Dim unselected -->
+
+                  @if (!page.selected) {
+
+                    <div
+                      class="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        bg-white/10
+                        transition
+                        group-hover:bg-transparent
+                      "
+                    ></div>
+
+                  }
+
+
+                  <!-- Selected Check -->
+
+                  @if (page.selected) {
+
+                    <div
+                      class="
+                        absolute
+                        right-2
+                        top-2
+                        flex
+                        h-6
+                        w-6
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-red-500
+                        text-white
+                        shadow-md
+                      "
+                    >
+
+                      <svg
+                        class="h-3.5 w-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="3"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+
+                    </div>
+
+                  }
+
+                </div>
+
+
+                <!-- Page Footer -->
+
+                <div
+                  class="
+                    flex
+                    items-center
+                    justify-between
+                    gap-2
+                    bg-white
+                    px-2.5
+                    py-2
+                  "
+                >
+
+                  <span
+                    class="
+                      text-[11px]
+                      font-semibold
+                      text-gray-700
+                    "
+                  >
+                    Page {{ page.pageNumber }}
+                  </span>
+
+                  @if (page.selected) {
+
+                    <span
+                      class="
+                        text-[9px]
+                        font-bold
+                        uppercase
+                        tracking-wide
+                        text-red-500
+                      "
+                    >
+                      Selected
+                    </span>
+
+                  }
+                  @else {
+
+                    <span
+                      class="
+                        text-[9px]
+                        font-medium
+                        text-gray-400
+                      "
+                    >
+                      Click to select
+                    </span>
+
+                  }
+
+                </div>
+
+              </button>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+    @else {
+
+      <!-- =================================================
+           Empty Preview State
+           ================================================= -->
+
+      <div
+        class="
+          flex
+          min-h-[420px]
+          items-center
+          justify-center
+          rounded-2xl
+          border
+          border-dashed
+          border-gray-200
+          bg-white
+          shadow-sm
+        "
+      >
+
+        <div class="max-w-xs px-6 text-center">
+
+          <div
+            class="
+              mx-auto
+              mb-4
+              flex
+              h-14
+              w-14
+              items-center
+              justify-center
+              rounded-2xl
+              bg-gray-50
+              text-gray-400
+              ring-1
+              ring-gray-100
+            "
+          >
+
+            <svg
+              class="h-7 w-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M7 18h10a4 4 0 000-8h-.5A5.5 5.5 0 006 11.5 3.5 3.5 0 007 18z"
+              />
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M12 8v7m0 0l-2.5-2.5M12 15l2.5-2.5"
+              />
+            </svg>
+
+          </div>
+
+
+          <h3 class="text-sm font-semibold text-gray-800">
+            PDF preview
+          </h3>
+
+          <p class="mt-1.5 text-xs leading-5 text-gray-500">
+            Select a brochure PDF from the form to preview its pages
+            and choose which pages should be processed.
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     Small Loading Animation
+     ===================================================== -->
+
+<style>
+  @keyframes loading {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    50% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(250%);
+    }
+  }
+</style>
+

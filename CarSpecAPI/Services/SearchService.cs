@@ -2,7 +2,6 @@
 using CarSpecAPI.Data.Models.ResponseModel;
 using CarSpecAPI.Entities;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CarSpecAPI.Services
 {
@@ -14,37 +13,47 @@ namespace CarSpecAPI.Services
         {
             this.carsDbContext = carsDbContext;
         }
+
         public async Task<List<SearchResultDto>> SearchAsync(string searchParameter)
         {
             if (string.IsNullOrWhiteSpace(searchParameter))
                 return new List<SearchResultDto>();
+
             searchParameter = searchParameter.Trim();
 
-            var searchModel = await carsDbContext.Models.Where(m => m.ModelName.Contains(searchParameter) || m.Brand.BrandName.Contains(searchParameter)).Select
-                (m => new SearchResultDto
+            var searchModel = await carsDbContext.Models
+                .Where(m => m.ModelName.Contains(searchParameter) || m.Brand.BrandName.Contains(searchParameter))
+                .Select(m => new SearchResultDto
                 {
                     ResultType = "Model",
                     Id = m.ModelId,
                     Name = m.ModelName,
                     BrandName = m.Brand.BrandName,
                     ModelName = m.ModelName
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
             var variants = await carsDbContext.Variants
-            .Where(v =>
-                v.VariantName.Contains(searchParameter) ||
-                v.Engine.EngineName.Contains(searchParameter))
-            .Select(v => new SearchResultDto
-            {
-                ResultType = "Variant",
-                Id = v.VariantId,
-                Name = v.VariantName + " " + v.Engine.EngineName,
-                BrandName = v.Model.Brand.BrandName,
-                ModelName = v.Model.ModelName,
-            })
-            .ToListAsync();
+                .Include(v => v.Model)
+                    .ThenInclude(m => m.Brand)
+                .Include(v => v.Powertrain)
+                    .ThenInclude(p => p.Engine)
+                .ToListAsync();
 
-            return searchModel.Concat(variants).ToList();
+            var variantResults = variants
+                .Where(v => v.VariantName.Contains(searchParameter) ||
+                    (v.Powertrain.Engine != null && v.Powertrain.Engine.EngineName.Contains(searchParameter)))
+                .Select(v => new SearchResultDto
+                {
+                    ResultType = "Variant",
+                    Id = v.VariantId,
+                    Name = v.VariantName + " " + (v.Powertrain.Engine?.EngineName ?? string.Empty),
+                    BrandName = v.Model.Brand.BrandName,
+                    ModelName = v.Model.ModelName,
+                })
+                .ToList();
+
+            return searchModel.Concat(variantResults).ToList();
         }
     }
 }

@@ -51,7 +51,7 @@
             class="text-xl font-extrabold leading-tight tracking-tight
                    text-gray-900 md:text-xl"
           >
-            Rs. {{ model()?.minPrice }} - {{ model()?.maxPrice }} Lakhs
+            Rs. {{ (model()?.minPrice ?? 0) / 100000 | number:'1.2-2'}} - {{ (model()?.maxPrice ?? 0) / 100000 | number:'1.2-2'}} Lakhs
           </p>
 
           <p class="mt-1 text-xs font-medium text-gray-400">
@@ -169,7 +169,7 @@
                 class="text-sm font-extrabold tracking-tight text-gray-900
                        sm:text-lg"
               >
-                Rs. {{ variant.exShowroomPrice }} Lakhs
+                Rs. {{ ( variant.exShowroomPrice ?? 0 )/ 100000 | number:'1.2-2' }} Lakhs
               </p>
             
               <p class="mt-0.5 text-[9px] font-medium text-gray-400 sm:text-[10px]">

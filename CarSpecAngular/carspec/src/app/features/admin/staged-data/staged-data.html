@@ -1,0 +1,2640 @@
+<style>
+  @keyframes cs-fade-up { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes cs-soft-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(139,92,246,.0); } 50% { box-shadow: 0 0 0 4px rgba(139,92,246,.07); } }
+  .cs-section { animation: cs-fade-up .28s ease-out both; }
+  .cs-card-hover { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease; }
+  .cs-card-hover:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15,23,42,.06); }
+  .cs-add-btn { background: linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff; box-shadow:0 4px 10px rgba(124,58,237,.18); transition:transform .18s ease, box-shadow .18s ease, filter .18s ease; }
+  .cs-add-btn:hover { transform:translateY(-1px); box-shadow:0 7px 16px rgba(124,58,237,.25); filter:saturate(1.06); }
+  .cs-subvariant { transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+  .cs-subvariant:hover { background:#f0fdf4 !important; border-color:#bbf7d0 !important; box-shadow:inset 3px 0 0 #86efac; }
+  .cs-badge-blue { background:#eff6ff; color:#2563eb; border-color:#bfdbfe; }
+  .cs-badge-green { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; }
+  .cs-badge-red { background:#fff1f2; color:#dc2626; border-color:#fecdd3; }
+  .cs-badge-violet { background:#f5f3ff; color:#7c3aed; border-color:#ddd6fe; }
+  .cs-badge-amber { background:#fffbeb; color:#b45309; border-color:#fde68a; }
+  .cs-heading-red { color:#b91c1c; }
+  .cs-heading-blue { color:#1d4ed8; }
+  .cs-heading-green { color:#15803d; }
+  .cs-heading-violet { color:#6d28d9; }
+  .cs-accent-line-red { border-left:3px solid #fca5a5; }
+  .cs-accent-line-blue { border-left:3px solid #93c5fd; }
+  .cs-accent-line-green { border-left:3px solid #86efac; }
+</style>
+<div class="mx-auto max-w-[1600px] px-3 py-3 sm:px-5 lg:px-6">
+
+
+  <!-- ============================================================
+       MODEL LIST / MODEL PAGE
+       ============================================================ -->
+
+  @if (!selectedVariant()) {
+
+    <!-- HEADER -->
+
+    <div
+      class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+
+      <div>
+
+        <h1 class="text-xl font-bold text-red-700 tracking-tight">
+          Staged Data
+        </h1>
+
+        <p class="mt-0.5 text-xs text-gray-500">
+          Review and edit data staged from completed brochure imports.
+        </p>
+
+      </div>
+
+
+      <div class="flex flex-wrap items-center gap-2">
+
+        <span
+          class="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600"
+        >
+          {{ totalRecords() }}
+          {{ totalRecords() === 1 ? 'model' : 'models' }}
+        </span>
+
+
+        @if (selectedModel()) {
+
+          <button
+            type="button"
+            (click)="expandAllParents()"
+            class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700"
+          >
+            Expand all
+          </button>
+
+
+          <button
+            type="button"
+            (click)="collapseAllParents()"
+            class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700"
+          >
+            Collapse all
+          </button>
+
+        }
+
+
+        <button
+          type="button"
+          (click)="loadModels()"
+          [disabled]="loadingModels() || loadingModel()"
+          class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:opacity-50"
+        >
+
+          <svg
+            class="h-3.5 w-3.5"
+            [class.animate-spin]="loadingModels()"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h5M20 20v-5h-5M5.5 15A8 8 0 0019 5M19 9A8 8 0 005 19"
+            />
+          </svg>
+
+          Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div
+      class="mb-4 rounded-xl border border-gray-200 bg-white p-3 shadow-sm"
+    >
+
+      <div class="flex gap-2">
+
+        <div class="relative min-w-0 flex-1">
+
+          <svg
+            class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+              d="m21 21-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+
+          <input
+            type="text"
+            [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+            (keyup.enter)="search()"
+            placeholder="Search brand or model..."
+            class="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-gray-400 focus:bg-white focus:ring-1 focus:ring-gray-300"
+          />
+
+        </div>
+
+
+        <button
+          type="button"
+          (click)="search()"
+          class="rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 hover:-translate-y-px"
+        >
+          Search
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================================================
+         MODEL WORKSPACE
+         ========================================================== -->
+
+    <div
+      class="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]"
+    >
+
+
+      <!-- MODEL LIST -->
+
+      <section
+        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+      >
+
+        <div
+          class="border-b border-gray-100 px-4 py-3"
+        >
+
+          <div class="flex items-center justify-between">
+
+            <div>
+
+              <h2 class="text-sm font-semibold text-blue-700">
+                Staged Models
+              </h2>
+
+              <p class="text-[10px] text-gray-500">
+                Select a model.
+              </p>
+
+            </div>
+
+
+            <span class="text-[10px] text-gray-400">
+              Page {{ currentPage() }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        @if (loadingModels()) {
+
+          <div class="space-y-2 p-3">
+
+            @for (x of [1,2,3,4,5]; track x) {
+
+              <div
+                class="animate-pulse rounded-lg border border-gray-100 p-3"
+              >
+
+                <div class="flex gap-3">
+
+                  <div class="h-12 w-14 rounded-md bg-gray-200"></div>
+
+                  <div class="flex-1 space-y-2">
+
+                    <div class="h-2.5 w-20 rounded bg-gray-200"></div>
+
+                    <div class="h-3 w-28 rounded bg-gray-200"></div>
+
+                    <div class="h-2 w-32 rounded bg-gray-200"></div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+
+        @else if (models().length === 0) {
+
+          <div class="px-5 py-14 text-center">
+
+            <p class="text-sm font-semibold text-blue-700">
+              No staged models
+            </p>
+
+            <p class="mt-1 text-xs text-gray-500">
+              Stage an import batch first.
+            </p>
+
+          </div>
+
+        }
+
+
+        @else {
+
+          <div class="divide-y divide-gray-100">
+
+            @for (
+              model of models();
+              track model.importModelId
+            ) {
+
+              <button
+                type="button"
+                (click)="openModel(model)"
+                class="w-full p-3 text-left transition hover:bg-blue-50/60 hover:border-blue-100"
+                [class.bg-gray-100]="
+                  selectedModel()?.importModelId === model.importModelId
+                "
+              >
+
+                <div class="flex gap-3">
+
+                  <div
+                    class="flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border border-gray-200 bg-gray-50"
+                  >
+
+                    @if (model.modelImageUrl) {
+
+                      <img
+                        [src]="model.modelImageUrl"
+                        [alt]="model.modelName"
+                        class="h-full w-full object-cover"
+                      />
+
+                    } @else {
+
+                      <svg
+                        class="h-5 w-5 text-gray-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.5"
+                          d="M5 18l3-4 3 3 3-5 5 6M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+
+                    }
+
+                  </div>
+
+
+                  <div class="min-w-0 flex-1">
+
+                    <p class="text-[10px] text-gray-500">
+                      {{ model.brandName }}
+                    </p>
+
+                    <p class="truncate text-sm font-semibold text-gray-600">
+                      {{ model.modelName }}
+                    </p>
+
+
+                    <div class="mt-1.5 flex flex-wrap gap-1">
+
+                      <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                        {{ model.parentVariantCount }} parents
+                      </span>
+
+                      <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                        {{ model.variantCount }} variants
+                      </span>
+
+                      @if (model.warningCount > 0) {
+
+                        <span class="cs-badge-amber rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                          {{ model.warningCount }} warnings
+                        </span>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </button>
+
+            }
+
+          </div>
+
+
+          <div
+            class="flex items-center justify-between border-t border-gray-100 px-3 py-2"
+          >
+
+            <span class="text-[10px] text-gray-500">
+              {{ totalRecords() }} models
+            </span>
+
+
+            <div class="flex gap-1">
+
+              <button
+                type="button"
+                (click)="previousPage()"
+                [disabled]="!hasPreviousPage()"
+                class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-xs text-gray-500 hover:bg-gray-50 disabled:opacity-40"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                (click)="nextPage()"
+                [disabled]="!hasNextPage()"
+                class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-xs text-gray-500 hover:bg-gray-50 disabled:opacity-40"
+              >
+                ›
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- ========================================================
+           MODEL
+           ======================================================== -->
+
+      <section
+        class="min-w-0 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+      >
+
+        @if (!selectedModel()) {
+
+          <div
+            class="flex min-h-[600px] items-center justify-center text-center"
+          >
+
+            <div>
+
+              <p class="text-sm font-semibold text-blue-700">
+                Select a staged model
+              </p>
+
+              <p class="mt-1 text-xs text-gray-500">
+                Choose a model from the left.
+              </p>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        @else {
+
+          <!-- MODEL HEADER -->
+
+          <div
+            class="border-b border-red-100 bg-gradient-to-r from-red-50 via-white to-blue-50 px-4 py-4"
+          >
+
+            <div class="flex gap-3">
+
+              <div
+                class="h-20 w-24 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white"
+              >
+
+                @if (selectedModel()!.modelImageUrl) {
+
+                  <img
+                    [src]="selectedModel()!.modelImageUrl!"
+                    [alt]="selectedModel()!.modelName ?? ''"
+                    class="h-full w-full object-cover"
+                  />
+
+                } @else {
+
+                  <div class="flex h-full items-center justify-center">
+
+                    <span class="text-xl text-gray-300">
+                      ◇
+                    </span>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <div class="min-w-0 flex-1">
+
+                <p class="text-[10px] uppercase tracking-wide text-gray-500">
+                  {{ selectedModel()!.brandName }}
+                </p>
+
+                <h2 class="text-lg font-bold text-blue-700 tracking-tight">
+                  {{ selectedModel()!.modelName }}
+                </h2>
+
+
+                <div class="mt-2 flex flex-wrap gap-1">
+
+                  <span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">
+                    Batch #{{ selectedModel()!.importBatchId }}
+                  </span>
+
+                  <span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">
+                    {{ selectedModel()!.category || '—' }}
+                  </span>
+
+                  <span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">
+                    {{ selectedModel()!.bodyType || '—' }}
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <button
+                type="button"
+                (click)="closeModel()"
+                class="h-8 w-8 shrink-0 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50"
+              >
+                ×
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- MODEL INFORMATION -->
+
+          <div class="cs-accent-line-red border-b border-gray-100 p-4">
+            <div class="mb-3"><h3 class="text-sm font-semibold cs-heading-red">Model Information</h3><p class="mt-0.5 text-[10px] text-gray-400">All model-level values are editable.</p></div>
+            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              @for (field of [
+                { key: 'brandName', editKey: 'model-brand', label: 'Brand', type: 'text' },
+                { key: 'modelName', editKey: 'model-name', label: 'Model', type: 'text' },
+                { key: 'category', editKey: 'model-category', label: 'Category', type: 'text' },
+                { key: 'bodyType', editKey: 'model-body', label: 'Body Type', type: 'text' }
+              ]; track field.key) {
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>
+                  @if (isEditing(field.editKey)) {
+                    <div class="mt-1 flex min-w-0 items-center gap-1"><input [type]="field.type" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveModelField($any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>
+                  } @else {
+                    <div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(selectedModel())[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit(field.editKey, $any(selectedModel())[field.key],
+                          'model')">✎</button></div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- =====================================================
+               DIMENSIONS=====================================================
+               DIMENSIONS
+               ===================================================== -->
+
+          <div class="border-b border-gray-100 p-4">
+
+            <div class="mb-3">
+
+              <h3 class="text-sm font-semibold text-blue-700">
+                Dimensions
+              </h3>
+
+              <p class="mt-0.5 text-[10px] text-gray-400">
+                Model-level dimensions. Null values are editable.
+              </p>
+
+            </div>
+
+
+            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+
+              @for (
+                dimension of [
+                  { key: 'lengthMm', label: 'Length', unit: 'mm' },
+                  { key: 'widthMm', label: 'Width', unit: 'mm' },
+                  { key: 'heightMm', label: 'Height', unit: 'mm' },
+                  { key: 'wheelbaseMm', label: 'Wheelbase', unit: 'mm' },
+                  { key: 'groundClearanceMm', label: 'Ground Clearance', unit: 'mm' },
+                  { key: 'bootSpaceLitres', label: 'Boot Space', unit: 'L' },
+                  { key: 'fuelTankCapacityLitres', label: 'Fuel Tank', unit: 'L' }
+                ];
+                track dimension.key
+              ) {
+
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5">
+
+                  <span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">
+                    {{ dimension.label }}
+                  </span>
+
+
+                  @if (
+                    isEditing(
+                      'dimension-' + dimension.key
+                    )
+                  ) {
+
+                    <div class="mt-1 flex min-w-0 items-center gap-1">
+
+                      <input
+                        type="number"
+                        [ngModel]="editValue()" (ngModelChange)="editValue.set($event)"
+                        class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none placeholder:text-gray-400 focus:border-gray-300 focus:ring-1 focus:ring-gray-200"
+                      />
+
+                      <button
+                        type="button"
+                        class="rounded-md bg-gray-700 px-2 py-1 text-[10px] font-semibold text-white hover:bg-gray-600"
+                        (click)="saveDimensionField($any(dimension.key))"
+                      >
+                        ✓
+                      </button>
+
+                      <button
+                        type="button"
+                        class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        (click)="cancelEdit()"
+                      >
+                        ×
+                      </button>
+
+                    </div>
+
+                  } @else {
+
+                    <div class="mt-1 flex min-w-0 items-center gap-1">
+
+                      <span class="min-w-0 break-words text-xs font-medium text-gray-600">
+
+                        {{
+                              displayValue(
+                                getDimensionValue($any(dimension.key))
+                              )
+                            }}
+
+                        {{ dimension.unit }}
+
+                      </span>
+
+
+                      <button
+                        type="button"
+                        class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        (click)="beginEdit(
+                          'dimension-' + dimension.key,
+                          getDimensionValue($any(dimension.key)),
+                          'dimensions',
+                          'number'
+                        )"
+                      >
+                        ✎
+                      </button>
+
+                    </div>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+
+          <!-- =====================================================
+               VARIANT CONFIGURATION
+               ===================================================== -->
+
+          <div class="p-4">
+
+            <div class="mb-3 flex items-center justify-between">
+
+              <div>
+
+                <h3 class="text-sm font-semibold text-blue-700">
+                  Variant Configuration
+                </h3>
+
+                <p class="mt-0.5 text-[10px] text-gray-400">
+                  Every parent is shown. Expand a parent to see its concrete subvariants.
+                </p>
+
+              </div>
+
+
+              <span class="text-[10px] text-gray-400">
+                {{ selectedModel()!.parentVariants.length }} parents
+              </span>
+
+            </div>
+
+
+            <div class="space-y-2">
+
+              @for (
+                parent of selectedModel()!.parentVariants;
+                track parent.importVariantParentId
+              ) {
+
+                <div
+                  class="overflow-hidden rounded-lg border border-blue-100 cs-card-hover"
+                >
+
+                  <!-- PARENT -->
+
+                  <button
+                    type="button"
+                    (click)="toggleParent(parent.importVariantParentId)"
+                    class="flex w-full items-center gap-2 bg-gray-50 px-3 py-3 text-left hover:bg-gray-100"
+                  >
+
+                    <svg
+                      class="h-4 w-4 shrink-0 text-gray-400 transition-transform"
+                      [class.rotate-90]="
+                        isParentExpanded(parent.importVariantParentId)
+                      "
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                        d="M9 5l7 7-7-7"
+                      />
+                    </svg>
+
+
+                    <div class="min-w-0 flex-1">
+
+                      <p class="text-xs font-semibold text-green-700">
+                        {{ parent.parentVariantName }}
+                      </p>
+
+                      <div class="mt-1 flex flex-wrap gap-1">
+
+                        <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                          {{
+                            (
+                              (parent.subVariants ?? [])
+                            ).length
+                          }}
+                          subvariants
+                        </span>
+
+                      </div>
+
+                    </div>
+
+
+                    <span class="cs-badge-violet rounded-full border px-2 py-1 text-[9px] font-semibold">
+                      PARENT
+                    </span>
+
+                  </button>
+
+
+                  <!-- CHILDREN -->
+
+                  @if (
+                    isParentExpanded(
+                      parent.importVariantParentId
+                    )
+                  ) {
+
+                    <div class="divide-y divide-gray-100">
+
+                      @for (
+                        variant of (parent.subVariants ?? []);
+                        track variant.importVariantId
+                      ) {
+
+                        <button
+                          type="button"
+                          (click)="
+                            openVariantPage(
+                              variant,
+                              parent.parentVariantName
+                            )
+                          "
+                          class="cs-subvariant group w-full px-3 py-3 text-left transition"
+                        >
+
+                          <div class="ml-6 flex gap-3">
+
+                            <div class="min-w-0 flex-1">
+
+                              <div class="flex flex-wrap items-center gap-1.5">
+
+                                <span class="text-xs font-semibold text-green-700">
+                                  {{ variant.variantName }}
+                                </span>
+
+                                <span
+                                  class="cs-badge-green rounded border px-1.5 py-0.5 text-[9px] font-medium"
+                                >
+                                  {{ variant.variantType }}
+                                </span>
+
+                              </div>
+
+
+                              <!-- COUNTS -->
+
+                              <div class="mt-1.5 flex flex-wrap gap-1">
+
+                                <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                                  {{ featureCount(variant) }} features
+                                </span>
+
+                                <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                                  {{ specificationCount(variant) }} specs
+                                </span>
+
+                                <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                                  {{ fuelEfficiencyCount(variant) }} efficiency
+                                </span>
+
+                                <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                                  {{ warrantyCount(variant) }} warranty
+                                </span>
+
+                                <span class="cs-badge-blue rounded border px-1.5 py-0.5 text-[9px] font-medium">
+                                  {{ performanceCount(variant) }} performance
+                                </span>
+
+                              </div>
+
+
+                              <!-- REFERENCES -->
+
+                              <div
+                                class="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[9px] text-gray-400"
+                              >
+
+                                <span>
+                                  PT:
+                                  {{ displayValue(variant.powertrainRef) }}
+                                </span>
+
+                                <span>
+                                  TR:
+                                  {{ displayValue(variant.transmissionRef) }}
+                                </span>
+
+                                <span>
+                                  DT:
+                                  {{ displayValue(variant.drivetrainRef) }}
+                                </span>
+
+                              </div>
+
+                            </div>
+
+
+                            <svg
+                              class="mt-1 h-4 w-4 shrink-0 text-gray-300 transition group-hover:translate-x-0.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M9 5l7 7-7-7"
+                              />
+                            </svg>
+
+                          </div>
+
+                        </button>
+
+                      }
+
+                    </div>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        }
+
+      </section>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       VARIANT DETAIL PAGE
+       ============================================================ -->
+
+  @if (selectedVariant(); as variant) {
+
+    <div>
+
+      <!-- TOP BAR -->
+
+      <div
+        class="mb-4 flex flex-col gap-3 border-b border-gray-200 pb-3 sm:flex-row sm:items-center sm:justify-between"
+      >
+
+        <div class="flex min-w-0 items-center gap-2">
+
+          <button
+            type="button"
+            (click)="backToModel()"
+            class="rounded-sm border border-grey-200 bg-white px-3 py-1.5 text-xs font-small text-gray-600 transition hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700"
+          >
+            &#129028; Model
+          </button>
+
+
+          <div class="min-w-0">
+
+            <p class="truncate text-[10px] text-gray-400">
+              {{ selectedModel()?.brandName }}
+              /
+              {{ selectedModel()?.modelName }}
+              /
+              {{ selectedParentName() }}
+            </p>
+
+            <h1 class="truncate text-base font-bold text-gray-600">
+              {{ variant.variantName }}
+            </h1>
+
+          </div>
+
+        </div>
+
+
+        <div class="flex flex-wrap gap-1">
+
+          <span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">
+            Variant #{{ variant.importVariantId }}
+          </span>
+
+          <span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">
+            {{ variant.variantType }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- BASIC -->
+
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover">
+
+        <div class="mb-3 flex items-start justify-between gap-3">
+
+          <div>
+
+            <h2 class="text-sm font-semibold text-blue-700">
+              Basic Variant Data
+            </h2>
+
+            <p class="mt-0.5 text-[10px] text-gray-400">
+              IDs are read-only. Other values are editable.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+
+          @for (
+            field of [
+              {
+                key: 'variantName',
+                label: 'Variant Name',
+                value: variant.variantName,
+                type: 'text'
+              },
+              {
+                key: 'variantType',
+                label: 'Variant Type',
+                value: variant.variantType,
+                type: 'text',
+                readonly: true
+              },
+              {
+                key: 'baseVariantName',
+                label: 'Base Variant',
+                value: variant.baseVariantName,
+                type: 'text'
+              },
+              {
+                key: 'exShowroomPrice',
+                label: 'Ex-showroom Price',
+                value: variant.exShowroomPrice,
+                type: 'number'
+              },
+              {
+                key: 'kerbWeight',
+                label: 'Kerb Weight',
+                value: variant.kerbWeight,
+                type: 'number'
+              },
+              {
+                key: 'seatingCapacity',
+                label: 'Seating Capacity',
+                value: variant.seatingCapacity,
+                type: 'number'
+              },
+              {
+                key: 'powertrainRef',
+                label: 'Powertrain Ref',
+                value: variant.powertrainRef,
+                type: 'text'
+              },
+              {
+                key: 'transmissionRef',
+                label: 'Transmission Ref',
+                value: variant.transmissionRef,
+                type: 'text'
+              },
+              {
+                key: 'drivetrainRef',
+                label: 'Drivetrain Ref',
+                value: variant.drivetrainRef,
+                type: 'text'
+              }
+            ];
+            track field.key
+          ) {
+
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5">
+
+              <span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">
+                {{ field.label }}
+              </span>
+
+
+              @if (
+                !field.readonly &&
+                isEditing(
+                  'variant-' + field.key
+                )
+              ) {
+
+                <div class="mt-1 flex min-w-0 items-center gap-1">
+
+                  <input
+                    [type]="field.type"
+                    [ngModel]="editValue()" (ngModelChange)="editValue.set($event)"
+                    class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none placeholder:text-gray-400 focus:border-gray-300 focus:ring-1 focus:ring-gray-200"
+                  />
+
+                  <button
+                    type="button"
+                    class="rounded-md bg-gray-700 px-2 py-1 text-[10px] font-semibold text-white hover:bg-gray-600"
+                    (click)="saveVariantField(
+                      variant,
+                      $any(field.key)
+                    )"
+                  >
+                    ✓
+                  </button>
+
+                  <button
+                    type="button"
+                    class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                    (click)="cancelEdit()"
+                  >
+                    ×
+                  </button>
+
+                </div>
+
+              } @else {
+
+                <div class="mt-1 flex min-w-0 items-center gap-1">
+
+                  <span class="min-w-0 break-words text-xs font-medium text-gray-600">
+                    {{ displayValue(field.value) }}
+                  </span>
+
+
+                  @if (!field.readonly) {
+
+                    <button
+                      type="button"
+                      class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                      (click)="beginEdit(
+                        'variant-' + field.key,
+                        field.value,
+                        'variant',
+                        $any(field.type)
+                      )"
+                    >
+                      ✎
+                    </button>
+
+                  }
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      </section>
+
+
+      <!-- POWERTRAIN -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-red">Powertrain</h2><p class="mt-0.5 text-[10px] text-gray-400">Resolved from PowertrainRef. The reference itself is read-only.</p></div><div class="flex items-center gap-2">
+
+                <button
+                  type="button"
+                  (click)="openPowertrainReferenceModal()"
+                  class="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[10px] font-semibold text-blue-700 hover:bg-blue-100"
+                >
+                  Reference
+                </button>
+              
+                <button
+                  type="button"
+                  (click)="openPowertrainModal()"
+                  class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold"
+                >
+                  + Add Powertrain
+                </button>
+              
+          </div></div>
+          @if (variant.powertrain) {<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Type</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-powertrainType')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'powertrainType')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['powertrainType']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-powertrainType', $any(variant.powertrain)['powertrainType'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Engine Ref</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-engineRef')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'engineRef')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['engineRef']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-engineRef', $any(variant.powertrain)['engineRef'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Battery Capacity kWh</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-batteryCapacityKWh')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'batteryCapacityKWh')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['batteryCapacityKWh']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-batteryCapacityKWh', $any(variant.powertrain)['batteryCapacityKWh'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Combined Max Power</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPower')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxPower')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxPower']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPower', $any(variant.powertrain)['combinedMaxPower'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power Unit</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxPowerUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxPowerUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerUnit', $any(variant.powertrain)['combinedMaxPowerUnit'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Combined Max Torque</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorque')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxTorque')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxTorque']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorque', $any(variant.powertrain)['combinedMaxTorque'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque Unit</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxTorqueUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxTorqueUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueUnit', $any(variant.powertrain)['combinedMaxTorqueUnit'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxPowerRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxPowerRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPM', $any(variant.powertrain)['combinedMaxPowerRPM'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Min</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxPowerRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxPowerRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPMMin', $any(variant.powertrain)['combinedMaxPowerRPMMin'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Max</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxPowerRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxPowerRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxPowerRPMMax', $any(variant.powertrain)['combinedMaxPowerRPMMax'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxTorqueRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxTorqueRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPM', $any(variant.powertrain)['combinedMaxTorqueRPM'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Min</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxTorqueRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxTorqueRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPMMin', $any(variant.powertrain)['combinedMaxTorqueRPMMin'],
+                          'variant')">✎</button></div>}
+                </div>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Max</span>
+                  @if (isEditing('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="savePowertrainField(variant.powertrain, 'combinedMaxTorqueRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.powertrain)['combinedMaxTorqueRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('powertrain-' + variant.powertrain.importPowertrainId + '-combinedMaxTorqueRPMMax', $any(variant.powertrain)['combinedMaxTorqueRPMMax'],
+                          'variant')">✎</button></div>}
+                </div>
+        </div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Powertrain: —</div>}
+      </section>
+
+      <!-- ENGINE -->
+
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover">
+
+        <div class="mb-3 flex items-start justify-between gap-3">
+
+          <div>
+
+            <h2 class="text-sm font-semibold text-blue-700">
+              Engine
+            </h2>
+
+            <p class="mt-0.5 text-[10px] text-gray-400">
+              Resolved through Powertrain.EngineRef.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        @if (variant.engine) {
+
+          <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+            @for (
+              field of [
+                ['engineName', 'Engine Name', 'text'],
+                ['numberOfCylinders', 'Cylinders', 'number'],
+                ['numberOfValves', 'Valves', 'number'],
+                ['displacement', 'Displacement', 'number'],
+                ['isTurbocharged', 'Turbocharged', 'boolean'],
+                ['emissionStandard', 'Emission Standard', 'text'],
+                ['aspiration', 'Aspiration', 'text'],
+                ['engineType', 'Engine Type', 'text']
+              ];
+              track field[0]
+            ) {
+
+              <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5">
+
+                <span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">
+                  {{ field[1] }}
+                </span>
+
+
+                @if (
+                  isEditing(
+                    'engine-' +
+                    variant.engine.importEngineId +
+                    '-' +
+                    field[0]
+                  )
+                ) {
+
+                  @if (field[2] === 'boolean') {
+
+                    <select
+                      [ngModel]="editValue()" (ngModelChange)="editValue.set($event)"
+                      class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none placeholder:text-gray-400 focus:border-gray-300 focus:ring-1 focus:ring-gray-200"
+                    >
+
+                      <option [ngValue]="true">
+                        Yes
+                      </option>
+
+                      <option [ngValue]="false">
+                        No
+                      </option>
+
+                      <option [ngValue]="null">
+                        —
+                      </option>
+
+                    </select>
+
+                  } @else {
+
+                    <input
+                      [type]="field[2]"
+                      [ngModel]="editValue()" (ngModelChange)="editValue.set($event)"
+                      class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none placeholder:text-gray-400 focus:border-gray-300 focus:ring-1 focus:ring-gray-200"
+                    />
+
+                  }
+
+
+                  <div class="mt-1 flex gap-1">
+
+                    <button
+                      type="button"
+                      class="rounded-md bg-gray-700 px-2 py-1 text-[10px] font-semibold text-white hover:bg-gray-600"
+                      (click)="saveEngineField(
+                        variant.engine,
+                        $any(field[0])
+                      )"
+                    >
+                      ✓
+                    </button>
+
+                    <button
+                      type="button"
+                      class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                      (click)="cancelEdit()"
+                    >
+                      ×
+                    </button>
+
+                  </div>
+
+                } @else {
+
+                  <div class="mt-1 flex min-w-0 items-center gap-1">
+
+                    <span class="min-w-0 break-words text-xs font-medium text-gray-600">
+                      {{
+                        displayValue(
+                          $any(variant.engine)[field[0]]
+                        )
+                      }}
+                    </span>
+
+                    <button
+                      type="button"
+                      class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                      (click)="beginEdit(
+                        'engine-' +
+                        variant.engine.importEngineId +
+                        '-' +
+                        field[0],
+                        $any(variant.engine)[field[0]],
+                        'engine',
+                        $any(field[2] === 'number'
+                          ? 'number'
+                          : field[2] === 'boolean'
+                            ? 'boolean'
+                            : 'text')
+                      )"
+                    >
+                      ✎
+                    </button>
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">
+            Engine: —
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- ENGINE PERFORMANCE -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3"><h2 class="text-sm font-semibold cs-heading-blue">Engine Performance</h2><p class="mt-0.5 text-[10px] text-gray-400">Fuel type is shown by FuelTypeName. FuelTypeId remains staging-null.</p></div>
+        @if (variant.enginePerformances?.length) {<div class="space-y-2">@for (performance of variant.enginePerformances; track performance.importEnginePerformanceId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="mb-2 flex items-center justify-between gap-2 text-xs font-semibold text-gray-600"><span>{{ displayValue(performance.modeName) }}</span><span class="font-mono text-[9px] text-gray-400">#{{ performance.importEnginePerformanceId }}</span></div><div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Mode</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-modeName')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'modeName')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['modeName']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-modeName', $any(performance)['modeName'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Fuel Type</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-fuelTypeName')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'fuelTypeName')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['fuelTypeName']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-fuelTypeName', $any(performance)['fuelTypeName'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Max Power</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxPower')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxPower')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxPower']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxPower', $any(performance)['maxPower'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power Unit</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxPowerUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxPowerUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerUnit', $any(performance)['maxPowerUnit'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Max Torque</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxTorque')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxTorque')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxTorque']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxTorque', $any(performance)['maxTorque'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque Unit</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxTorqueUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxTorqueUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueUnit', $any(performance)['maxTorqueUnit'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxPowerRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxPowerRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPM', $any(performance)['maxPowerRPM'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Min</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxPowerRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxPowerRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPMMin', $any(performance)['maxPowerRPMMin'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Max</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxPowerRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxPowerRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxPowerRPMMax', $any(performance)['maxPowerRPMMax'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxTorqueRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxTorqueRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPM', $any(performance)['maxTorqueRPM'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Min</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxTorqueRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxTorqueRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPMMin', $any(performance)['maxTorqueRPMMin'],
+                          'enginePerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Max</span>@if (isEditing('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveEnginePerformanceField(performance, 'maxTorqueRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(performance)['maxTorqueRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('engine-performance-' + performance.importEnginePerformanceId + '-maxTorqueRPMMax', $any(performance)['maxTorqueRPMMax'],
+                          'enginePerformance')">✎</button></div>}</div>
+        </div></div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Engine performance: —</div>}
+      </section>
+
+      <!-- TRANSMISSION -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-violet">Transmission</h2><p class="mt-0.5 text-[10px] text-gray-400">Resolved from TransmissionRef. The reference itself is read-only.</p></div><div class="flex items-center gap-2">
+
+              <button
+                type="button"
+                (click)="openTransmissionReferenceModal()"
+                class="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[10px] font-semibold text-blue-700 hover:bg-blue-100"
+              >
+                Reference
+              </button>
+            
+              <button
+                type="button"
+                (click)="openTransmissionModal()"
+                class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold"
+              >
+                + Add Transmission
+              </button>
+            
+            </div></div>
+            @if (variant.transmission) {<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Type</span>@if (isEditing('transmission-' + variant.transmission.importTransmissionId + '-transmissionType')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveTransmissionField(variant.transmission, 'transmissionType')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.transmission)['transmissionType']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('transmission-' + variant.transmission.importTransmissionId + '-transmissionType', $any(variant.transmission)['transmissionType'],
+                          'variant')">✎</button></div>}</div>
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Number of Gears</span>@if (isEditing('transmission-' + variant.transmission.importTransmissionId + '-numberOfGears')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveTransmissionField(variant.transmission, 'numberOfGears')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.transmission)['numberOfGears']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('transmission-' + variant.transmission.importTransmissionId + '-numberOfGears', $any(variant.transmission)['numberOfGears'],
+                          'variant')">✎</button></div>}</div>
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Manual Override</span>@if (isEditing('transmission-' + variant.transmission.importTransmissionId + '-hasManualOverride')) {<div class="mt-1 flex min-w-0 items-center gap-1"><select [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"><option [ngValue]="null">—</option><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveTransmissionField(variant.transmission, 'hasManualOverride')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.transmission)['hasManualOverride']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('transmission-' + variant.transmission.importTransmissionId + '-hasManualOverride', $any(variant.transmission)['hasManualOverride'],
+                          'variant')">✎</button></div>}</div>
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Paddle Shifters</span>@if (isEditing('transmission-' + variant.transmission.importTransmissionId + '-hasPaddleShifters')) {<div class="mt-1 flex min-w-0 items-center gap-1"><select [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"><option [ngValue]="null">—</option><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveTransmissionField(variant.transmission, 'hasPaddleShifters')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.transmission)['hasPaddleShifters']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('transmission-' + variant.transmission.importTransmissionId + '-hasPaddleShifters', $any(variant.transmission)['hasPaddleShifters'],
+                          'variant')">✎</button></div>}</div>
+      </div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Transmission: —</div>}</section>
+
+      <!-- DRIVETRAIN -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-red">Drivetrain</h2><p class="mt-0.5 text-[10px] text-gray-400">Resolved from DrivetrainRef. The reference itself is read-only.</p></div><div class="flex items-center gap-2">
+
+            <button
+              type="button"
+              (click)="openDrivetrainReferenceModal()"
+              class="rounded-lg border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-[10px] font-semibold text-blue-700 hover:bg-blue-100"
+            >
+              Reference
+            </button>
+          
+            <button
+              type="button"
+              (click)="openDrivetrainModal()"
+              class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold"
+            >
+              + Add Drivetrain
+            </button>
+          
+          </div></div>
+          @if (variant.drivetrain) {<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (field of [{key:'drivetrainType',label:'Drivetrain Type'},{key:'differentialType',label:'Differential Type'}]; track field.key) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>@if (isEditing('drivetrain-' + variant.drivetrain.importDrivetrainId + '-' + field.key)) {<div class="mt-1 flex min-w-0 items-center gap-1"><input [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveDrivetrainField(variant.drivetrain, $any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(variant.drivetrain)[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('drivetrain-' + variant.drivetrain.importDrivetrainId + '-' + field.key, $any(variant.drivetrain)[field.key],
+                          'variant')">✎</button></div>}</div>}
+      </div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Drivetrain: —</div>}</section>
+
+      <!-- MOTOR PERFORMANCE -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3"><h2 class="text-sm font-semibold cs-heading-violet">Motor Performance</h2><p class="mt-0.5 text-[10px] text-gray-400">Electric motor information, when present.</p></div>@if (variant.powertrain?.motorPerformances?.length) {<div class="space-y-2">@for (motor of variant.powertrain!.motorPerformances; track motor.importMotorPerformanceId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="mb-2 flex items-center justify-between gap-2 text-xs font-semibold text-gray-600"><span>{{ displayValue(motor.motorName) }}</span><span class="font-mono text-[9px] text-gray-400">#{{ motor.importMotorPerformanceId }}</span></div><div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Motor Name</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-motorName')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'motorName')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['motorName']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-motorName', $any(motor)['motorName'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Max Power</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxPower')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxPower')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxPower']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxPower', $any(motor)['maxPower'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power Unit</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxPowerUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxPowerUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerUnit', $any(motor)['maxPowerUnit'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Max Torque</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxTorque')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxTorque')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxTorque']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxTorque', $any(motor)['maxTorque'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque Unit</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueUnit')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="text" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxTorqueUnit')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxTorqueUnit']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueUnit', $any(motor)['maxTorqueUnit'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxPowerRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxPowerRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPM', $any(motor)['maxPowerRPM'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Min</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxPowerRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxPowerRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPMMin', $any(motor)['maxPowerRPMMin'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Power RPM Max</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxPowerRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxPowerRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxPowerRPMMax', $any(motor)['maxPowerRPMMax'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPM')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxTorqueRPM')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxTorqueRPM']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPM', $any(motor)['maxTorqueRPM'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Min</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPMMin')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxTorqueRPMMin')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxTorqueRPMMin']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPMMin', $any(motor)['maxTorqueRPMMin'],
+                          'motorPerformance')">✎</button></div>}</div>
+                    <div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Torque RPM Max</span>@if (isEditing('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPMMax')) {<div class="mt-1 flex min-w-0 items-center gap-1"><input type="number" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveMotorPerformanceField(motor, 'maxTorqueRPMMax')">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 break-words text-xs font-medium text-gray-600">{{ displayValue($any(motor)['maxTorqueRPMMax']) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('motor-performance-' + motor.importMotorPerformanceId + '-maxTorqueRPMMax', $any(motor)['maxTorqueRPMMax'],
+                          'motorPerformance')">✎</button></div>}</div>
+      </div></div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Motor performance: —</div>}</section>
+
+      <!-- FEATURES -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-green">Features</h2><p class="mt-0.5 text-[10px] text-gray-400">{{ featureCount(variant) }} feature records. Master identity/code are read-only.</p></div><button type="button" (click)="openFeatureModal()" class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold">+ Add Feature</button></div>@if (variant.features?.length) {<div class="grid gap-2 sm:grid-cols-2">@for (feature of variant.features; track feature.importFeatureVariantId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="flex items-start justify-between gap-2"><div class="min-w-0"><p class="text-xs font-semibold text-green-700">{{ feature.featureName || feature.featureCode }}</p><p class="font-mono text-[9px] text-gray-400">{{ feature.featureCode }}</p></div><span class="font-mono text-[9px] text-gray-400">#{{ feature.importFeatureVariantId }}</span></div><div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        @for (field of [{key:'available',label:'Available',type:'boolean'},{key:'value',label:'Value',type:'text'},{key:'sourceColumn',label:'Source Column',type:'text'},{key:'pageNumber',label:'Page',type:'number'},{key:'evidence',label:'Evidence',type:'textarea'},{key:'confidence',label:'Confidence',type:'number'}]; track field.key) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>@if (isEditing('feature-' + feature.importFeatureVariantId + '-' + field.key)) {<div class="mt-1 flex min-w-0 items-start gap-1">@if (field.type === 'boolean') {<select [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"><option [ngValue]="null">—</option><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select>} @else if (field.type === 'textarea') {<textarea rows="3" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"></textarea>} @else {<input [type]="field.type" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" />}<button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveFeatureField(feature, $any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-start gap-1"><span class="min-w-0 flex-1 break-words text-xs font-medium text-gray-600">{{ field.key === 'confidence' ? formatConfidence($any(feature)[field.key]) : field.key === 'valueOptionIds' ? (($any(feature)[field.key] ?? []).join(', ')) : displayValue($any(feature)[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('feature-' + feature.importFeatureVariantId + '-' + field.key, $any(feature)[field.key],
+                          'feature')">✎</button></div>}</div>}
+      </div>@if (feature.valueOptions?.length) {<div class="mt-2 rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">Selected Options</span><div class="mt-1 flex flex-wrap gap-1">@for (option of feature.valueOptions; track option.valueOptionId) {<span class="rounded-full bg-white px-2 py-1 text-[9px] text-gray-500 ring-1 ring-gray-200">{{ option.displayName }}</span>}</div></div>}</div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Features: —</div>}</section>
+
+      <!-- SPECIFICATIONS -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-blue">Specifications</h2><p class="mt-0.5 text-[10px] text-gray-400">{{ specificationCount(variant) }} specification records. Master identity/code are read-only.</p></div><button type="button" (click)="openSpecificationModal()" class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold">+ Add Specification</button></div>@if (variant.specifications?.length) {<div class="grid gap-2 sm:grid-cols-2">@for (specification of variant.specifications; track specification.importSpecificationVariantId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="flex items-start justify-between gap-2"><div><p class="text-xs font-semibold text-green-700">{{ specification.specificationName || specification.specificationCode }}</p><p class="font-mono text-[9px] text-gray-400">{{ specification.specificationCode }}</p></div><span class="font-mono text-[9px] text-gray-400">#{{ specification.importSpecificationVariantId }}</span></div><div class="mt-3 grid gap-2 sm:grid-cols-2">
+        @for (field of [{key:'numericValue',label:'Numeric',type:'number'},{key:'textValue',label:'Text',type:'text'},{key:'booleanValue',label:'Boolean',type:'boolean'},{key:'unit',label:'Unit',type:'text'},{key:'sourceColumn',label:'Source Column',type:'text'},{key:'pageNumber',label:'Page',type:'number'},{key:'evidence',label:'Evidence',type:'textarea'},{key:'confidence',label:'Confidence',type:'number'}]; track field.key) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>@if (isEditing('specification-' + specification.importSpecificationVariantId + '-' + field.key)) {<div class="mt-1 flex min-w-0 items-start gap-1">@if (field.type === 'boolean') {<select [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"><option [ngValue]="null">—</option><option [ngValue]="true">Yes</option><option [ngValue]="false">No</option></select>} @else if (field.type === 'textarea') {<textarea rows="3" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"></textarea>} @else {<input [type]="field.type" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" />}<button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveSpecificationField(specification, $any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-start gap-1"><span class="min-w-0 flex-1 break-words text-xs font-medium text-gray-600">{{ field.key === 'confidence' ? formatConfidence($any(specification)[field.key]) : displayValue($any(specification)[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('specification-' + specification.importSpecificationVariantId + '-' + field.key, $any(specification)[field.key],
+                          'specification')">✎</button></div>}</div>}
+      </div></div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Specifications: —</div>}</section>
+
+      <!-- FUEL EFFICIENCY -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-red">Fuel Efficiency</h2><p class="mt-0.5 text-[10px] text-gray-400">{{ fuelEfficiencyCount(variant) }} applicable records.</p></div><button type="button" (click)="openFuelEfficiencyModal()" class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold">+ Add</button></div>@if (variant.fuelEfficiencies?.length) {<div class="space-y-2">@for (efficiency of variant.fuelEfficiencies; track efficiency.importFuelEfficiencyId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (field of [{key:'fuelEfficiency',label:'Efficiency',type:'number'},{key:'fuelEfficiencyUnit',label:'Unit',type:'text'},{key:'sourceColumn',label:'Source Column',type:'text'},{key:'pageNumber',label:'Page',type:'number'},{key:'confidence',label:'Confidence',type:'number'}]; track field.key) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>@if (isEditing('fuel-' + efficiency.importFuelEfficiencyId + '-' + field.key)) {<div class="mt-1 flex min-w-0 items-center gap-1"><input [type]="field.type" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" /><button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveFuelEfficiencyField(efficiency, $any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-center gap-1"><span class="min-w-0 flex-1 break-words text-xs font-medium text-gray-600">{{ field.key === 'confidence' ? formatConfidence($any(efficiency)[field.key]) : displayValue($any(efficiency)[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('fuel-' + efficiency.importFuelEfficiencyId + '-' + field.key, $any(efficiency)[field.key],
+                          'fuelEfficiency')">✎</button></div>}</div>}
+      </div></div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Fuel efficiency: —</div>}</section>
+
+      <!-- WARRANTY -->
+      <section class="cs-section mb-3 rounded-xl border border-blue-100 bg-white p-4 shadow-sm cs-card-hover"><div class="mb-3 flex items-start justify-between gap-3"><div><h2 class="text-sm font-semibold cs-heading-violet">Warranty</h2><p class="mt-0.5 text-[10px] text-gray-400">{{ warrantyCount(variant) }} warranty records.</p></div><button type="button" (click)="openWarrantyModal()" class="cs-add-btn shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-semibold">+ Add</button></div>@if (variant.warranties?.length) {<div class="space-y-2">@for (warranty of variant.warranties; track warranty.importWarrantyId) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-3"><div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        @for (field of [{key:'warrantyType',label:'Warranty Type',type:'text'},{key:'durationYears',label:'Duration Years',type:'number'},{key:'kilometres',label:'Kilometres',type:'number'},{key:'maximumDurationYears',label:'Maximum Years',type:'number'},{key:'maximumKilometres',label:'Maximum Km',type:'number'},{key:'sourceId',label:'Source ID',type:'number'},{key:'pageNumber',label:'Page',type:'number'},{key:'confidence',label:'Confidence',type:'number'},{key:'evidenceText',label:'Evidence',type:'textarea'}]; track field.key) {<div class="rounded-lg border border-gray-100 bg-gray-50 p-2.5"><span class="block text-[9px] font-medium uppercase tracking-wide text-gray-400">{{ field.label }}</span>@if (isEditing('warranty-' + warranty.importWarrantyId + '-' + field.key)) {<div class="mt-1 flex min-w-0 items-start gap-1">@if (field.type === 'textarea') {<textarea rows="3" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200"></textarea>} @else {<input [type]="field.type" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" class="min-w-0 flex-1 rounded-md border border-gray-200 bg-white px-2 py-1.5 text-xs text-gray-600 outline-none focus:border-gray-300 focus:ring-1 focus:ring-gray-200" />}<button type="button" class="rounded-md bg-green-600 px-2 py-1 text-[10px] font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50" (click)="saveWarrantyField(warranty, $any(field.key))">✓</button><button type="button" class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="cancelEdit()">×</button></div>} @else {<div class="mt-1 flex min-w-0 items-start gap-1"><span class="min-w-0 flex-1 break-words text-xs font-medium text-gray-600">{{ field.key === 'confidence' ? formatConfidence($any(warranty)[field.key]) : displayValue($any(warranty)[field.key]) }}</span><button type="button" class="shrink-0 rounded p-0.5 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-600" (click)="beginEdit('warranty-' + warranty.importWarrantyId + '-' + field.key, $any(warranty)[field.key],
+                          'warranty')">✎</button></div>}</div>}
+      </div></div>}</div>} @else {<div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 p-4 text-center text-xs text-gray-400">Warranty: —</div>}</section>
+
+      </div>
+
+      <!-- ============================================================
+           FLOATING ALERT
+           ============================================================ -->
+       <!-- ============================================================ -->
+
+  @if (alertMessage()) {
+
+    <div
+      class="fixed bottom-5 right-4 z-[100] max-w-[calc(100vw-2rem)]"
+    >
+
+      <div
+        class="flex items-start gap-3 rounded-xl border bg-white px-4 py-3 shadow-xl"
+        [class.border-green-200]="alertType() === 'success'"
+        [class.border-red-200]="alertType() === 'error'"
+      >
+
+        <div
+          class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+          [class.bg-green-100]="alertType() === 'success'"
+          [class.bg-red-100]="alertType() === 'error'"
+        >
+
+          <span
+            [class.text-green-700]="alertType() === 'success'"
+            [class.text-red-700]="alertType() === 'error'"
+          >
+            {{ alertType() === 'success' ? '✓' : '!' }}
+          </span>
+
+        </div>
+
+
+        <p class="text-xs font-medium text-gray-700">
+          {{ alertMessage() }}
+        </p>
+
+
+        <button
+          type="button"
+          (click)="alertMessage.set('')"
+          class="text-gray-400"
+        >
+          ×
+        </button>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ============================================================
+       MODAL
+       ============================================================ -->
+
+  @if (modalType()) {
+    <div class="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/40 p-3" (click)="closeModal()">
+      <div class="w-full max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl" (click)="$event.stopPropagation()">
+        <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4"><div><h3 class="text-sm font-semibold text-gray-700">{{ modalTitle() }}</h3><p class="mt-0.5 text-[10px] text-gray-500">New data is added directly to staged tables.</p></div><button type="button" (click)="closeModal()" class="h-7 w-7 rounded-md text-gray-400 hover:bg-gray-50">×</button></div>
+        <div class="max-h-[80vh] overflow-y-auto p-5">
+          @if (modalType() === 'referencePowertrain') {
+          
+            <div class="space-y-4">
+          
+              <div>
+                <h4 class="text-xs font-semibold text-blue-700">
+                  Reference Existing Powertrain
+                </h4>
+          
+                <p class="mt-1 text-[10px] text-gray-500">
+                  Select an existing powertrain from this model to replace
+                  the powertrain currently referenced by this variant.
+                </p>
+              </div>
+          
+              <div class="rounded-lg border border-red-200 bg-red-50 p-3">
+          
+                <div class="text-[10px] font-semibold text-red-700">
+                  Warning
+                </div>
+          
+                <p class="mt-1 text-[10px] leading-relaxed text-red-600">
+                  The powertrain currently referenced by this variant will
+                  be replaced. The existing powertrain record will not be
+                  deleted or modified.
+                </p>
+          
+              </div>
+          
+              @if (powertrainReferenceLoading()) {
+          
+                <div class="rounded-lg border border-blue-100 bg-blue-50 p-3 text-[10px] text-blue-700">
+                  Loading existing powertrains...
+                </div>
+          
+              } @else if (!existingPowertrains().length) {
+          
+                <div class="rounded-lg border border-amber-100 bg-amber-50 p-3 text-[10px] text-amber-700">
+                  No other powertrains were found for this model.
+                </div>
+          
+              } @else {
+          
+                <label class="block">
+          
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">
+                    Powertrain *
+                  </span>
+          
+                  <select
+                    [ngModel]="modalData().importPowertrainId"
+                    (ngModelChange)="setModalField('importPowertrainId', $event)"
+                    class="form-input"
+                  >
+          
+                    <option [ngValue]="null">
+                      Select powertrain...
+                    </option>
+          
+                    @for (
+                      powertrain of existingPowertrains();
+                      track powertrain.importPowertrainId
+                    ) {
+          
+                      <option
+                        [ngValue]="powertrain.importPowertrainId"
+                      >
+                        {{ powertrain.powertrainRef }}
+                        |
+                        {{ powertrain.powertrainType }}
+                        |
+                        Engine: {{ displayValue(powertrain.engineRef) }}
+                        |
+                        Power: {{ displayValue(powertrain.combinedMaxPower) }}
+                        |
+                        Torque: {{ displayValue(powertrain.combinedMaxTorque) }}
+                      </option>
+          
+                    }
+          
+                  </select>
+          
+                </label>
+          
+                @for (
+                  powertrain of existingPowertrains();
+                  track powertrain.importPowertrainId
+                ) {
+          
+                  @if (
+                    powertrain.importPowertrainId ===
+                    modalData().importPowertrainId
+                  ) {
+          
+                    <div class="rounded-lg border border-blue-200 bg-blue-50/50 p-3">
+          
+                      <div class="mb-2 text-[10px] font-semibold text-blue-800">
+                        Selected Powertrain
+                      </div>
+          
+                      <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          
+                        <div>
+                          <span class="cs-lookup-label">Ref</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.powertrainRef) }}
+                          </span>
+                        </div>
+          
+                        <div>
+                          <span class="cs-lookup-label">Type</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.powertrainType) }}
+                          </span>
+                        </div>
+          
+                        <div>
+                          <span class="cs-lookup-label">Engine Ref</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.engineRef) }}
+                          </span>
+                        </div>
+          
+                        <div>
+                          <span class="cs-lookup-label">Battery</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.batteryCapacityKWh) }}
+                          </span>
+                        </div>
+          
+                        <div>
+                          <span class="cs-lookup-label">Max Power</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.combinedMaxPower) }}
+                          </span>
+                        </div>
+          
+                        <div>
+                          <span class="cs-lookup-label">Max Torque</span>
+                          <span class="cs-lookup-value">
+                            {{ displayValue(powertrain.combinedMaxTorque) }}
+                          </span>
+                        </div>
+          
+                      </div>
+          
+                    </div>
+          
+                  }
+          
+                }
+          
+              }
+          
+            </div>
+          }
+          
+          @if (modalType() === 'referenceTransmission') {
+          
+            <div class="space-y-4">
+          
+              <div>
+                <h4 class="text-xs font-semibold text-blue-700">
+                  Reference Existing Transmission
+                </h4>
+          
+                <p class="mt-1 text-[10px] text-gray-500">
+                  Select another transmission belonging to this model.
+                </p>
+              </div>
+          
+              <div class="rounded-lg border border-red-200 bg-red-50 p-3">
+          
+                <div class="text-[10px] font-semibold text-red-700">
+                  Warning
+                </div>
+          
+                <p class="mt-1 text-[10px] leading-relaxed text-red-600">
+                  The transmission currently referenced by this variant
+                  will be replaced. The existing transmission record will
+                  not be deleted or modified.
+                </p>
+          
+              </div>
+          
+              @if (transmissionReferenceLoading()) {
+          
+                <div class="rounded-lg border border-blue-100 bg-blue-50 p-3 text-[10px] text-blue-700">
+                  Loading existing transmissions...
+                </div>
+          
+              } @else if (!existingTransmissions().length) {
+          
+                <div class="rounded-lg border border-amber-100 bg-amber-50 p-3 text-[10px] text-amber-700">
+                  No transmissions were found for this model.
+                </div>
+          
+              } @else {
+          
+                <label class="block">
+          
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">
+                    Transmission *
+                  </span>
+          
+                  <select
+                    [ngModel]="modalData().importTransmissionId"
+                    (ngModelChange)="setModalField('importTransmissionId', $event)"
+                    class="form-input"
+                  >
+          
+                    <option [ngValue]="null">
+                      Select transmission...
+                    </option>
+          
+                    @for (
+                      transmission of existingTransmissions();
+                      track transmission.importTransmissionId
+                    ) {
+          
+                      <option
+                        [ngValue]="transmission.importTransmissionId"
+                      >
+                        {{ transmission.transmissionRef }}
+                        |
+                        {{ displayValue(transmission.transmissionType) }}
+                        |
+                        Gears: {{ displayValue(transmission.numberOfGears) }}
+                        |
+                        Manual Override:
+                        {{ displayValue(transmission.hasManualOverride) }}
+                        |
+                        Paddle:
+                        {{ displayValue(transmission.hasPaddleShifters) }}
+                      </option>
+          
+                    }
+          
+                  </select>
+          
+                </label>
+          
+              }
+          
+            </div>
+          }
+          
+          @if (modalType() === 'referenceDrivetrain') {
+          
+            <div class="space-y-4">
+          
+              <div>
+                <h4 class="text-xs font-semibold text-blue-700">
+                  Reference Existing Drivetrain
+                </h4>
+          
+                <p class="mt-1 text-[10px] text-gray-500">
+                  Select another drivetrain belonging to this model.
+                </p>
+              </div>
+          
+              <div class="rounded-lg border border-red-200 bg-red-50 p-3">
+          
+                <div class="text-[10px] font-semibold text-red-700">
+                  Warning
+                </div>
+          
+                <p class="mt-1 text-[10px] leading-relaxed text-red-600">
+                  The drivetrain currently referenced by this variant
+                  will be replaced. The existing drivetrain record will
+                  not be deleted or modified.
+                </p>
+          
+              </div>
+          
+              @if (drivetrainReferenceLoading()) {
+          
+                <div class="rounded-lg border border-blue-100 bg-blue-50 p-3 text-[10px] text-blue-700">
+                  Loading existing drivetrains...
+                </div>
+          
+              } @else if (!existingDrivetrains().length) {
+          
+                <div class="rounded-lg border border-amber-100 bg-amber-50 p-3 text-[10px] text-amber-700">
+                  No drivetrains were found for this model.
+                </div>
+          
+              } @else {
+          
+                <label class="block">
+          
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">
+                    Drivetrain *
+                  </span>
+          
+                  <select
+                    [ngModel]="modalData().importDrivetrainId"
+                    (ngModelChange)="setModalField('importDrivetrainId', $event)"
+                    class="form-input"
+                  >
+          
+                    <option [ngValue]="null">
+                      Select drivetrain...
+                    </option>
+          
+                    @for (
+                      drivetrain of existingDrivetrains();
+                      track drivetrain.importDrivetrainId
+                    ) {
+          
+                      <option
+                        [ngValue]="drivetrain.importDrivetrainId"
+                      >
+                        {{ drivetrain.drivetrainRef }}
+                        |
+                        {{ displayValue(drivetrain.drivetrainType) }}
+                        |
+                        Differential:
+                        {{ displayValue(drivetrain.differentialType) }}
+                      </option>
+          
+                    }
+          
+                  </select>
+          
+                </label>
+          
+              }
+          
+            </div>
+          }
+          
+                    @if (modalType() === 'feature') {
+            <div class="grid gap-3 sm:grid-cols-2">
+                  <label class="block sm:col-span-2">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">
+                      Feature *
+                    </span>
+                  
+                    @if (featureSpecificationCatalogLoading()) {
+                    
+                      <div class="form-input text-gray-400">
+                        Loading features...
+                      </div>
+                    
+                    } @else {
+                    
+                      <select
+                        [ngModel]="modalData().featureCode"
+                        (ngModelChange)="setModalField('featureCode', $event)"
+                        class="form-input"
+                      >
+                        <option value="">Select feature...</option>
+                    
+                        @for (
+                          feature of featureCatalog();
+                          track feature.importFeatureId
+                        ) {
+                          <option [value]="feature.featureCode">
+                            {{ feature.featureCode }}
+                            @if (feature.featureName) {
+                              — {{ feature.featureName }}
+                            }
+                          </option>
+                        }
+                      </select>
+                    
+                    }
+                  </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Available</span>
+                <select [ngModel]="modalData().available" (ngModelChange)="setModalField('available', $event)" class="form-input">
+                  <option [ngValue]="true">Yes</option>
+                  <option [ngValue]="false">No</option>
+                  <option [ngValue]="null">—</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Value</span>
+                <input [ngModel]="modalData().value" (ngModelChange)="setModalField('value', $event)" class="form-input" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Evidence</span>
+                <textarea rows="3" [ngModel]="modalData().evidence" (ngModelChange)="setModalField('evidence', $event)" class="form-input"></textarea>
+              </label>
+            </div>
+          }
+
+          @if (modalType() === 'specification') {
+            <div class="grid gap-3 sm:grid-cols-2">
+                <label class="block sm:col-span-2">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">
+                    Specification *
+                  </span>
+                
+                  @if (featureSpecificationCatalogLoading()) {
+                  
+                    <div class="form-input text-gray-400">
+                      Loading specifications...
+                    </div>
+                  
+                  } @else {
+                  
+                    <select
+                      [ngModel]="modalData().specificationCode"
+                      (ngModelChange)="selectSpecification($event)"
+                      class="form-input"
+                    >
+                      <option value="">Select specification...</option>
+                  
+                      @for (
+                        specification of specificationCatalog();
+                        track specification.importSpecificationId
+                      ) {
+                        <option [value]="specification.specificationCode">
+                          {{ specification.specificationCode }}
+                          @if (specification.specificationName) {
+                            — {{ specification.specificationName }}
+                          }
+                        </option>
+                      }
+                    </select>
+                  }
+                </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Numeric Value</span>
+                <input type="number" [ngModel]="modalData().numericValue" (ngModelChange)="setModalField('numericValue', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Unit</span>
+                <input [ngModel]="modalData().unit" (ngModelChange)="setModalField('unit', $event)" class="form-input" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Text Value</span>
+                <input [ngModel]="modalData().textValue" (ngModelChange)="setModalField('textValue', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Boolean Value</span>
+                <select [ngModel]="modalData().booleanValue" (ngModelChange)="setModalField('booleanValue', $event)" class="form-input">
+                  <option [ngValue]="null">—</option>
+                  <option [ngValue]="true">Yes</option>
+                  <option [ngValue]="false">No</option>
+                </select>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Page</span>
+                <input type="number" [ngModel]="modalData().pageNumber" (ngModelChange)="setModalField('pageNumber', $event)" class="form-input" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Evidence</span>
+                <textarea rows="3" [ngModel]="modalData().evidence" (ngModelChange)="setModalField('evidence', $event)" class="form-input"></textarea>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Confidence</span>
+                <input type="number" min="0" max="1" step="0.01" [ngModel]="modalData().confidence" (ngModelChange)="setModalField('confidence', $event)" class="form-input" />
+              </label>
+            </div>
+          }
+
+          @if (modalType() === 'fuelEfficiency') {
+            <div class="grid gap-3 sm:grid-cols-2">
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Efficiency</span>
+                <input type="number" [ngModel]="modalData().fuelEfficiency" (ngModelChange)="setModalField('fuelEfficiency', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Unit</span>
+                <input [ngModel]="modalData().fuelEfficiencyUnit" (ngModelChange)="setModalField('fuelEfficiencyUnit', $event)" class="form-input" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Source Column</span>
+                <input [ngModel]="modalData().sourceColumn" (ngModelChange)="setModalField('sourceColumn', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Page</span>
+                <input type="number" [ngModel]="modalData().pageNumber" (ngModelChange)="setModalField('pageNumber', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Confidence</span>
+                <input type="number" min="0" max="1" step="0.01" [ngModel]="modalData().confidence" (ngModelChange)="setModalField('confidence', $event)" class="form-input" />
+              </label>
+              <div class="sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Apply to Variants</span>
+                <div class="grid max-h-40 gap-1 overflow-y-auto rounded-lg border border-gray-200 p-2 sm:grid-cols-2">
+                  @for (v of getConcreteVariants(); track v.importVariantId) {
+                    <label class="flex items-center gap-2 rounded-md px-2 py-1 text-[10px] text-gray-600 hover:bg-gray-50">
+                      <input type="checkbox" [checked]="modalData().importVariantIds?.includes(v.importVariantId)" (change)="setModalVariantChecked(v.importVariantId, $any($event.target).checked)" />
+                      {{ v.variantName }}
+                    </label>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (modalType() === 'warranty') {
+            <div class="grid gap-3 sm:grid-cols-2">
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Warranty Type</span>
+                <input [ngModel]="modalData().warrantyType" (ngModelChange)="setModalField('warrantyType', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Duration Years</span>
+                <input type="number" step="0.1" [ngModel]="modalData().durationYears" (ngModelChange)="setModalField('durationYears', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Kilometres</span>
+                <input type="number" [ngModel]="modalData().kilometres" (ngModelChange)="setModalField('kilometres', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Maximum Years</span>
+                <input type="number" step="0.1" [ngModel]="modalData().maximumDurationYears" (ngModelChange)="setModalField('maximumDurationYears', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Maximum Km</span>
+                <input type="number" [ngModel]="modalData().maximumKilometres" (ngModelChange)="setModalField('maximumKilometres', $event)" class="form-input" />
+              </label>
+              <label class="block sm:col-span-2">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Evidence</span>
+                <textarea rows="3" [ngModel]="modalData().evidenceText" (ngModelChange)="setModalField('evidenceText', $event)" class="form-input"></textarea>
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Page</span>
+                <input type="number" [ngModel]="modalData().pageNumber" (ngModelChange)="setModalField('pageNumber', $event)" class="form-input" />
+              </label>
+              <label class="block">
+                <span class="mb-1 block text-[10px] font-semibold text-gray-500">Confidence</span>
+                <input type="number" min="0" max="1" step="0.01" [ngModel]="modalData().confidence" (ngModelChange)="setModalField('confidence', $event)" class="form-input" />
+              </label>
+            </div>
+          }
+
+          @if (modalType() === 'powertrain') {
+            <div class="space-y-5">
+
+              <div>
+                <div class="mb-2">
+                  <h4 class="text-xs font-semibold text-red-700">Powertrain</h4>
+                  <p class="text-[10px] text-gray-400">Create the model-level powertrain. Powertrain Ref is entered by the admin.</p>
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Powertrain Ref *</span>
+                    <input [ngModel]="modalData().powertrainRef" (ngModelChange)="setModalField('powertrainRef', $event)" class="form-input" placeholder="e.g. PT-1.2P" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Powertrain Type *</span>
+                    <select [ngModel]="modalData().powertrainType" (ngModelChange)="setModalField('powertrainType', $event)" class="form-input">
+                      <option value="ICE">ICE</option>
+                      <option value="EV">EV</option>
+                      <option value="Hybrid">Hybrid</option>
+                    </select>
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Engine Ref</span>
+                    <input [ngModel]="modalData().engineRef" (ngModelChange)="setModalField('engineRef', $event)" class="form-input" placeholder="Engine reference" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Battery Capacity (kWh)</span>
+                    <input type="number" step="0.01" [ngModel]="modalData().batteryCapacityKWh" (ngModelChange)="setModalField('batteryCapacityKWh', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Max Power</span>
+                    <input type="number" step="0.01" [ngModel]="modalData().combinedMaxPower" (ngModelChange)="setModalField('combinedMaxPower', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Max Torque</span>
+                    <input type="number" step="0.01" [ngModel]="modalData().combinedMaxTorque" (ngModelChange)="setModalField('combinedMaxTorque', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Power RPM</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxPowerRPM" (ngModelChange)="setModalField('combinedMaxPowerRPM', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Power RPM Min</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxPowerRPMMin" (ngModelChange)="setModalField('combinedMaxPowerRPMMin', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Power RPM Max</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxPowerRPMMax" (ngModelChange)="setModalField('combinedMaxPowerRPMMax', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Torque RPM</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxTorqueRPM" (ngModelChange)="setModalField('combinedMaxTorqueRPM', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Torque RPM Min</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxTorqueRPMMin" (ngModelChange)="setModalField('combinedMaxTorqueRPMMin', $event)" class="form-input" />
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-1 block text-[10px] font-semibold text-gray-500">Combined Torque RPM Max</span>
+                    <input type="number" [ngModel]="modalData().combinedMaxTorqueRPMMax" (ngModelChange)="setModalField('combinedMaxTorqueRPMMax', $event)" class="form-input" />
+                  </label>
+                </div>
+              </div>
+
+              <div class="rounded-xl border border-blue-100 bg-blue-50/40 p-3">
+                <div class="mb-3">
+                  <h4 class="text-xs font-semibold text-blue-700">Engine Dependency</h4>
+                  <p class="text-[10px] text-gray-500">Choose no engine, clone an existing staged engine, or create a new engine.</p>
+                </div>
+
+                <div class="mb-3 grid gap-3 sm:grid-cols-3">
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="engineMode" value="none" [ngModel]="modalData().engineMode" (ngModelChange)="setModalField('engineMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">No Engine</span>
+                  </label>
+
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="engineMode" value="existing" [ngModel]="modalData().engineMode" (ngModelChange)="setModalField('engineMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">Use Existing</span>
+                  </label>
+
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="engineMode" value="new" [ngModel]="modalData().engineMode" (ngModelChange)="setModalField('engineMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">Create New</span>
+                  </label>
+                </div>
+
+                @if (modalData().engineMode === 'existing') {
+                  <div class="space-y-3">
+                    @if (powertrainDependencyLoading()) {
+                      <div class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-[10px] text-blue-700">
+                        Loading existing staged engines...
+                      </div>
+                    } @else if (!existingEngines().length) {
+                      <div class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-[10px] text-amber-700">
+                        No existing staged engines were found.
+                      </div>
+                    } @else {
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Existing Engine *</span>
+                        <select
+                          [ngModel]="modalData().existingEngineId"
+                          (ngModelChange)="setModalField('existingEngineId', $event)"
+                          class="form-input"
+                        >
+                          <option [ngValue]="null">Select an existing engine...</option>
+                          @for (engine of existingEngines(); track engine.importEngineId) {
+                            <option [ngValue]="engine.importEngineId">
+                              {{ engine.engineRef }} | {{ engine.engineName }} | Cyl: {{ displayValue(engine.numberOfCylinders) }} | Valves: {{ displayValue(engine.numberOfValves) }} | Displacement: {{ displayValue(engine.displacement) }} | Turbo: {{ displayValue(engine.isTurbocharged) }} | Emission: {{ displayValue(engine.emissionStandard) }} | Aspiration: {{ displayValue(engine.aspiration) }} | Type: {{ displayValue(engine.engineType) }}
+                            </option>
+                          }
+                        </select>
+                        <span class="mt-1 block text-[9px] text-gray-400">Select an engine; its complete staged data will be cloned under the newly created powertrain.</span>
+                      </label>
+
+                      @for (engine of existingEngines(); track engine.importEngineId) {
+                        @if (engine.importEngineId === modalData().existingEngineId) {
+                          <div class="rounded-lg border border-blue-200 bg-blue-50/50 p-3">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                              <span class="text-[10px] font-semibold text-blue-800">Selected Engine — complete data</span>
+                              <span class="rounded-full bg-blue-100 px-2 py-0.5 text-[9px] font-semibold text-blue-700">ID {{ engine.importEngineId }}</span>
+                            </div>
+                            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                              <div><span class="cs-lookup-label">Engine Ref</span><span class="cs-lookup-value">{{ displayValue(engine.engineRef) }}</span></div>
+                              <div><span class="cs-lookup-label">Engine Name</span><span class="cs-lookup-value">{{ displayValue(engine.engineName) }}</span></div>
+                              <div><span class="cs-lookup-label">Import Powertrain ID</span><span class="cs-lookup-value">{{ displayValue(engine.importPowertrainId) }}</span></div>
+                              <div><span class="cs-lookup-label">Cylinders</span><span class="cs-lookup-value">{{ displayValue(engine.numberOfCylinders) }}</span></div>
+                              <div><span class="cs-lookup-label">Valves</span><span class="cs-lookup-value">{{ displayValue(engine.numberOfValves) }}</span></div>
+                              <div><span class="cs-lookup-label">Displacement</span><span class="cs-lookup-value">{{ displayValue(engine.displacement) }}</span></div>
+                              <div><span class="cs-lookup-label">Turbocharged</span><span class="cs-lookup-value">{{ displayValue(engine.isTurbocharged) }}</span></div>
+                              <div><span class="cs-lookup-label">Emission Standard</span><span class="cs-lookup-value">{{ displayValue(engine.emissionStandard) }}</span></div>
+                              <div><span class="cs-lookup-label">Aspiration</span><span class="cs-lookup-value">{{ displayValue(engine.aspiration) }}</span></div>
+                              <div><span class="cs-lookup-label">Engine Type</span><span class="cs-lookup-value">{{ displayValue(engine.engineType) }}</span></div>
+                              <div><span class="cs-lookup-label">Production Engine ID</span><span class="cs-lookup-value">{{ displayValue(engine.productionEngineId) }}</span></div>
+                            </div>
+                          </div>
+                        }
+                      }
+                    }
+                  </div>
+                }
+
+                @if (modalData().engineMode === 'new') {
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Engine Ref *</span>
+                      <input [ngModel]="$any(modalData().newEngine).engineRef" (ngModelChange)="$any(modalData().newEngine).engineRef = $event" class="form-input" placeholder="e.g. K12N" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Engine Name *</span>
+                      <input [ngModel]="$any(modalData().newEngine).engineName" (ngModelChange)="$any(modalData().newEngine).engineName = $event" class="form-input" placeholder="Engine name" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Cylinders</span>
+                      <input type="number" [ngModel]="$any(modalData().newEngine).numberOfCylinders" (ngModelChange)="$any(modalData().newEngine).numberOfCylinders = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Valves</span>
+                      <input type="number" [ngModel]="$any(modalData().newEngine).numberOfValves" (ngModelChange)="$any(modalData().newEngine).numberOfValves = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Displacement</span>
+                      <input type="number" step="0.001" [ngModel]="$any(modalData().newEngine).displacement" (ngModelChange)="$any(modalData().newEngine).displacement = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Turbocharged</span>
+                      <select [ngModel]="$any(modalData().newEngine).isTurbocharged" (ngModelChange)="$any(modalData().newEngine).isTurbocharged = $event" class="form-input">
+                        <option [ngValue]="null">—</option>
+                        <option [ngValue]="true">Yes</option>
+                        <option [ngValue]="false">No</option>
+                      </select>
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Emission Standard</span>
+                      <input [ngModel]="$any(modalData().newEngine).emissionStandard" (ngModelChange)="$any(modalData().newEngine).emissionStandard = $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Aspiration</span>
+                      <input [ngModel]="$any(modalData().newEngine).aspiration" (ngModelChange)="$any(modalData().newEngine).aspiration = $event" class="form-input" />
+                    </label>
+
+                    <label class="block sm:col-span-2">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Engine Type</span>
+                      <input [ngModel]="$any(modalData().newEngine).engineType" (ngModelChange)="$any(modalData().newEngine).engineType = $event" class="form-input" />
+                    </label>
+                  </div>
+                }
+              </div>
+
+              <div class="rounded-xl border border-green-100 bg-green-50/40 p-3">
+                <div class="mb-3">
+                  <h4 class="text-xs font-semibold text-green-700">Engine Performance Dependency</h4>
+                  <p class="text-[10px] text-gray-500">Available only when an engine is selected or created.</p>
+                </div>
+
+                <div class="mb-3 grid gap-3 sm:grid-cols-3">
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="enginePerformanceMode" value="none" [ngModel]="modalData().enginePerformanceMode" (ngModelChange)="setModalField('enginePerformanceMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">No Performance</span>
+                  </label>
+
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="enginePerformanceMode" value="existing" [ngModel]="modalData().enginePerformanceMode" (ngModelChange)="setModalField('enginePerformanceMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">Use Existing</span>
+                  </label>
+
+                  <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white p-2.5">
+                    <input type="radio" name="enginePerformanceMode" value="new" [ngModel]="modalData().enginePerformanceMode" (ngModelChange)="setModalField('enginePerformanceMode', $event)" />
+                    <span class="text-[10px] font-semibold text-gray-600">Create New</span>
+                  </label>
+                </div>
+
+                @if (modalData().enginePerformanceMode === 'existing') {
+                  <div class="space-y-3">
+                    @if (powertrainDependencyLoading()) {
+                      <div class="rounded-lg border border-green-100 bg-green-50 px-3 py-2 text-[10px] text-green-700">
+                        Loading existing engine performances...
+                      </div>
+                    } @else if (!existingEnginePerformances().length) {
+                      <div class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-[10px] text-amber-700">
+                        No existing staged engine performances were found.
+                      </div>
+                    } @else {
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Existing Engine Performance *</span>
+                        <select
+                          [ngModel]="modalData().existingEnginePerformanceId"
+                          (ngModelChange)="setModalField('existingEnginePerformanceId', $event)"
+                          class="form-input"
+                        >
+                          <option [ngValue]="null">Select an existing engine performance...</option>
+                          @for (performance of existingEnginePerformances(); track performance.importEnginePerformanceId) {
+                            <option [ngValue]="performance.importEnginePerformanceId">
+                              {{ performance.modeName }} | Engine: {{ displayValue(performance.engineRef) }} / {{ displayValue(performance.engineName) }} | Fuel: {{ displayValue(performance.fuelTypeName) }} | Power: {{ displayValue(performance.maxPower) }} | Torque: {{ displayValue(performance.maxTorque) }} | Power RPM: {{ displayValue(performance.maxPowerRPM) }} | Power RPM Range: {{ displayValue(performance.maxPowerRPMMin) }}-{{ displayValue(performance.maxPowerRPMMax) }} | Torque RPM: {{ displayValue(performance.maxTorqueRPM) }} | Torque RPM Range: {{ displayValue(performance.maxTorqueRPMMin) }}-{{ displayValue(performance.maxTorqueRPMMax) }}
+                            </option>
+                          }
+                        </select>
+                        <span class="mt-1 block text-[9px] text-gray-400">The selected performance is cloned under the newly created engine. The original record is not changed.</span>
+                      </label>
+
+                      @for (performance of existingEnginePerformances(); track performance.importEnginePerformanceId) {
+                        @if (performance.importEnginePerformanceId === modalData().existingEnginePerformanceId) {
+                          <div class="rounded-lg border border-green-200 bg-green-50/50 p-3">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                              <span class="text-[10px] font-semibold text-green-800">Selected Engine Performance — complete data</span>
+                              <span class="rounded-full bg-green-100 px-2 py-0.5 text-[9px] font-semibold text-green-700">ID {{ performance.importEnginePerformanceId }}</span>
+                            </div>
+                            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                              <div><span class="cs-lookup-label">Import Engine ID</span><span class="cs-lookup-value">{{ displayValue(performance.importEngineId) }}</span></div>
+                              <div><span class="cs-lookup-label">Engine Ref</span><span class="cs-lookup-value">{{ displayValue(performance.engineRef) }}</span></div>
+                              <div><span class="cs-lookup-label">Engine Name</span><span class="cs-lookup-value">{{ displayValue(performance.engineName) }}</span></div>
+                              <div><span class="cs-lookup-label">Mode Name</span><span class="cs-lookup-value">{{ displayValue(performance.modeName) }}</span></div>
+                              <div><span class="cs-lookup-label">Fuel Type ID</span><span class="cs-lookup-value">{{ displayValue(performance.fuelTypeId) }}</span></div>
+                              <div><span class="cs-lookup-label">Fuel Type</span><span class="cs-lookup-value">{{ displayValue(performance.fuelTypeName) }}</span></div>
+                              <div><span class="cs-lookup-label">Max Power</span><span class="cs-lookup-value">{{ displayValue(performance.maxPower) }}</span></div>
+                              <div><span class="cs-lookup-label">Max Torque</span><span class="cs-lookup-value">{{ displayValue(performance.maxTorque) }}</span></div>
+                              <div><span class="cs-lookup-label">Max Power RPM</span><span class="cs-lookup-value">{{ displayValue(performance.maxPowerRPM) }}</span></div>
+                              <div><span class="cs-lookup-label">Power RPM Min</span><span class="cs-lookup-value">{{ displayValue(performance.maxPowerRPMMin) }}</span></div>
+                              <div><span class="cs-lookup-label">Power RPM Max</span><span class="cs-lookup-value">{{ displayValue(performance.maxPowerRPMMax) }}</span></div>
+                              <div><span class="cs-lookup-label">Max Torque RPM</span><span class="cs-lookup-value">{{ displayValue(performance.maxTorqueRPM) }}</span></div>
+                              <div><span class="cs-lookup-label">Torque RPM Min</span><span class="cs-lookup-value">{{ displayValue(performance.maxTorqueRPMMin) }}</span></div>
+                              <div><span class="cs-lookup-label">Torque RPM Max</span><span class="cs-lookup-value">{{ displayValue(performance.maxTorqueRPMMax) }}</span></div>
+                              <div><span class="cs-lookup-label">Production Performance ID</span><span class="cs-lookup-value">{{ displayValue(performance.productionEnginePerformanceId) }}</span></div>
+                            </div>
+                          </div>
+                        }
+                      }
+                    }
+                  </div>
+                }
+
+                @if (modalData().enginePerformanceMode === 'new') {
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <label class="block sm:col-span-2">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Mode Name *</span>
+                      <input [ngModel]="$any(modalData().newEnginePerformance).modeName" (ngModelChange)="$any(modalData().newEnginePerformance).modeName = $event" class="form-input" placeholder="e.g. Normal, Sport" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Fuel Type ID</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).fuelTypeId" (ngModelChange)="$any(modalData().newEnginePerformance).fuelTypeId = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Max Power</span>
+                      <input type="number" step="0.01" [ngModel]="$any(modalData().newEnginePerformance).maxPower" (ngModelChange)="$any(modalData().newEnginePerformance).maxPower = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Max Torque</span>
+                      <input type="number" step="0.01" [ngModel]="$any(modalData().newEnginePerformance).maxTorque" (ngModelChange)="$any(modalData().newEnginePerformance).maxTorque = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxPowerRPM" (ngModelChange)="$any(modalData().newEnginePerformance).maxPowerRPM = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM Min</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxPowerRPMMin" (ngModelChange)="$any(modalData().newEnginePerformance).maxPowerRPMMin = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM Max</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxPowerRPMMax" (ngModelChange)="$any(modalData().newEnginePerformance).maxPowerRPMMax = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxTorqueRPM" (ngModelChange)="$any(modalData().newEnginePerformance).maxTorqueRPM = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM Min</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxTorqueRPMMin" (ngModelChange)="$any(modalData().newEnginePerformance).maxTorqueRPMMin = $event === '' ? null : $event" class="form-input" />
+                    </label>
+
+                    <label class="block">
+                      <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM Max</span>
+                      <input type="number" [ngModel]="$any(modalData().newEnginePerformance).maxTorqueRPMMax" (ngModelChange)="$any(modalData().newEnginePerformance).maxTorqueRPMMax = $event === '' ? null : $event" class="form-input" />
+                    </label>
+                  </div>
+                }
+              </div>
+
+              <div class="rounded-xl border border-violet-100 bg-violet-50/40 p-3">
+                <div class="mb-3">
+                  <h4 class="text-xs font-semibold text-violet-700">Motor Performance</h4>
+                  <p class="text-[10px] text-gray-500">Optional electric motor performance. Existing records are cloned; new records are created under this powertrain.</p>
+                </div>
+
+                <div class="mb-3">
+                  @if (powertrainDependencyLoading()) {
+                    <div class="rounded-lg border border-violet-100 bg-violet-50 px-3 py-2 text-[10px] text-violet-700">
+                      Loading existing motor performances...
+                    </div>
+                  } @else if (!existingMotorPerformances().length) {
+                    <div class="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-[10px] text-amber-700">
+                      No existing staged motor performances were found.
+                    </div>
+                  } @else {
+                    <span class="mb-2 block text-[10px] font-semibold text-gray-500">Existing Motor Performances</span>
+                    <div class="max-h-64 space-y-2 overflow-y-auto rounded-lg border border-gray-200 bg-white p-2">
+                      @for (motor of existingMotorPerformances(); track motor.importMotorPerformanceId) {
+                        <label class="block cursor-pointer rounded-lg border border-gray-100 bg-gray-50 p-2.5 transition hover:border-violet-200 hover:bg-violet-50/50">
+                          <div class="flex items-start gap-2">
+                            <input
+                              type="checkbox"
+                              [checked]="($any(modalData().existingMotorPerformanceIds) ?? []).includes(motor.importMotorPerformanceId)"
+                              (change)="toggleExistingMotorPerformance(motor.importMotorPerformanceId)"
+                              class="mt-0.5"
+                            />
+                            <div class="min-w-0 flex-1">
+                              <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="text-[10px] font-semibold text-gray-700">{{ displayValue(motor.motorName) }}</span>
+                                <span class="rounded-full bg-violet-100 px-1.5 py-0.5 text-[8px] font-semibold text-violet-700">ID {{ motor.importMotorPerformanceId }}</span>
+                              </div>
+                              <div class="mt-1 grid gap-x-3 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+                                <div><span class="cs-lookup-label">Import Powertrain ID</span><span class="cs-lookup-value">{{ displayValue(motor.importPowertrainId) }}</span></div>
+                                <div><span class="cs-lookup-label">Motor Name</span><span class="cs-lookup-value">{{ displayValue(motor.motorName) }}</span></div>
+                                <div><span class="cs-lookup-label">Max Power</span><span class="cs-lookup-value">{{ displayValue(motor.maxPower) }}</span></div>
+                                <div><span class="cs-lookup-label">Max Torque</span><span class="cs-lookup-value">{{ displayValue(motor.maxTorque) }}</span></div>
+                                <div><span class="cs-lookup-label">Max Power RPM</span><span class="cs-lookup-value">{{ displayValue(motor.maxPowerRPM) }}</span></div>
+                                <div><span class="cs-lookup-label">Power RPM Min</span><span class="cs-lookup-value">{{ displayValue(motor.maxPowerRPMMin) }}</span></div>
+                                <div><span class="cs-lookup-label">Power RPM Max</span><span class="cs-lookup-value">{{ displayValue(motor.maxPowerRPMMax) }}</span></div>
+                                <div><span class="cs-lookup-label">Max Torque RPM</span><span class="cs-lookup-value">{{ displayValue(motor.maxTorqueRPM) }}</span></div>
+                                <div><span class="cs-lookup-label">Torque RPM Min</span><span class="cs-lookup-value">{{ displayValue(motor.maxTorqueRPMMin) }}</span></div>
+                                <div><span class="cs-lookup-label">Torque RPM Max</span><span class="cs-lookup-value">{{ displayValue(motor.maxTorqueRPMMax) }}</span></div>
+                                <div><span class="cs-lookup-label">Production Performance ID</span><span class="cs-lookup-value">{{ displayValue(motor.productionMotorPerformanceId) }}</span></div>
+                              </div>
+                            </div>
+                          </div>
+                        </label>
+                      }
+                    </div>
+                    <span class="mt-1 block text-[9px] text-gray-400">Select one or more existing motor performances. Each selected record will be cloned under the new powertrain.</span>
+                  }
+                </div>
+
+                @if (!($any(modalData().newMotorPerformances) ?? []).length) {
+                  <button
+                    type="button"
+                    (click)="setModalField('newMotorPerformances', [{
+                      motorName: '',
+                      maxPower: null,
+                      maxTorque: null,
+                      maxPowerRPM: null,
+                      maxPowerRPMMin: null,
+                      maxPowerRPMMax: null,
+                      maxTorqueRPM: null,
+                      maxTorqueRPMMin: null,
+                      maxTorqueRPMMax: null
+                    }])"
+                    class="rounded-lg border border-violet-200 bg-white px-3 py-2 text-[10px] font-semibold text-violet-700 transition hover:bg-violet-50"
+                  >
+                    + Create New Motor Performance
+                  </button>
+                }
+
+                @if (($any(modalData().newMotorPerformances) ?? []).length) {
+                  <div class="rounded-lg border border-gray-200 bg-white p-3">
+                    <div class="mb-3 flex items-center justify-between gap-2">
+                      <span class="text-[10px] font-semibold text-gray-600">New Motor Performance</span>
+                      <button
+                        type="button"
+                        (click)="setModalField('newMotorPerformances', [])"
+                        class="rounded-md px-2 py-1 text-[10px] text-gray-400 hover:bg-gray-100"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div class="grid gap-3 sm:grid-cols-2">
+                      <label class="block sm:col-span-2">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Motor Name</span>
+                        <input [ngModel]="$any(modalData().newMotorPerformances)[0].motorName" (ngModelChange)="$any(modalData().newMotorPerformances)[0].motorName = $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Max Power</span>
+                        <input type="number" step="0.01" [ngModel]="$any(modalData().newMotorPerformances)[0].maxPower" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxPower = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Max Torque</span>
+                        <input type="number" step="0.01" [ngModel]="$any(modalData().newMotorPerformances)[0].maxTorque" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxTorque = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxPowerRPM" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxPowerRPM = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM Min</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxPowerRPMMin" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxPowerRPMMin = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Power RPM Max</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxPowerRPMMax" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxPowerRPMMax = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxTorqueRPM" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxTorqueRPM = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM Min</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxTorqueRPMMin" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxTorqueRPMMin = $event === '' ? null : $event" class="form-input" />
+                      </label>
+
+                      <label class="block">
+                        <span class="mb-1 block text-[10px] font-semibold text-gray-500">Torque RPM Max</span>
+                        <input type="number" [ngModel]="$any(modalData().newMotorPerformances)[0].maxTorqueRPMMax" (ngModelChange)="$any(modalData().newMotorPerformances)[0].maxTorqueRPMMax = $event === '' ? null : $event" class="form-input" />
+                      </label>
+                    </div>
+                  </div>
+                }
+              </div>
+
+            </div>
+          }
+
+          @if (modalType() === 'transmission') {
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-xs font-semibold text-violet-700">Create Transmission</h4>
+                <p class="mt-0.5 text-[10px] text-gray-400">Transmission Ref is model-level and must be entered by the admin.</p>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Transmission Ref *</span>
+                  <input [ngModel]="modalData().transmissionRef" (ngModelChange)="setModalField('transmissionRef', $event)" class="form-input" placeholder="e.g. AT6" />
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Transmission Type</span>
+                  <input [ngModel]="modalData().transmissionType" (ngModelChange)="setModalField('transmissionType', $event)" class="form-input" placeholder="Automatic / Manual / AMT / CVT" />
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Number of Gears</span>
+                  <input type="number" [ngModel]="modalData().numberOfGears" (ngModelChange)="setModalField('numberOfGears', $event === '' ? null : $event)" class="form-input" />
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Manual Override</span>
+                  <select [ngModel]="modalData().hasManualOverride" (ngModelChange)="setModalField('hasManualOverride', $event)" class="form-input">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Yes</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Paddle Shifters</span>
+                  <select [ngModel]="modalData().hasPaddleShifters" (ngModelChange)="setModalField('hasPaddleShifters', $event)" class="form-input">
+                    <option [ngValue]="null">—</option>
+                    <option [ngValue]="true">Yes</option>
+                    <option [ngValue]="false">No</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          }
+
+          @if (modalType() === 'drivetrain') {
+            <div class="space-y-4">
+              <div>
+                <h4 class="text-xs font-semibold text-red-700">Create Drivetrain</h4>
+                <p class="mt-0.5 text-[10px] text-gray-400">Drivetrain Ref is model-level and must be entered by the admin.</p>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-2">
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Drivetrain Ref *</span>
+                  <input [ngModel]="modalData().drivetrainRef" (ngModelChange)="setModalField('drivetrainRef', $event)" class="form-input" placeholder="e.g. FWD" />
+                </label>
+
+                <label class="block">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Drivetrain Type</span>
+                  <input [ngModel]="modalData().drivetrainType" (ngModelChange)="setModalField('drivetrainType', $event)" class="form-input" placeholder="Front Wheel Drive / AWD / RWD" />
+                </label>
+
+                <label class="block sm:col-span-2">
+                  <span class="mb-1 block text-[10px] font-semibold text-gray-500">Differential Type</span>
+                  <input [ngModel]="modalData().differentialType" (ngModelChange)="setModalField('differentialType', $event)" class="form-input" placeholder="Open / LSD / Electronic" />
+                </label>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="flex justify-end gap-2 border-t border-gray-100 px-5 py-3"><button type="button" (click)="closeModal()" class="rounded-lg border border-gray-200 px-4 py-2 text-xs text-gray-600 hover:bg-gray-50">Cancel</button><button type="button" (click)="saveModal()" [disabled]="saving()" class="rounded-lg bg-gray-900 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50">{{ saving() ? 'Saving...' : 'Save' }}</button></div>
+      </div>
+    </div>
+  }
+
+  <style>
+    .cs-lookup-label { display: block; font-size: 9px; line-height: 1.1; font-weight: 600; color: rgb(156 163 175); text-transform: uppercase; letter-spacing: 0.025em; }
+    .cs-lookup-value { display: block; margin-top: 2px; font-size: 11px; line-height: 1.25; color: rgb(75 85 99); overflow-wrap: anywhere; }
+    .form-input { min-height: 34px; border: 1px solid rgb(229 231 235); border-radius: 0.375rem; background: white; padding: 0.375rem 0.5rem; font-size: 0.75rem; color: rgb(75 85 99); outline: none; width: 100%; }
+    .form-input:focus { border-color: rgb(209 213 219); box-shadow: 0 0 0 1px rgb(229 231 235); }
+  </style>openPowertrainModal()
+
+  }

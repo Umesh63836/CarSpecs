@@ -1,5 +1,10 @@
+using CarspecAPI.Services;
 using CarSpecAPI.Entities;
 using CarSpecAPI.Services;
+using CarSpecAPI.Services.AdministrationServices;
+using CarSpecAPI.Services.BrochureValidationServices;
+using CarSpecAPI.Services.OpenAIServices;
+using CarsSpecAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +83,7 @@ builder.Services.AddRateLimiter(options =>
             QueueProcessingOrder.OldestFirst;
     });
 });
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IBrandsService, BrandsService>();
 builder.Services.AddScoped<IModelsService, ModelsService>();
@@ -88,11 +94,28 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAIService, AIService>();
 builder.Services.AddScoped<ICarsService, CarsService>();
 builder.Services.AddSingleton<ConversationService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IRegistrationCalculator, RegistrationCalculator>();
+builder.Services.AddScoped<IInsuranceCalculator, InsuranceCalculator>();
+builder.Services.AddScoped<ITcsCalculator, TcsCalculator>();
+builder.Services.AddScoped<IOnRoadPriceService, OnRoadPriceService>();
+builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+builder.Services.AddScoped<IBrochureImportService, BrochureImportService>();
+builder.Services.AddScoped<IPdfTextExtractor, PdfTextExtractor>();
+builder.Services.AddScoped<IPdfPageExtractor, PdfPageExtractor>();
+builder.Services.AddScoped<ICarBrochureAiService, CarBrochureAiService>();
+builder.Services.AddScoped<IBrochurePageProcessingService, BrochurePageProcessingService>();
+builder.Services.AddScoped<IImportBatchService, ImportBatchService>();
+builder.Services.AddScoped<BrochureImportValidator>();
+builder.Services.AddScoped<BrochureImportToDb>();
+builder.Services.AddScoped<AdminReviewService>();
+builder.Services.AddScoped<IStagedDataService, StagedDataService>();
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

@@ -1,0 +1,551 @@
+/* =========================================================
+   PRICE BREAKUP CONTAINER
+   ========================================================= */
+
+.price-breakup-container {
+  position: relative;
+  overflow: visible;
+}
+
+
+/* =========================================================
+   PRICE BREAKUP FLOATING CARD
+   ========================================================= */
+
+.price-breakup-card {
+  position: absolute;
+
+  z-index: 100;
+
+  top: calc(100% + 10px);
+  left: 0;
+
+  width: 330px;
+  max-width: calc(100vw - 24px);
+
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.14);
+
+  overflow: visible;
+}
+
+
+/* =========================================================
+   PRICE BREAKUP ANIMATION
+   ========================================================= */
+
+@keyframes priceBreakupIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+.animate-price-breakup {
+  animation:
+    priceBreakupIn
+    180ms
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+  transform-origin: top left;
+}
+
+
+/* =========================================================
+   PRICE BREAKUP POINTER
+   ========================================================= */
+
+.price-breakup-pointer {
+
+  position: absolute;
+
+  top: -6px;
+  left: 32px;
+
+  width: 12px;
+  height: 12px;
+
+  background: white;
+
+  border-left: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+
+  transform: rotate(45deg);
+
+  z-index: -1;
+}
+
+
+/* =========================================================
+   PRICE BREAKUP ROW
+   ========================================================= */
+
+.price-breakup-row {
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  min-height: 30px;
+}
+
+
+/* =========================================================
+   INFO BUTTON WRAPPER
+   ========================================================= */
+
+/*
+   This is the positioning context for each
+   individual information popup.
+
+   Therefore:
+
+   Ex-showroom i
+          ↓
+   its own information panel
+
+   RTO i
+          ↓
+   its own RTO breakup
+
+   etc.
+*/
+
+.price-info-wrapper {
+
+  position: relative;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   INFO BUTTON
+   ========================================================= */
+
+.price-info-button {
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 16px;
+  height: 16px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+
+  background: white;
+
+  color: #6b7280;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.price-info-button:hover {
+
+  background: #f3f4f6;
+
+  border-color: #9ca3af;
+
+  color: #374151;
+}
+
+.price-info-button:active {
+  transform: scale(0.9);
+}
+
+
+/* =========================================================
+   INFO PANEL ANIMATION
+   ========================================================= */
+
+@keyframes infoPanelIn {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-50%)
+      translateX(-4px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(-50%)
+      translateX(0)
+      scale(1);
+  }
+
+}
+
+.animate-info-panel {
+
+  animation:
+    infoPanelIn
+    150ms
+    ease-out;
+}
+
+
+/* =========================================================
+   FLOATING INFO PANELS
+   ========================================================= */
+
+.charge-info-floating {
+
+  position: absolute;
+
+  z-index: 200;
+
+  /*
+     Put the panel immediately to the
+     right of its own i button.
+  */
+
+  left: calc(100% + 8px);
+  top: 50%;
+
+  width: 280px;
+
+  max-width: calc(100vw - 32px);
+
+  box-sizing: border-box;
+
+  padding: 9px 11px;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  color: #6b7280;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.10);
+
+  transform:
+    translateY(-50%);
+}
+
+
+/* =========================================================
+   INFO PANEL POINTER
+   ========================================================= */
+
+.charge-info-floating::before {
+
+  content: "";
+
+  position: absolute;
+
+  left: -5px;
+  top: 50%;
+
+  width: 9px;
+  height: 9px;
+
+  background: white;
+
+  border-left: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+
+  transform:
+    translateY(-50%)
+    rotate(45deg);
+}
+
+
+/* =========================================================
+   RTO FLOATING PANEL
+   ========================================================= */
+
+.rto-floating-panel {
+
+  width: 300px;
+
+  max-width: calc(100vw - 32px);
+
+  padding: 10px 12px;
+}
+
+
+/* =========================================================
+   RTO BREAKUP ROWS
+   ========================================================= */
+
+.rto-breakup-row {
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 3px 0;
+
+  color: #6b7280;
+
+  font-size: 11px;
+
+  line-height: 1.3;
+}
+
+.rto-breakup-row span:last-child {
+
+  color: #374151;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   SPECIFICATION ROW
+   ========================================================= */
+
+.spec-row {
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 12px 16px;
+}
+
+.spec-row > span:first-child {
+
+  font-size: 12px;
+
+  color: #6b7280;
+}
+
+.spec-row > span:last-child {
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #111827;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+
+  /* =======================================================
+     PRICE BREAKUP CARD
+     ======================================================= */
+
+  .price-breakup-card {
+
+    position: absolute;
+
+    top: calc(100% + 8px);
+
+    /*
+       Keep it attached to the price area.
+       No translateX and no fixed positioning.
+    */
+
+    left: 0 !important;
+    right: auto !important;
+
+    width: calc(100vw - 24px) !important;
+
+    max-width: 360px;
+
+    box-sizing: border-box;
+
+    padding: 11px 12px;
+  }
+
+
+  /* =======================================================
+     PRICE BREAKUP POINTER
+     ======================================================= */
+
+  .price-breakup-pointer {
+
+    left: 28px;
+  }
+
+
+  /* =======================================================
+     INFO PANELS ON MOBILE
+     ======================================================= */
+
+  /*
+     IMPORTANT:
+
+     Do NOT use position: fixed.
+
+     The panel remains relative to the
+     individual i button.
+
+     We make it narrower on mobile so it
+     cannot extend beyond the screen.
+  */
+
+  .charge-info-floating {
+
+    position: absolute;
+
+    left: calc(100% + 7px) !important;
+
+    right: auto !important;
+
+    top: 50%;
+
+    width: 235px;
+
+    max-width: calc(100vw - 80px);
+
+    box-sizing: border-box;
+
+    transform:
+      translateY(-50%);
+  }
+
+
+  /* =======================================================
+     RTO PANEL
+     ======================================================= */
+
+  .rto-floating-panel {
+
+    width: 250px;
+
+    max-width: calc(100vw - 70px);
+  }
+
+
+  /* =======================================================
+     POINTER
+     ======================================================= */
+
+  .charge-info-floating::before {
+
+    left: -5px;
+
+    top: 50%;
+  }
+
+
+  /* =======================================================
+     SMALLER ROWS
+     ======================================================= */
+
+  .price-breakup-row {
+
+    min-height: 29px;
+
+    gap: 8px;
+  }
+
+
+  .rto-breakup-row {
+
+    gap: 8px;
+
+    padding: 3px 0;
+
+    font-size: 10.5px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .price-breakup-card {
+
+    width: calc(100vw - 20px) !important;
+
+    padding: 10px 11px;
+  }
+
+
+  .charge-info-floating {
+
+    width: 210px;
+
+    max-width: calc(100vw - 65px);
+
+    font-size: 10.5px;
+  }
+
+
+  .rto-floating-panel {
+
+    width: 225px;
+
+    max-width: calc(100vw - 55px);
+  }
+
+
+  .rto-breakup-row {
+
+    gap: 6px;
+
+    font-size: 10px;
+  }
+
+}

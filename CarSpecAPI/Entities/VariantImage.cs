@@ -13,5 +13,9 @@ public partial class VariantImage
 
     public bool IsPrimary { get; set; }
 
+    public string? ImageType { get; set; }
+
+    public int? DisplayOrder { get; set; }
+
     public virtual Variant Variant { get; set; } = null!;
 }

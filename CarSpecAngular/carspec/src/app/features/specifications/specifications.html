@@ -1,17 +1,24 @@
-<div class="min-h-screen">
+<div class="min-h-screen"
+(click)="closePriceBreakup()">
 
-  <!-- Variant Header -->
+  <!-- =========================================================
+       VARIANT HEADER
+       ========================================================= -->
+
   <div class="mx-auto max-w-6xl px-4 pt-5 sm:px-6 lg:px-8">
 
     <div
-      class="overflow-hidden rounded-2xl bg-gray-50
+      class="overflow-visible rounded-2xl bg-gray-50
              transition-all duration-300
              hover:shadow-md hover:shadow-gray-200/60"
     >
 
       <div class="flex flex-col sm:flex-row">
 
-        <!-- Vehicle Image -->
+        <!-- =====================================================
+             VEHICLE IMAGE
+             ===================================================== -->
+
         <div
           class="flex h-52 w-full items-center justify-center
                  p-5
@@ -24,19 +31,23 @@
             class="h-full w-full object-contain
                    transition-transform duration-300
                    hover:scale-105"
-          >
+          />
 
         </div>
 
 
-        <!-- Variant Information -->
+        <!-- =====================================================
+             VARIANT INFORMATION
+             ===================================================== -->
+
         <div
           class="flex min-w-0 flex-1 flex-col justify-center
                  px-5 py-6
                  sm:px-6 sm:py-8"
         >
 
-          <!-- Brand / Model / Variant -->
+          <!-- BRAND / MODEL / VARIANT -->
+
           <p
             class="text-xl font-bold leading-tight tracking-tight
                    text-gray-900
@@ -48,252 +59,853 @@
           </p>
 
 
-          <!-- Price -->
+          <!-- ===================================================
+               PRICE AREA
+               =================================================== -->
+
           <div class="mt-5">
 
-            <p
-              class="text-xl font-extrabold leading-tight tracking-tight
-                     text-gray-900
-                     sm:text-2xl"
-            >
-              ₹{{ specifications()?.exShowroomPrice }} Lakhs
-            </p>
+            <!-- =================================================
+                 BEFORE LOCATION IS SELECTED
+                 ================================================= -->
 
-            <p class="mt-1 text-xs font-medium text-gray-400">
-              Ex-showroom
-            </p>
+            @if (!onRoadPrice()) {
 
-          </div>
+              <div class="flex flex-wrap items-center gap-x-2">
 
-        </div>
+                <!-- EX-SHOWROOM PRICE -->
 
-      </div>
-
-    </div>
-
-  </div>
+                <p
+                  class="text-xl font-extrabold leading-tight
+                         tracking-tight text-gray-900
+                         sm:text-2xl"
+                >
+                  ₹{{ (specifications()?.exShowroomPrice ?? 0) / 100000 | number:'1.2-2'}} Lakhs
+                </p>
 
 
-  <!-- Main Content -->
-  <main class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+                <!-- GET ON ROAD PRICE -->
+
+                <button
+                  type="button"
+                  (click)="openLocationSearch()"
+                  class="text-xs font-small
+                         text-blue-600
+                         underline-offset-2
+                         hover:text-blue-700
+                         hover:underline
+                         transition-colors"
+                >
+                  Get On-Road Price
+                </button>
+
+              </div>
 
 
-    <!-- Page Heading -->
-    <div class="mb-4">
-
-      <h2
-        class="text-xl font-bold tracking-tight text-gray-900
-               md:text-2xl"
-      >
-        Specifications
-      </h2>
-
-      <p class="mt-1 text-xs text-gray-500 sm:text-sm">
-        Detailed specifications of this variant
-      </p>
-
-    </div>
-
-
-    <!-- Specification Accordion -->
-<div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
-
-
-  <!-- ====================================================== -->
-  <!-- ENGINE & PERFORMANCE -->
-  <!-- ====================================================== -->
-
-  <div class="overflow-hidden rounded-xl bg-white">
-
-    <!-- Header -->
-    <button
-      type="button"
-      (click)="toggleSpecification('engine')"
-      class="flex w-full items-center justify-between
-             bg-gray-50
-             px-4 py-4 text-left
-             transition-colors duration-200
-             hover:bg-gray-100
-             sm:px-5"
-      [attr.aria-expanded]="expandedSpecification() === 'engine'"
-    >
-
-      <div>
-
-        <h3
-          class="text-sm font-bold text-gray-900
-                 sm:text-base"
-        >
-          Engine & Performance
-        </h3>
-
-        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
-          Engine, power, torque and performance details
-        </p>
-
-      </div>
-
-
-      <!-- Plus / Minus -->
-      <span
-        class="ml-4 flex h-6 w-6 shrink-0 items-center
-               justify-center text-lg font-light text-gray-500"
-      >
-        {{ expandedSpecification() === 'engine' ? '−' : '+' }}
-      </span>
-
-    </button>
-
-
-    <!-- Content -->
-    <div
-      class="grid transition-[grid-template-rows]
-             duration-500 ease-in-out"
-      [class.grid-rows-[1fr]]="expandedSpecification() === 'engine'"
-      [class.grid-rows-[0fr]]="expandedSpecification() !== 'engine'"
-    >
-
-      <div class="min-h-0 overflow-hidden">
-
-        <div
-          class="divide-y divide-gray-100
-                 bg-white
-                 border-t border-gray-100"
-        >
-
-          <!-- Engine -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Engine
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.engine }}
-            </span>
-          </div>
-
-
-          <!-- Fuel -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Fuel Type
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.fuelType }}
-            </span>
-          </div>
-
-
-          <!-- Displacement -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Displacement
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.displacement }} cc
-            </span>
-          </div>
-
-
-          <!-- Cylinders -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Number of Cylinders
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.noOfCyl }}
-            </span>
-          </div>
-
-
-          <!-- Valves -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Number of Valves
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.noOfValves }}
-            </span>
-          </div>
-
-
-          <!-- Max Power -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Max Power
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.maxPower }} PS
-            </span>
-          </div>
-
-
-          <!-- Max Torque -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Max Torque
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.maxTorque }} Nm
-            </span>
-          </div>
-
-
-          <!-- Turbocharged -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Turbocharged
-            </span>
-
-            @if (specifications()?.isTurbocharged) {
-
-              <span
-                class="rounded-full bg-green-100 px-2.5 py-0.5
-                       text-[10px] font-semibold text-green-700
-                       sm:text-xs"
+              <p
+                class="mt-1 text-xs font-medium text-gray-400"
               >
-                Yes
-              </span>
+                Ex-showroom
+              </p>
 
-            } @else {
+            }
 
-              <span
-                class="rounded-full bg-gray-100 px-2.5 py-0.5
-                       text-[10px] font-semibold text-gray-500
-                       sm:text-xs"
+
+            <!-- =================================================
+                 ON ROAD PRICE
+                 ================================================= -->
+
+            @if (onRoadPrice()) {
+
+              <!--
+                IMPORTANT:
+                This container is the positioning context
+                for the floating Price Breakup card.
+              -->
+
+              <div class="price-breakup-container">
+
+
+                <!-- =============================================
+                     MAIN ON-ROAD PRICE
+                     ============================================= -->
+
+                <div
+                  class="flex flex-wrap items-center gap-x-2"
+                >
+
+                  <p
+                    class="text-xl font-extrabold leading-tight
+                           tracking-tight text-gray-900
+                           sm:text-2xl"
+                  >
+                    ₹{{ (onRoadPrice()?.totalOnRoadPrice ?? 0) / 100000 | number:'1.2-2'}} Lakhs
+                  </p>
+
+
+                  <!-- PRICE BREAKUP LINK -->
+
+                  <button
+                    type="button"
+                    (click)="togglePriceBreakup(); $event.stopPropagation()"
+                    class="text-xs font-small
+                           text-blue-700
+                           underline-offset-2
+                           hover:text-blue-800
+                           hover:underline
+                           transition-colors"
+                  >
+                    Price breakup
+                  </button>
+
+                </div>
+
+
+                <!-- =============================================
+                     LOCATION
+                     ============================================= -->
+
+                <div
+                  class="mt-1 flex items-center gap-1"
+                >
+
+                  <span
+                    class="text-xs font-medium text-gray-400"
+                  >
+                    On-road price in
+                  </span>
+
+
+                  <span
+                    class="text-xs font-semibold text-gray-600"
+                  >
+                    {{ selectedLocation()?.name }}
+                  </span>
+
+
+                  <!-- EDIT LOCATION -->
+
+                  <button
+                    type="button"
+                    title="Change location"
+                    aria-label="Change location"
+                    (click)="openLocationSearch(); $event.stopPropagation()"
+                    class="ml-0.5
+                           inline-flex
+                           items-center
+                           justify-center
+                           text-gray-400
+                           transition-colors
+                           hover:text-gray-700"
+                  >
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-3.5 w-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                    >
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16.862 3.487a2.25 2.25 0 013.182 3.182L8.25 18.464 4 19.5l1.036-4.25L16.862 3.487z"
+                      />
+
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M14.5 5.85l3.65 3.65"
+                      />
+
+                    </svg>
+
+                  </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     FLOATING PRICE BREAKUP CARD
+                     ================================================= -->
+
+                @if (showPriceBreakup()) {
+
+                  <div
+                    class="price-breakup-card
+                           animate-price-breakup"
+                    (click)="$event.stopPropagation()"
+                  >
+
+                    <!-- POINTER -->
+
+                    <div
+                      class="price-breakup-pointer"
+                    ></div>
+
+
+                    <!-- =========================================
+                         EX-SHOWROOM
+                         ========================================= -->
+
+                    <div class="price-breakup-row">
+
+                      <div
+                        class="flex min-w-0 items-center gap-2"
+                      >
+
+                        <span
+                          class="text-xs text-gray-500"
+                        >
+                          Ex-showroom
+                        </span>
+
+
+                        <!-- INFO WRAPPER -->
+
+                        <div class="price-info-wrapper">
+
+                          <button
+                            type="button"
+                            class="price-info-button"
+                            aria-label="Ex-showroom price information"
+                            title="About Ex-showroom price"
+                            (click)="
+                              toggleChargeInfo('exShowroom');
+                              $event.stopPropagation()
+                            "
+                          >
+                            i
+                          </button>
+
+
+                          <!-- EX-SHOWROOM INFO -->
+
+                          @if (activeChargeInfo() === 'exShowroom') {
+
+                            <div
+                              class="charge-info-floating
+                                     animate-info-panel"
+                              (click)="$event.stopPropagation()"
+                            >
+                              Ex-showroom price is the
+                              manufacturer's listed price of
+                              the vehicle before RTO,
+                              insurance and other applicable
+                              charges.
+                            </div>
+
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        class="shrink-0
+                               text-xs
+                               font-semibold
+                               text-gray-800"
+                      >
+                        ₹{{ onRoadPrice()?.exShowroomPrice | number }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         RTO REGISTRATION
+                         ========================================= -->
+
+                    <div class="price-breakup-row">
+
+                      <div
+                        class="flex min-w-0 items-center gap-2"
+                      >
+
+                        <span
+                          class="text-xs text-gray-500"
+                        >
+                          RTO Registration
+                        </span>
+
+
+                        <!-- INFO WRAPPER -->
+
+                        <div class="price-info-wrapper">
+
+                          <button
+                            type="button"
+                            class="price-info-button"
+                            aria-label="RTO registration information"
+                            title="View RTO breakup"
+                            (click)="
+                              toggleChargeInfo('rto');
+                              $event.stopPropagation()
+                            "
+                          >
+                            i
+                          </button>
+
+
+                          <!-- RTO FLOATING BREAKUP -->
+
+                          @if (activeChargeInfo() === 'rto') {
+
+                            <div
+                              class="charge-info-floating
+                                     rto-floating-panel
+                                     animate-info-panel"
+                              (click)="$event.stopPropagation()"
+                            >
+
+                              <div
+                                class="mb-1.5
+                                       text-[11px]
+                                       font-semibold
+                                       text-gray-800"
+                              >
+                                RTO Registration Breakup
+                              </div>
+
+
+                              <!-- ROAD TAX -->
+
+                              @if (
+                                onRoadPrice()?.registration?.roadTax &&
+                                onRoadPrice()!.registration.roadTax !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Road Tax
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.roadTax
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- ROAD TAX CESS -->
+
+                              @if (
+                                onRoadPrice()?.registration?.roadTaxCess &&
+                                onRoadPrice()!.registration.roadTaxCess !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Road Tax Cess
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.roadTaxCess
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- INFRASTRUCTURE CESS -->
+
+                              @if (
+                                onRoadPrice()?.registration?.infrastructureCess &&
+                                onRoadPrice()!.registration.infrastructureCess !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Infrastructure Cess
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.infrastructureCess
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- GREEN TAX -->
+
+                              @if (
+                                onRoadPrice()?.registration?.greenTax &&
+                                onRoadPrice()!.registration.greenTax !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Green Tax
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.greenTax
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- REGISTRATION FEE -->
+
+                              @if (
+                                onRoadPrice()?.registration?.registrationFee &&
+                                onRoadPrice()!.registration.registrationFee !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Registration Fee
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.registrationFee
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- HSRP -->
+
+                              @if (
+                                onRoadPrice()?.registration?.hsrpCharge &&
+                                onRoadPrice()!.registration.hsrpCharge !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    HSRP Charge
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.hsrpCharge
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- OTHER CHARGES -->
+
+                              @if (
+                                onRoadPrice()?.registration?.otherCharges &&
+                                onRoadPrice()!.registration.otherCharges !== 0
+                              ) {
+
+                                <div class="rto-breakup-row">
+
+                                  <span>
+                                    Other Charges
+                                  </span>
+
+                                  <span>
+                                    ₹{{
+                                      onRoadPrice()!.registration.otherCharges
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              }
+
+
+                              <!-- TOTAL REGISTRATION -->
+
+                              <div
+                                class="mt-1.5
+                                       border-t
+                                       border-gray-100
+                                       pt-1.5"
+                              >
+
+                                <div
+                                  class="flex
+                                         items-center
+                                         justify-between"
+                                >
+
+                                  <span
+                                    class="text-[11px]
+                                           font-semibold
+                                           text-gray-700"
+                                  >
+                                    Total Registration
+                                  </span>
+
+                                  <span
+                                    class="text-[11px]
+                                           font-bold
+                                           text-gray-900"
+                                  >
+                                    ₹{{
+                                      onRoadPrice()?.registration
+                                        ?.totalRegistrationCharges
+                                      | number
+                                    }}
+                                  </span>
+
+                                </div>
+
+                              </div>
+
+                            </div>
+
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        class="shrink-0
+                               text-xs
+                               font-semibold
+                               text-gray-800"
+                      >
+                        ₹{{
+                          onRoadPrice()?.registration
+                            ?.totalRegistrationCharges
+                          | number
+                        }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         INSURANCE
+                         ========================================= -->
+
+                    <div class="price-breakup-row">
+
+                      <div
+                        class="flex min-w-0 items-center gap-2"
+                      >
+
+                        <span
+                          class="text-xs text-gray-500"
+                        >
+                          Insurance
+                        </span>
+
+
+                        <!-- INFO WRAPPER -->
+
+                        <div class="price-info-wrapper">
+
+                          <button
+                            type="button"
+                            class="price-info-button"
+                            aria-label="Insurance information"
+                            title="About insurance"
+                            (click)="
+                              toggleChargeInfo('insurance');
+                              $event.stopPropagation()
+                            "
+                          >
+                            i
+                          </button>
+
+
+                          <!-- INSURANCE INFO -->
+
+                          @if (activeChargeInfo() === 'insurance') {
+
+                            <div
+                              class="charge-info-floating
+                                     animate-info-panel"
+                              (click)="$event.stopPropagation()"
+                            >
+                              Insurance is the estimated
+                              insurance cost included in the
+                              on-road price.
+                            </div>
+
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        class="shrink-0
+                               text-xs
+                               font-semibold
+                               text-gray-800"
+                      >
+                        ₹{{ onRoadPrice()?.insurance | number }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         TCS
+                         ========================================= -->
+
+                    <div class="price-breakup-row">
+
+                      <div
+                        class="flex min-w-0 items-center gap-2"
+                      >
+
+                        <span
+                          class="text-xs text-gray-500"
+                        >
+                          TCS
+                        </span>
+
+
+                        <!-- INFO WRAPPER -->
+
+                        <div class="price-info-wrapper">
+
+                          <button
+                            type="button"
+                            class="price-info-button"
+                            aria-label="TCS information"
+                            title="About TCS"
+                            (click)="
+                              toggleChargeInfo('tcs');
+                              $event.stopPropagation()
+                            "
+                          >
+                            i
+                          </button>
+
+
+                          <!-- TCS INFO -->
+
+                          @if (activeChargeInfo() === 'tcs') {
+
+                            <div
+                              class="charge-info-floating
+                                     animate-info-panel"
+                              (click)="$event.stopPropagation()"
+                            >
+                              Tax Collected at Source (TCS)
+                              applicable to the vehicle purchase.
+                            </div>
+
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        class="shrink-0
+                               text-xs
+                               font-semibold
+                               text-gray-800"
+                      >
+                        ₹{{ onRoadPrice()?.tcs | number }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         Fastag
+                         ========================================= -->
+
+                    <div class="price-breakup-row">
+
+                      <div
+                        class="flex min-w-0 items-center gap-2"
+                      >
+
+                        <span
+                          class="text-xs text-gray-500"
+                        >
+                          Fastag
+                        </span>
+
+
+                        <!-- INFO WRAPPER -->
+
+                        <div class="price-info-wrapper">
+
+                          <button
+                            type="button"
+                            class="price-info-button"
+                            aria-label="Fastag information"
+                            title="About Fastag"
+                            (click)="
+                              toggleChargeInfo('fastag');
+                              $event.stopPropagation()
+                            "
+                          >
+                            i
+                          </button>
+
+
+                          <!-- Fastag INFO -->
+
+                          @if (activeChargeInfo() === 'fastag') {
+
+                            <div
+                              class="charge-info-floating
+                                     animate-info-panel"
+                              (click)="$event.stopPropagation()"
+                            >
+                              Fastag is a prepaid electronic toll collection system in India, which is
+                              mandatory for all vehicles. The cost of Fastag is included in the on-road price.
+                            </div>
+
+                          }
+
+                        </div>
+
+                      </div>
+
+
+                      <span
+                        class="shrink-0
+                               text-xs
+                               font-semibold
+                               text-gray-800"
+                      >
+                        ₹{{ onRoadPrice()?.fastag | number }}
+                      </span>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         TOTAL
+                         ========================================= -->
+
+                    <div
+                      class="mt-1.5
+                             border-t
+                             border-gray-200
+                             pt-2"
+                    >
+
+                      <div
+                        class="flex
+                               items-center
+                               justify-between
+                               gap-3"
+                      >
+
+                        <span
+                          class="text-sm
+                                 font-bold
+                                 text-gray-900"
+                        >
+                          Final On-Road Price
+                        </span>
+
+
+                        <span
+                          class="shrink-0
+                                 text-sm
+                                 font-extrabold
+                                 text-gray-900"
+                        >
+                          ₹{{
+                            onRoadPrice()?.totalOnRoadPrice
+                            | number
+                          }}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                }
+
+              </div>
+
+
+              <!-- ON-ROAD LABEL -->
+
+              <!-- <p
+                class="mt-1
+                       text-xs
+                       font-medium
+                       text-gray-400"
               >
-                No
-              </span>
+                On-road price
+              </p> -->
+
+            }
+
+
+            <!-- =================================================
+                 LOADING
+                 ================================================= -->
+
+            @if (isLoadingOnRoadPrice()) {
+
+              <div
+                class="mt-2
+                       flex
+                       items-center
+                       gap-2"
+              >
+
+                <div
+                  class="h-3.5 w-3.5
+                         animate-spin
+                         rounded-full
+                         border-2
+                         border-gray-200
+                         border-t-gray-700"
+                ></div>
+
+                <span
+                  class="text-xs text-gray-400"
+                >
+                  Calculating on-road price...
+                </span>
+
+              </div>
 
             }
 
@@ -308,223 +920,491 @@
   </div>
 
 
+  <!-- =========================================================
+       MAIN CONTENT
+       ========================================================= -->
 
-  <!-- ====================================================== -->
-  <!-- TRANSMISSION & DRIVETRAIN -->
-  <!-- ====================================================== -->
-
-  <div class="overflow-hidden rounded-xl bg-white">
-
-    <!-- Header -->
-    <button
-      type="button"
-      (click)="toggleSpecification('transmission')"
-      class="flex w-full items-center justify-between
-             bg-gray-50
-             px-4 py-4 text-left
-             transition-colors duration-200
-             hover:bg-gray-100
-             sm:px-5"
-      [attr.aria-expanded]="expandedSpecification() === 'transmission'"
-    >
-
-      <div>
-
-        <h3
-          class="text-sm font-bold text-gray-900
-                 sm:text-base"
-        >
-          Transmission & Drivetrain
-        </h3>
-
-        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
-          Transmission, gears and drivetrain information
-        </p>
-
-      </div>
-
-
-      <!-- Plus / Minus -->
-      <span
-        class="ml-4 flex h-6 w-6 shrink-0 items-center
-               justify-center text-lg font-light text-gray-500"
-      >
-        {{ expandedSpecification() === 'transmission' ? '−' : '+' }}
-      </span>
-
-    </button>
-
-
-    <!-- Content -->
-    <div
-      class="grid transition-[grid-template-rows]
-             duration-500 ease-in-out"
-      [class.grid-rows-[1fr]]="expandedSpecification() === 'transmission'"
-      [class.grid-rows-[0fr]]="expandedSpecification() !== 'transmission'"
-    >
-
-      <div class="min-h-0 overflow-hidden">
-
-        <div
-          class="divide-y divide-gray-100
-                 bg-white
-                 border-t border-gray-100"
-        >
-
-          <!-- Transmission -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Transmission Type
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.transmissionType }}
-            </span>
-          </div>
-
-
-          <!-- Gears -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Number of Gears
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.noOfGears }}
-            </span>
-          </div>
-
-
-          <!-- Drivetrain -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Drivetrain
-            </span>
-
-            <span class="text-xs font-semibold text-gray-900 sm:text-sm">
-              {{ specifications()?.drivetrain }}
-            </span>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-
-  <!-- ====================================================== -->
-  <!-- SAFETY & EMISSION -->
-  <!-- ====================================================== -->
-
-  <div
-    class="overflow-hidden rounded-xl bg-white
-           lg:col-span-2"
+  <main
+    class="mx-auto max-w-6xl
+           px-4 py-6
+           sm:px-6 lg:px-8"
   >
 
-    <!-- Header -->
-    <button
-      type="button"
-      (click)="toggleSpecification('safety')"
-      class="flex w-full items-center justify-between
-             bg-gray-50
-             px-4 py-4 text-left
-             transition-colors duration-200
-             hover:bg-gray-100
-             sm:px-5"
-      [attr.aria-expanded]="expandedSpecification() === 'safety'"
-    >
+    <!-- PAGE HEADING -->
 
-      <div>
+    <div class="mb-4">
 
-        <h3
-          class="text-sm font-bold text-gray-900
-                 sm:text-base"
-        >
-          Safety & Emission Standards
-        </h3>
-
-        <p class="mt-0.5 text-[10px] text-gray-400 sm:text-xs">
-          Safety and applicable emission standards
-        </p>
-
-      </div>
-
-
-      <!-- Plus / Minus -->
-      <span
-        class="ml-4 flex h-6 w-6 shrink-0 items-center
-               justify-center text-lg font-light text-gray-500"
+      <h2
+        class="text-xl font-bold
+               tracking-tight
+               text-gray-900
+               md:text-2xl"
       >
-        {{ expandedSpecification() === 'safety' ? '−' : '+' }}
-      </span>
+        Specifications
+      </h2>
 
-    </button>
+      <p
+        class="mt-1
+               text-xs
+               text-gray-500
+               sm:text-sm"
+      >
+        Detailed specifications of this variant
+      </p>
+
+    </div>
 
 
-    <!-- Content -->
+    <!-- =========================================================
+         SPECIFICATION ACCORDION
+         ========================================================= -->
+
     <div
-      class="grid transition-[grid-template-rows]
-             duration-500 ease-in-out"
-      [class.grid-rows-[1fr]]="expandedSpecification() === 'safety'"
-      [class.grid-rows-[0fr]]="expandedSpecification() !== 'safety'"
+      class="grid
+             grid-cols-1
+             gap-3
+             lg:grid-cols-2"
     >
 
-      <div class="min-h-0 overflow-hidden">
+      <!-- =======================================================
+           ENGINE & PERFORMANCE
+           ======================================================= -->
 
-        <div
-          class="divide-y divide-gray-100
-                 bg-white
-                 border-t border-gray-100"
+      <div
+        class="overflow-hidden
+               rounded-xl
+               bg-white"
+      >
+
+        <button
+          type="button"
+          (click)="toggleSpecification('engine')"
+          class="flex w-full
+                 items-center
+                 justify-between
+                 bg-gray-50
+                 px-4 py-4
+                 text-left
+                 transition-colors
+                 duration-200
+                 hover:bg-gray-100
+                 sm:px-5"
+          [attr.aria-expanded]="
+            expandedSpecification() === 'engine'
+          "
         >
 
-          <!-- Emission -->
-          <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
-          >
+          <div>
 
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Emission Standard
-            </span>
+            <h3
+              class="text-sm
+                     font-bold
+                     text-gray-900
+                     sm:text-base"
+            >
+              Engine & Performance
+            </h3>
 
-            <span
-              class="rounded-full bg-gray-100
-                     px-2.5 py-0.5
-                     text-[10px] font-semibold text-gray-700
+            <p
+              class="mt-0.5
+                     text-[10px]
+                     text-gray-400
                      sm:text-xs"
             >
-              {{ specifications()?.emmissionStandard }}
-            </span>
+              Engine, power, torque and performance details
+            </p>
 
           </div>
 
 
-          <!-- Safety -->
+          <span
+            class="ml-4
+                   flex h-6 w-6
+                   shrink-0
+                   items-center
+                   justify-center
+                   text-lg
+                   font-light
+                   text-gray-500"
+          >
+            {{ expandedSpecification() === 'engine' ? '−' : '+' }}
+          </span>
+
+        </button>
+
+
+        <div
+          class="grid
+                 transition-[grid-template-rows]
+                 duration-500
+                 ease-in-out"
+          [class.grid-rows-[1fr]]="
+            expandedSpecification() === 'engine'
+          "
+          [class.grid-rows-[0fr]]="
+            expandedSpecification() !== 'engine'
+          "
+        >
+
           <div
-            class="flex items-center justify-between gap-4
-                   px-4 py-3 sm:px-5"
+            class="min-h-0
+                   overflow-hidden"
           >
 
-            <span class="text-xs text-gray-500 sm:text-sm">
-              Safety Specifications
-            </span>
+            <div
+              class="divide-y
+                     divide-gray-100
+                     border-t
+                     border-gray-100
+                     bg-white"
+            >
 
-            <span class="text-xs font-medium text-gray-400 sm:text-sm">
-              Coming soon
-            </span>
+              <div class="spec-row">
+                <span>Engine</span>
+                <span>{{ specifications()?.engine }}</span>
+              </div>
+
+              <div class="spec-row">
+                <span>Fuel Type</span>
+                <span>{{ specifications()?.fuelType }}</span>
+              </div>
+
+              <div class="spec-row">
+                <span>Displacement</span>
+                <span>
+                  {{ specifications()?.displacement }} cc
+                </span>
+              </div>
+
+              <div class="spec-row">
+                <span>Number of Cylinders</span>
+                <span>{{ specifications()?.noOfCyl }}</span>
+              </div>
+
+              <div class="spec-row">
+                <span>Number of Valves</span>
+                <span>{{ specifications()?.noOfValves }}</span>
+              </div>
+
+              <div class="spec-row">
+                <span>Max Power</span>
+                <span>
+                  {{ specifications()?.maxPower }} PS
+                </span>
+              </div>
+
+              <div class="spec-row">
+                <span>Max Torque</span>
+                <span>
+                  {{ specifications()?.maxTorque }} Nm
+                </span>
+              </div>
+
+              <div class="spec-row">
+
+                <span>Turbocharged</span>
+
+                @if (specifications()?.isTurbocharged) {
+
+                  <span
+                    class="rounded-full
+                           bg-green-100
+                           px-2.5 py-0.5
+                           text-[10px]
+                           font-semibold
+                           text-green-700
+                           sm:text-xs"
+                  >
+                    Yes
+                  </span>
+
+                } @else {
+
+                  <span
+                    class="rounded-full
+                           bg-gray-100
+                           px-2.5 py-0.5
+                           text-[10px]
+                           font-semibold
+                           text-gray-500
+                           sm:text-xs"
+                  >
+                    No
+                  </span>
+
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =======================================================
+           TRANSMISSION
+           ======================================================= -->
+
+      <div
+        class="overflow-hidden
+               rounded-xl
+               bg-white"
+      >
+
+        <button
+          type="button"
+          (click)="toggleSpecification('transmission')"
+          class="flex w-full
+                 items-center
+                 justify-between
+                 bg-gray-50
+                 px-4 py-4
+                 text-left
+                 transition-colors
+                 duration-200
+                 hover:bg-gray-100
+                 sm:px-5"
+          [attr.aria-expanded]="
+            expandedSpecification() === 'transmission'
+          "
+        >
+
+          <div>
+
+            <h3
+              class="text-sm
+                     font-bold
+                     text-gray-900
+                     sm:text-base"
+            >
+              Transmission & Drivetrain
+            </h3>
+
+            <p
+              class="mt-0.5
+                     text-[10px]
+                     text-gray-400
+                     sm:text-xs"
+            >
+              Transmission, gears and drivetrain information
+            </p>
+
+          </div>
+
+
+          <span
+            class="ml-4
+                   flex h-6 w-6
+                   shrink-0
+                   items-center
+                   justify-center
+                   text-lg
+                   font-light
+                   text-gray-500"
+          >
+            {{
+              expandedSpecification() === 'transmission'
+                ? '−'
+                : '+'
+            }}
+          </span>
+
+        </button>
+
+
+        <div
+          class="grid
+                 transition-[grid-template-rows]
+                 duration-500
+                 ease-in-out"
+          [class.grid-rows-[1fr]]="
+            expandedSpecification() === 'transmission'
+          "
+          [class.grid-rows-[0fr]]="
+            expandedSpecification() !== 'transmission'
+          "
+        >
+
+          <div
+            class="min-h-0
+                   overflow-hidden"
+          >
+
+            <div
+              class="divide-y
+                     divide-gray-100
+                     border-t
+                     border-gray-100
+                     bg-white"
+            >
+
+              <div class="spec-row">
+                <span>Transmission Type</span>
+                <span>
+                  {{ specifications()?.transmissionType }}
+                </span>
+              </div>
+
+              <div class="spec-row">
+                <span>Number of Gears</span>
+                <span>
+                  {{ specifications()?.noOfGears }}
+                </span>
+              </div>
+
+              <div class="spec-row">
+                <span>Drivetrain</span>
+                <span>
+                  {{ specifications()?.drivetrain }}
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =======================================================
+           SAFETY
+           ======================================================= -->
+
+      <div
+        class="overflow-hidden
+               rounded-xl
+               bg-white
+               lg:col-span-2"
+      >
+
+        <button
+          type="button"
+          (click)="toggleSpecification('safety')"
+          class="flex w-full
+                 items-center
+                 justify-between
+                 bg-gray-50
+                 px-4 py-4
+                 text-left
+                 transition-colors
+                 duration-200
+                 hover:bg-gray-100
+                 sm:px-5"
+          [attr.aria-expanded]="
+            expandedSpecification() === 'safety'
+          "
+        >
+
+          <div>
+
+            <h3
+              class="text-sm
+                     font-bold
+                     text-gray-900
+                     sm:text-base"
+            >
+              Safety & Emission Standards
+            </h3>
+
+            <p
+              class="mt-0.5
+                     text-[10px]
+                     text-gray-400
+                     sm:text-xs"
+            >
+              Safety and applicable emission standards
+            </p>
+
+          </div>
+
+
+          <span
+            class="ml-4
+                   flex h-6 w-6
+                   shrink-0
+                   items-center
+                   justify-center
+                   text-lg
+                   font-light
+                   text-gray-500"
+          >
+            {{ expandedSpecification() === 'safety' ? '−' : '+' }}
+          </span>
+
+        </button>
+
+
+        <div
+          class="grid
+                 transition-[grid-template-rows]
+                 duration-500
+                 ease-in-out"
+          [class.grid-rows-[1fr]]="
+            expandedSpecification() === 'safety'
+          "
+          [class.grid-rows-[0fr]]="
+            expandedSpecification() !== 'safety'
+          "
+        >
+
+          <div
+            class="min-h-0
+                   overflow-hidden"
+          >
+
+            <div
+              class="divide-y
+                     divide-gray-100
+                     border-t
+                     border-gray-100
+                     bg-white"
+            >
+
+              <div class="spec-row">
+
+                <span>
+                  Emission Standard
+                </span>
+
+                <span
+                  class="rounded-full
+                         bg-gray-100
+                         px-2.5 py-0.5
+                         text-[10px]
+                         font-semibold
+                         text-gray-700
+                         sm:text-xs"
+                >
+                  {{ specifications()?.emmissionStandard }}
+                </span>
+
+              </div>
+
+
+              <div class="spec-row">
+
+                <span>
+                  Safety Specifications
+                </span>
+
+                <span
+                  class="text-xs
+                         font-medium
+                         text-gray-400
+                         sm:text-sm"
+                >
+                  Coming soon
+                </span>
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -534,10 +1414,11 @@
 
     </div>
 
-  </div>
-
-</div>
-
   </main>
+
+
+  <!-- LOCATION SELECTOR -->
+
+  <app-location-selector></app-location-selector>
 
 </div>
