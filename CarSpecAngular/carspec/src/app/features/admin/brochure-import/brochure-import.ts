@@ -70,7 +70,8 @@ export class BrochureImport implements OnDestroy {
     try {
       const pdfjsLib = await import('pdfjs-dist');
       pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-        'pdfjs-dist/build/pdf.worker.mjs',
+        // 'pdfjs-dist/build/pdf.worker.mjs',
+        '/assets/pdfjs/pdf.worker.mjs',
         import.meta.url
       ).toString();
       const arrayBuffer = await file.arrayBuffer();
