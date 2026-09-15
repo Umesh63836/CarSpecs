@@ -6,13 +6,16 @@ namespace CarSpecAPI.Entities;
 
 public partial class CarsDbContext : DbContext
 {
+    private readonly IConfiguration configuration;
+
     public CarsDbContext()
     {
     }
 
-    public CarsDbContext(DbContextOptions<CarsDbContext> options)
+    public CarsDbContext(DbContextOptions<CarsDbContext> options, IConfiguration configuration)
         : base(options)
     {
+        this.configuration = configuration;
     }
 
     public virtual DbSet<Admin> Admins { get; set; }
@@ -131,7 +134,7 @@ public partial class CarsDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost,1433; DataBase=CarsDB; User Id=sa; Password=Password@12345; TrustServerCertificate=true;");
+        => optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
