@@ -53,6 +53,7 @@ import {
   ReplaceStagedDrivetrainReferenceDto,
   ReplaceStagedDrivetrainReferenceResultDto
 } from '../../../models/interfaces/DataProcessingDtos/StagedDataDtos/staged-data-dto';
+import { environment } from '../../../../../environments/environment';
 
 
 /*
@@ -78,8 +79,7 @@ export class StagedDataService {
    * If your application already has an environment/config service,
    * replace only this value with your existing API URL.
    */
-  private readonly apiUrl =
-    'https://localhost:7135/api';
+  private readonly apiUrl = environment.apiUrl;
 
   private readonly baseUrl =
     `${this.apiUrl}/admin/StagedData`;
